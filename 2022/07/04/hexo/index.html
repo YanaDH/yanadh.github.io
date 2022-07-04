@@ -1,251 +1,692 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  
-  <title>Hexo + GitHub 搭建个人博客 | Yana&#39;s Blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="1. 前言2. 准备工作3. 博客搭建  1 前言1.1 搭建目的记录日常开发、学习过程中遇到的问题，方便后续查看 1.2 最终效果通过网址 https:&#x2F;&#x2F;your username.github.io 直接访问搭建好的博客  2 准备工作2.1 基本环境 GitHub 账号 Nodejs Git  2.2 创建博客对应的 GitHub 仓库仓库名称必须为your usern">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Hexo + GitHub 搭建个人博客">
-<meta property="og:url" content="http://example.com/2022/07/04/hexo/index.html">
-<meta property="og:site_name" content="Yana&#39;s Blog">
-<meta property="og:description" content="1. 前言2. 准备工作3. 博客搭建  1 前言1.1 搭建目的记录日常开发、学习过程中遇到的问题，方便后续查看 1.2 最终效果通过网址 https:&#x2F;&#x2F;your username.github.io 直接访问搭建好的博客  2 准备工作2.1 基本环境 GitHub 账号 Nodejs Git  2.2 创建博客对应的 GitHub 仓库仓库名称必须为your usern">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2022070401.png">
-<meta property="article:published_time" content="2022-07-04T03:19:20.000Z">
-<meta property="article:modified_time" content="2022-07-04T06:08:22.269Z">
-<meta property="article:author" content="duhuan">
-<meta property="article:tag" content="Hexo">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/2022070401.png">
-  
-    <link rel="alternate" href="/atom.xml" title="Yana's Blog" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Yana&#39;s Blog">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>Hexo + GitHub 搭建个人博客</title>
   
     
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
-
+      <meta 
+        property="og:title" 
+        content="Hexo + GitHub 搭建个人博客">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2022/07/04/hexo/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/images/avatar.jpg">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-07-04">
+      <meta 
+        property="og:article:modified_time" 
+        content="2022-07-04">
+      <meta 
+        property="og:article:author" 
+        content="杜欢">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Hexo">
+        
+      
+    
   
   
-<link rel="stylesheet" href="/css/style.css">
-
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
   
     
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
-
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
   
 <meta name="generator" content="Hexo 6.2.0"></head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Yana&#39;s Blog</a>
-      </h1>
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
       
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">随笔，方便后续查看</a>
-        </h2>
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
       </div>
-    </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-hexo" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/04/hexo/" class="article-date">
-  <time class="dt-published" datetime="2022-07-04T03:19:20.000Z" itemprop="datePublished">2022-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
       Hexo + GitHub 搭建个人博客
     </h1>
-  
-
-      </header>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-07-04T03:19:20.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-07-04</span>
+    </time>
     
-    <div class="e-content article-entry" itemprop="articleBody">
+      <span class="dot"></span>
       
-        <p><a href="#%E5%89%8D%E8%A8%80">1. 前言</a><br><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">2. 准备工作</a><br><a href="#%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA">3. 博客搭建</a></p>
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>534 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Hexo/" 
+            class="post-meta-link">
+            Hexo
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p><a href="#%E5%89%8D%E8%A8%80">1. 前言</a><br><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">2. 准备工作</a><br><a href="#%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA">3. 博客搭建</a><br><a href="#%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96">4. 博客优化</a></p>
 <p><span id="前言"></span></p>
 <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><h3 id="1-1-搭建目的"><a href="#1-1-搭建目的" class="headerlink" title="1.1 搭建目的"></a>1.1 搭建目的</h3><p>记录日常开发、学习过程中遇到的问题，方便后续查看</p>
 <h3 id="1-2-最终效果"><a href="#1-2-最终效果" class="headerlink" title="1.2 最终效果"></a>1.2 最终效果</h3><p>通过网址 https:&#x2F;&#x2F;<code>your username</code>.github.io 直接访问搭建好的<a target="_blank" rel="noopener" href="https://yanadh.github.io/">博客</a></p>
 <p><span id="准备工作"></span></p>
 <h2 id="2-准备工作"><a href="#2-准备工作" class="headerlink" title="2 准备工作"></a>2 准备工作</h2><h3 id="2-1-基本环境"><a href="#2-1-基本环境" class="headerlink" title="2.1 基本环境"></a>2.1 基本环境</h3><ul>
 <li>GitHub 账号</li>
-<li>Nodejs</li>
+<li>Node.js (Node.js 版本需不低于 10.13，建议使用 Node.js 12.0 及以上版本)</li>
 <li>Git</li>
 </ul>
-<h3 id="2-2-创建博客对应的-GitHub-仓库"><a href="#2-2-创建博客对应的-GitHub-仓库" class="headerlink" title="2.2 创建博客对应的 GitHub 仓库"></a>2.2 创建博客对应的 GitHub 仓库</h3><p>仓库名称必须为<code>your username</code>.github.io ，下图中我的username是yanadh，那对应的仓库名称就是yanadh.github.io<br><img src="/../images/2022070401.png"></p>
+<h3 id="2-2-创建博客对应的-GitHub-仓库"><a href="#2-2-创建博客对应的-GitHub-仓库" class="headerlink" title="2.2 创建博客对应的 GitHub 仓库"></a>2.2 创建博客对应的 GitHub 仓库</h3><p>仓库名称必须为<code>your username</code>.github.io ，下图中我的username是yanadh，那么对应的仓库名称就是yanadh.github.io<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/2022070401.png" class="lozad post-image"src="/../images/2022070401.png"></p>
 <p><span id="博客搭建"></span></p>
-<h2 id="3-博客搭建"><a href="#3-博客搭建" class="headerlink" title="3 博客搭建"></a>3 博客搭建</h2><h3 id="3-1-安装-Hexo"><a href="#3-1-安装-Hexo" class="headerlink" title="3.1 安装 Hexo"></a>3.1 安装 Hexo</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm i hexo -g</span><br></pre></td></tr></table></figure>
+<h2 id="3-博客搭建"><a href="#3-博客搭建" class="headerlink" title="3 博客搭建"></a>3 博客搭建</h2><h3 id="3-1-安装-Hexo"><a href="#3-1-安装-Hexo" class="headerlink" title="3.1 安装 Hexo"></a>3.1 安装 Hexo</h3><pre class="highlight"><span class="line">$ npm i hexo -g</span><br></pre>
 
-<h3 id="3-2-博客初始化"><a href="#3-2-博客初始化" class="headerlink" title="3.2 博客初始化"></a>3.2 博客初始化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-初始化"><a href="#3-2-初始化" class="headerlink" title="3.2 初始化"></a>3.2 初始化</h3><pre class="highlight"><span class="line">$ hexo init</span><br></pre>
 <p>执行该命令，hexo 自动下载相关文件到本地</p>
-<h3 id="3-2-预览"><a href="#3-2-预览" class="headerlink" title="3.2 预览"></a>3.2 预览</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-<p>浏览器访问 <a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000/</a> ，即可查看本地博客效果，除修改 _config.yml 站点配置文件外，其他文件更改无需重启服务器，可以直接刷新查看</p>
-<h3 id="3-3-发布"><a href="#3-3-发布" class="headerlink" title="3.3 发布"></a>3.3 发布</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g -d</span><br></pre></td></tr></table></figure>
-<p>执行该命令，生成静态网页文件存放在 public 文件夹下，并将该文件夹推送到<code>your username</code>.github.io 仓库<br>浏览器访问 <a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000/</a> ，即可查看本地博客效果</p>
+<h3 id="3-3-预览"><a href="#3-3-预览" class="headerlink" title="3.3 预览"></a>3.3 预览</h3><pre class="highlight"><span class="line">$ hexo s</span><br></pre>
+<p>浏览器访问 <a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000/</a> ，即可查看本地博客效果，除修改 _config.yml 站点配置文件外，其他文件更改无需重启服务器，可直接刷新查看</p>
+<h3 id="3-4-发布"><a href="#3-4-发布" class="headerlink" title="3.4 发布"></a>3.4 发布</h3><h4 id="3-4-1-安装-GitHub-插件"><a href="#3-4-1-安装-GitHub-插件" class="headerlink" title="3.4.1 安装 GitHub 插件"></a>3.4.1 安装 GitHub 插件</h4><pre class="highlight"><span class="line">$ npm i hexo-deployer-git</span><br></pre>
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/07/04/hexo/" data-id="cl56c28p400007susbaod1w6w" data-title="Hexo + GitHub 搭建个人博客" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li></ul>
+<h4 id="3-4-2-修改站点配置文件"><a href="#3-4-2-修改站点配置文件" class="headerlink" title="3.4.2 修改站点配置文件"></a>3.4.2 修改站点配置文件</h4><p>在根目录下找到 _config.yml ，修改最下方 deploy 内容</p>
+<pre class="highlight"><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">`your</span> <span class="string">username`.github.io</span> <span class="string">仓库</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">分支名</span></span><br><span class="line"></span><br><span class="line"><span class="string">例如：</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:YanaDH/yanadh.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre>
 
-    </footer>
+<h4 id="3-4-3-将静态文件推送到-GitHub-仓库"><a href="#3-4-3-将静态文件推送到-GitHub-仓库" class="headerlink" title="3.4.3 将静态文件推送到 GitHub 仓库"></a>3.4.3 将静态文件推送到 GitHub 仓库</h4><pre class="highlight"><span class="line">$ hexo g -d</span><br></pre>
+<p>执行该命令，生成静态网页文件存放在 public 文件夹下，并推送到 _config.yml 文件 deploy.repo 配置的仓库</p>
+<p>以上命令执行成功后，浏览器访问 https:&#x2F;&#x2F;<code>your username</code>.github.io ，即可查看<a target="_blank" rel="noopener" href="https://yanadh.github.io/">博客</a></p>
+<p><span id="博客优化"></span></p>
+<h2 id="4-博客优化"><a href="#4-博客优化" class="headerlink" title="4 博客优化"></a>4 博客优化</h2><h3 id="4-1-主题修改"><a href="#4-1-主题修改" class="headerlink" title="4.1 主题修改"></a>4.1 主题修改</h3><h4 id="4-1-1-下载主题"><a href="#4-1-1-下载主题" class="headerlink" title="4.1.1 下载主题"></a>4.1.1 下载主题</h4><p>可以在 <a target="_blank" rel="noopener" href="https://hexo.io/themes/">Hexo</a> 官网上选择一款喜欢的主题，并克隆到 themes 文件夹下</p>
+<pre class="highlight"><span class="line">$ git <span class="built_in">clone</span> https://github.com/miccall/hexo-theme-Mic_Theme.git</span><br></pre>
+
+<h4 id="4-1-2-修改站点配置文件"><a href="#4-1-2-修改站点配置文件" class="headerlink" title="4.1.2 修改站点配置文件"></a>4.1.2 修改站点配置文件</h4><p>在根目录下找到 _config.yml ，修改最下方 theme 内容</p>
+<pre class="highlight"><span class="line"><span class="attr">theme:</span> <span class="string">主题文件夹名称</span></span><br><span class="line"></span><br><span class="line"><span class="string">例如：</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">hexo-theme-Mic_Theme</span></span><br></pre>
+
+<h4 id="4-1-2-修改主题内容"><a href="#4-1-2-修改主题内容" class="headerlink" title="4.1.2 修改主题内容"></a>4.1.2 修改主题内容</h4><p>可直接到主题对应的 GitHub 查看具体修改内容：<a target="_blank" rel="noopener" href="https://github.com/miccall/hexo-theme-Mic_Theme">hexo-theme-Mic_Theme</a></p>
+
   </div>
-  
+  <div>
     
-<nav id="article-nav">
-  
-  
-    <a href="/2022/07/01/yana-cli/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title">搭建个人脚手架</div>
-    </a>
-  
-</nav>
-
-  
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            杜欢
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="http://example.com/2022/07/04/hexo/">
+            http://example.com/2022/07/04/hexo/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
 </article>
-
-
-</section>
-        
-          <aside id="sidebar">
+<div class="nav">
   
-    
-
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cli/" rel="tag">Cli</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li></ul>
+    <div class="nav-item-next">
+      <a 
+        href="/2022/07/01/yana-cli/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">搭建个人脚手架 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
     </div>
-  </div>
-
-
   
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E6%90%AD%E5%BB%BA%E7%9B%AE%E7%9A%84"><span class="toc-text">1.1 搭建目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">1.2 最终效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83"><span class="toc-text">2.1 基本环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%AF%B9%E5%BA%94%E7%9A%84-GitHub-%E4%BB%93%E5%BA%93"><span class="toc-text">2.2 创建博客对应的 GitHub 仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA"><span class="toc-text">3 博客搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85-Hexo"><span class="toc-text">3.1 安装 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">3.2 初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E9%A2%84%E8%A7%88"><span class="toc-text">3.3 预览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%8F%91%E5%B8%83"><span class="toc-text">3.4 发布</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-1-%E5%AE%89%E8%A3%85-GitHub-%E6%8F%92%E4%BB%B6"><span class="toc-text">3.4.1 安装 GitHub 插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-2-%E4%BF%AE%E6%94%B9%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">3.4.2 修改站点配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-3-%E5%B0%86%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E6%8E%A8%E9%80%81%E5%88%B0-GitHub-%E4%BB%93%E5%BA%93"><span class="toc-text">3.4.3 将静态文件推送到 GitHub 仓库</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96"><span class="toc-text">4 博客优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%B8%BB%E9%A2%98%E4%BF%AE%E6%94%B9"><span class="toc-text">4.1 主题修改</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-1-%E4%B8%8B%E8%BD%BD%E4%B8%BB%E9%A2%98"><span class="toc-text">4.1.1 下载主题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E4%BF%AE%E6%94%B9%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">4.1.2 修改站点配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E5%86%85%E5%AE%B9"><span class="toc-text">4.1.2 修改主题内容</span></a></li></ol></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">杜欢</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>2</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>2</span>
+    <span>标签</span>
+  </a>
+</div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E6%90%AD%E5%BB%BA%E7%9B%AE%E7%9A%84"><span class="toc-text">1.1 搭建目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">1.2 最终效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83"><span class="toc-text">2.1 基本环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%AF%B9%E5%BA%94%E7%9A%84-GitHub-%E4%BB%93%E5%BA%93"><span class="toc-text">2.2 创建博客对应的 GitHub 仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA"><span class="toc-text">3 博客搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85-Hexo"><span class="toc-text">3.1 安装 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">3.2 初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E9%A2%84%E8%A7%88"><span class="toc-text">3.3 预览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%8F%91%E5%B8%83"><span class="toc-text">3.4 发布</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-1-%E5%AE%89%E8%A3%85-GitHub-%E6%8F%92%E4%BB%B6"><span class="toc-text">3.4.1 安装 GitHub 插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-2-%E4%BF%AE%E6%94%B9%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">3.4.2 修改站点配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-3-%E5%B0%86%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E6%8E%A8%E9%80%81%E5%88%B0-GitHub-%E4%BB%93%E5%BA%93"><span class="toc-text">3.4.3 将静态文件推送到 GitHub 仓库</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96"><span class="toc-text">4 博客优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%B8%BB%E9%A2%98%E4%BF%AE%E6%94%B9"><span class="toc-text">4.1 主题修改</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-1-%E4%B8%8B%E8%BD%BD%E4%B8%BB%E9%A2%98"><span class="toc-text">4.1.1 下载主题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E4%BF%AE%E6%94%B9%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">4.1.2 修改站点配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E5%86%85%E5%AE%B9"><span class="toc-text">4.1.2 修改主题内容</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/Cli/" style="font-size: 10px;">Cli</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a>
-    </div>
-  </div>
-
-  
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a></li></ul>
-    </div>
   </div>
-
-
+</div>
+  </article>
   
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2022/07/04/hexo/">Hexo + GitHub 搭建个人博客</a>
-          </li>
-        
-          <li>
-            <a href="/2022/07/01/yana-cli/">搭建个人脚手架</a>
-          </li>
-        
-      </ul>
-    </div>
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
   </div>
-
+</div>
+  </article>
   
-</aside>
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E6%90%AD%E5%BB%BA%E7%9B%AE%E7%9A%84"><span class="toc-text">1.1 搭建目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">1.2 最终效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83"><span class="toc-text">2.1 基本环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%AF%B9%E5%BA%94%E7%9A%84-GitHub-%E4%BB%93%E5%BA%93"><span class="toc-text">2.2 创建博客对应的 GitHub 仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA"><span class="toc-text">3 博客搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85-Hexo"><span class="toc-text">3.1 安装 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">3.2 初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E9%A2%84%E8%A7%88"><span class="toc-text">3.3 预览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%8F%91%E5%B8%83"><span class="toc-text">3.4 发布</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-1-%E5%AE%89%E8%A3%85-GitHub-%E6%8F%92%E4%BB%B6"><span class="toc-text">3.4.1 安装 GitHub 插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-2-%E4%BF%AE%E6%94%B9%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">3.4.2 修改站点配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-3-%E5%B0%86%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E6%8E%A8%E9%80%81%E5%88%B0-GitHub-%E4%BB%93%E5%BA%93"><span class="toc-text">3.4.3 将静态文件推送到 GitHub 仓库</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96"><span class="toc-text">4 博客优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%B8%BB%E9%A2%98%E4%BF%AE%E6%94%B9"><span class="toc-text">4.1 主题修改</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-1-%E4%B8%8B%E8%BD%BD%E4%B8%BB%E9%A2%98"><span class="toc-text">4.1.1 下载主题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E4%BF%AE%E6%94%B9%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">4.1.2 修改站点配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E5%86%85%E5%AE%B9"><span class="toc-text">4.1.2 修改主题内容</span></a></li></ol></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-04</div>
+        <a href="/2022/07/04/hexo/"><div class="recent-posts-item-content">Hexo + GitHub 搭建个人博客</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-01</div>
+        <a href="/2022/07/01/yana-cli/"><div class="recent-posts-item-content">搭建个人脚手架</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
         
       </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
       
-      &copy; 2022 duhuan<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
     
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
 
-
-<script src="/js/jquery-3.4.1.min.js"></script>
-
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+  </body>
 </html>
