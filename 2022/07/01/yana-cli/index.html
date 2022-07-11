@@ -45,7 +45,7 @@
         content="2022-07-01">
       <meta 
         property="og:article:modified_time" 
-        content="2022-07-05">
+        content="2022-07-11">
       <meta 
         property="og:article:author" 
         content="杜欢">
@@ -340,7 +340,7 @@
 <h3 id="3-3-添加命令路径"><a href="#3-3-添加命令路径" class="headerlink" title="3.3 添加命令路径"></a>3.3 添加命令路径</h3><p>在根目录下找到 package.json ，添加 bin 字段</p>
 <pre class="highlight"><span class="line"><span class="attr">&quot;bin&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;yana-cli&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bin/yana-cli.js&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre>
 
-<h3 id="3-4-添加软链接"><a href="#3-4-添加软链接" class="headerlink" title="3.4 添加软链接"></a>3.4 添加软链接</h3><pre class="highlight"><span class="line">npm <span class="built_in">link</span></span><br></pre>
+<h3 id="3-4-添加软链接"><a href="#3-4-添加软链接" class="headerlink" title="3.4 添加软链接"></a>3.4 添加软链接</h3><pre class="highlight"><span class="line">$ npm <span class="built_in">link</span></span><br></pre>
 <ul>
 <li>执行该命令，增加软链接到全局，成功后可直接全局使用 <code>yana-cli</code></li>
 <li>若该命令执行失败，可以在网上查看对应解决方案</li>
@@ -381,11 +381,11 @@
 <li>在 lib 文件夹下新建 create.js</li>
 <li>将以下内容粘贴到 create.js<pre class="highlight"><span class="line"><span class="keyword">const</span> templateUrl = <span class="built_in">require</span>(<span class="string">&#x27;../template.json&#x27;</span>)[<span class="string">&#x27;vue3-project-template&#x27;</span>]</span><br><span class="line"><span class="keyword">const</span> download = <span class="built_in">require</span>(<span class="string">&#x27;download-git-repo&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> inquirer = <span class="built_in">require</span>(<span class="string">&#x27;inquirer&#x27;</span>)</span><br><span class="line"><span class="comment">// 新增项</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> handlebars = <span class="built_in">require</span>(<span class="string">&#x27;handlebars&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="title function_">download</span>(<span class="string">`direct:<span class="subst">$&#123;templateUrl&#125;</span>`</span>, <span class="string">&#x27;tmp&#x27;</span>, &#123; <span class="attr">clone</span>: <span class="literal">true</span> &#125;, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (err) <span class="keyword">return</span></span><br><span class="line">  <span class="keyword">const</span> packagePath = path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;../&#x27;</span>, <span class="string">&#x27;/tmp/package.json&#x27;</span>)</span><br><span class="line">  <span class="keyword">const</span> content = <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(<span class="built_in">require</span>(packagePath), <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;\t&#x27;</span>)</span><br><span class="line">  <span class="keyword">const</span> template = handlebars.<span class="title function_">compile</span>(content)</span><br><span class="line">  inquirer</span><br><span class="line">    .<span class="title function_">prompt</span>([</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">&#x27;name&#x27;</span>, <span class="attr">message</span>: <span class="string">&#x27;请输入项目名称&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">&#x27;description&#x27;</span>, <span class="attr">message</span>: <span class="string">&#x27;请输入项目描述&#x27;</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">name</span>: <span class="string">&#x27;author&#x27;</span>, <span class="attr">message</span>: <span class="string">&#x27;请输入项目作者&#x27;</span> &#125;,</span><br><span class="line">    ])</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">params</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> result = <span class="title function_">template</span>(params)</span><br><span class="line">      fs.<span class="title function_">writeFileSync</span>(packagePath, result)</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(params)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></li>
 </ul>
-<h3 id="6-3-create-命令测试"><a href="#6-3-create-命令测试" class="headerlink" title="6.3 create 命令测试"></a>6.3 create 命令测试</h3><pre class="highlight"><span class="line">yana-cli create</span><br></pre>
+<h3 id="6-3-create-命令测试"><a href="#6-3-create-命令测试" class="headerlink" title="6.3 create 命令测试"></a>6.3 create 命令测试</h3><pre class="highlight"><span class="line">$ yana-cli create</span><br></pre>
 <p>若 inquirer 报错，则降低 inquirer 版本为8.2.4<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220705/2022070504.png" class="lozad post-image"src="/../images/20220705/2022070504.png"><br>终端输出以下内容<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220705/2022070505.png" class="lozad post-image"src="/../images/20220705/2022070505.png"><br>对应目录生成 tmp 文件夹，且下载下来的模板仓库 package.json 文件中 name、description、author 为刚刚输入内容<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220705/2022070506.png" class="lozad post-image"src="/../images/20220705/2022070506.png"></p>
 <p><span id="发布NPM包"></span></p>
 <h2 id="7-发布NPM包"><a href="#7-发布NPM包" class="headerlink" title="7 发布NPM包"></a>7 发布NPM包</h2><p>若没有<a target="_blank" rel="noopener" href="https://www.npmjs.com/">npm</a>账号，需要先注册一个</p>
-<pre class="highlight"><span class="line"><span class="comment"># 1. 登录npm，输入用户名、密码</span></span><br><span class="line">npm login</span><br><span class="line"><span class="comment"># 2. 发布</span></span><br><span class="line">npm publish</span><br></pre>
+<pre class="highlight"><span class="line"><span class="comment"># 1. 登录npm，输入用户名、密码</span></span><br><span class="line">$ npm login</span><br><span class="line"><span class="comment"># 2. 发布</span></span><br><span class="line">$ npm publish</span><br></pre>
 <p>发布成功后可直接通过 <code>npm i yana-cli</code> 进行安装</p>
 <p><span id="脚手架优化"></span></p>
 <h2 id="8-脚手架优化"><a href="#8-脚手架优化" class="headerlink" title="8 脚手架优化"></a>8 脚手架优化</h2><p><a target="_blank" rel="noopener" href="https://github.com/YanaDH/yana-cli">GitHub</a><br><a target="_blank" rel="noopener" href="https://gitee.com/YanaDH/yana-cli">Gitee</a></p>
@@ -407,7 +407,7 @@
 <li>将<a target="_blank" rel="noopener" href="https://gitee.com/YanaDH/yana-cli/blob/master/lib/util/git-user.js">链接</a>内容粘贴到 git-user.js</li>
 </ul>
 <h3 id="8-4-修改-create-js-文件中"><a href="#8-4-修改-create-js-文件中" class="headerlink" title="8.4 修改 create.js 文件中"></a>8.4 修改 create.js 文件中</h3><p>控制台增加颜色、loading等显示<br>将<a target="_blank" rel="noopener" href="https://gitee.com/YanaDH/yana-cli/blob/master/lib/create.js">链接</a>内容粘贴到 create.js</p>
-<pre class="highlight"><span class="line">yana-cli create</span><br></pre>
+<pre class="highlight"><span class="line">$ yana-cli create</span><br></pre>
 <ul>
 <li>若 ora 报错，则将 ora 版本降为8.2.4</li>
 <li>若 chalk 报错，则将 chalk 版本降为4.1.1<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220705/2022070507.png" class="lozad post-image"src="/../images/20220705/2022070507.png"></li>
@@ -535,7 +535,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>2</span>
+    <span>3</span>
     <span>文章</span>
   </a>
   <a 
@@ -547,7 +547,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>2</span>
+    <span>3</span>
     <span>标签</span>
   </a>
 </div>
@@ -592,7 +592,7 @@
       <a href="/categories/%E6%8A%80%E6%9C%AF/">
         <div class="categories-list-item">
           技术
-          <span class="categories-list-item-badge">2</span>
+          <span class="categories-list-item-badge">3</span>
         </div>
       </a>
     
@@ -611,15 +611,21 @@
   <div class="tags-list">
     
       <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
         href="/tags/Cli/" 
         title="Cli">
         <div class="tags-list-item">Cli</div>
       </a>
     
       <a 
-        href="/tags/Hexo/" 
-        title="Hexo">
-        <div class="tags-list-item">Hexo</div>
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
       </a>
     
   </div>
@@ -653,6 +659,11 @@
     </i>最近文章
   </div>
   <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-11</div>
+        <a href="/2022/07/11/element-plus/"><div class="recent-posts-item-content">Element Plus 按需引入</div></a>
+      </div>
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-07-04</div>
