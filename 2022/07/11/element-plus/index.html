@@ -45,7 +45,7 @@
         content="2022-07-11">
       <meta 
         property="og:article:modified_time" 
-        content="2022-07-11">
+        content="2022-07-12">
       <meta 
         property="og:article:author" 
         content="杜欢">
@@ -288,7 +288,7 @@
     
     
       <span class="dot"></span>
-      <span>279 字</span>
+      <span>301 字</span>
     
   </div>
   
@@ -315,9 +315,10 @@
   <div 
     id="section" 
     class="post-content">
-    <p><a href="#%E5%89%8D%E8%A8%80">1. 前言</a><br><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">2. 准备工作</a><br><a href="#%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5">3. 按需引入</a></p>
+    <p><a href="#%E5%89%8D%E8%A8%80">1. 前言</a><br><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">2. 准备工作</a><br><a href="#%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5">3. 按需引入</a><br><a href="#%E5%85%B6%E4%BB%96">4. 其他</a></p>
 <p><span id="前言"></span></p>
-<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>在搭建 vue3 + Element Plus 模板时，官方推荐按需引入，但相关文档较少，故此记录</p>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><h3 id="1-1-目的"><a href="#1-1-目的" class="headerlink" title="1.1 目的"></a>1.1 目的</h3><p>Element Plus 使用按需引入，大大缩小打包后的文件大小</p>
+<h3 id="1-2-最终效果"><a href="#1-2-最终效果" class="headerlink" title="1.2 最终效果"></a>1.2 最终效果</h3><p>自动生成 components.d.ts 文件，并在文件中引入 Element Plus 组件<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220711/2022071104.png" class="lozad post-image"src="/../images/20220711/2022071104.png"></p>
 <p><span id="准备工作"></span></p>
 <h2 id="2-准备工作"><a href="#2-准备工作" class="headerlink" title="2 准备工作"></a>2 准备工作</h2><p>安装 Element Plus</p>
 <pre class="highlight"><span class="line"><span class="comment"># 选择一个你喜欢的包管理器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># NPM</span></span><br><span class="line">$ npm install element-plus --save</span><br><span class="line"></span><br><span class="line"><span class="comment"># Yarn</span></span><br><span class="line">$ yarn add element-plus</span><br><span class="line"></span><br><span class="line"><span class="comment"># pnpm</span></span><br><span class="line">$ pnpm install element-plus</span><br></pre>
@@ -328,11 +329,12 @@
 <pre class="highlight"><span class="line">$ pnpm i unplugin-auto-import unplugin-vue-components unplugin-icons -D</span><br></pre></li>
 </ul>
 <h3 id="3-2-修改-vite-config-ts-文件"><a href="#3-2-修改-vite-config-ts-文件" class="headerlink" title="3.2 修改 vite.config.ts 文件"></a>3.2 修改 vite.config.ts 文件</h3><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220711/2022071101.png" class="lozad post-image"src="/../images/20220711/2022071101.png"></p>
-<h3 id="3-3-其他"><a href="#3-3-其他" class="headerlink" title="3.3 其他"></a>3.3 其他</h3><h4 id="3-3-1-ELMessage-弹框样式未生效"><a href="#3-3-1-ELMessage-弹框样式未生效" class="headerlink" title="3.3.1 ELMessage 弹框样式未生效"></a>3.3.1 ELMessage 弹框样式未生效</h4><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220711/2022071102.png" class="lozad post-image"src="/../images/20220711/2022071102.png"></p>
+<p><span id="其他"></span></p>
+<h2 id="4-其他"><a href="#4-其他" class="headerlink" title="4 其他"></a>4 其他</h2><h3 id="4-1-ELMessage-弹框样式未生效"><a href="#4-1-ELMessage-弹框样式未生效" class="headerlink" title="4.1 ELMessage 弹框样式未生效"></a>4.1 ELMessage 弹框样式未生效</h3><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220711/2022071102.png" class="lozad post-image"src="/../images/20220711/2022071102.png"></p>
 <div class="post-note note-info"><p>需手动导入 ElMessage 对应样式，只使用组件 API 导致的样式失效问题可尝试相同处理方法</p></div>
 <pre class="highlight"><span class="line"><span class="comment">// 示例</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">ElMessage</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;element-plus&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;element-plus/es/components/message/style/css&#x27;</span></span><br></pre>
 
-<h4 id="3-3-2-图标使用"><a href="#3-3-2-图标使用" class="headerlink" title="3.3.2 图标使用"></a>3.3.2 图标使用</h4><div class="post-note note-info"><p>注意，-ep- 是 vite.config.ts 文件中配置的，必须保持一致</p></div>
+<h3 id="4-2-图标使用"><a href="#4-2-图标使用" class="headerlink" title="4.2 图标使用"></a>4.2 图标使用</h3><div class="post-note note-info"><p>注意，-ep- 是 vite.config.ts 文件中配置的，必须保持一致</p></div>
 <pre class="highlight"><span class="line"><span class="comment">&lt;!-- 直接使用 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">i-ep-menu</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 嵌套使用 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">el-icon</span>&gt;</span><span class="tag">&lt;<span class="name">i-ep-menu</span> /&gt;</span><span class="tag">&lt;/<span class="name">el-icon</span>&gt;</span></span><br></pre>
 
 
@@ -429,7 +431,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5"><span class="toc-text">3 按需引入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="toc-text">3.1 安装插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9-vite-config-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">3.2 修改 vite.config.ts 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%85%B6%E4%BB%96"><span class="toc-text">3.3 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-ELMessage-%E5%BC%B9%E6%A1%86%E6%A0%B7%E5%BC%8F%E6%9C%AA%E7%94%9F%E6%95%88"><span class="toc-text">3.3.1 ELMessage 弹框样式未生效</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-%E5%9B%BE%E6%A0%87%E4%BD%BF%E7%94%A8"><span class="toc-text">3.3.2 图标使用</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%9B%AE%E7%9A%84"><span class="toc-text">1.1 目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">1.2 最终效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5"><span class="toc-text">3 按需引入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="toc-text">3.1 安装插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9-vite-config-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">3.2 修改 vite.config.ts 文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%85%B6%E4%BB%96"><span class="toc-text">4 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-ELMessage-%E5%BC%B9%E6%A1%86%E6%A0%B7%E5%BC%8F%E6%9C%AA%E7%94%9F%E6%95%88"><span class="toc-text">4.1 ELMessage 弹框样式未生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9B%BE%E6%A0%87%E4%BD%BF%E7%94%A8"><span class="toc-text">4.2 图标使用</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -487,7 +489,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5"><span class="toc-text">3 按需引入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="toc-text">3.1 安装插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9-vite-config-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">3.2 修改 vite.config.ts 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%85%B6%E4%BB%96"><span class="toc-text">3.3 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-ELMessage-%E5%BC%B9%E6%A1%86%E6%A0%B7%E5%BC%8F%E6%9C%AA%E7%94%9F%E6%95%88"><span class="toc-text">3.3.1 ELMessage 弹框样式未生效</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-%E5%9B%BE%E6%A0%87%E4%BD%BF%E7%94%A8"><span class="toc-text">3.3.2 图标使用</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%9B%AE%E7%9A%84"><span class="toc-text">1.1 目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">1.2 最终效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5"><span class="toc-text">3 按需引入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="toc-text">3.1 安装插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9-vite-config-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">3.2 修改 vite.config.ts 文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%85%B6%E4%BB%96"><span class="toc-text">4 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-ELMessage-%E5%BC%B9%E6%A1%86%E6%A0%B7%E5%BC%8F%E6%9C%AA%E7%94%9F%E6%95%88"><span class="toc-text">4.1 ELMessage 弹框样式未生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9B%BE%E6%A0%87%E4%BD%BF%E7%94%A8"><span class="toc-text">4.2 图标使用</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -559,7 +561,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5"><span class="toc-text">3 按需引入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="toc-text">3.1 安装插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9-vite-config-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">3.2 修改 vite.config.ts 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%85%B6%E4%BB%96"><span class="toc-text">3.3 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-ELMessage-%E5%BC%B9%E6%A1%86%E6%A0%B7%E5%BC%8F%E6%9C%AA%E7%94%9F%E6%95%88"><span class="toc-text">3.3.1 ELMessage 弹框样式未生效</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-%E5%9B%BE%E6%A0%87%E4%BD%BF%E7%94%A8"><span class="toc-text">3.3.2 图标使用</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%9B%AE%E7%9A%84"><span class="toc-text">1.1 目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">1.2 最终效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5"><span class="toc-text">3 按需引入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="toc-text">3.1 安装插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9-vite-config-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">3.2 修改 vite.config.ts 文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%85%B6%E4%BB%96"><span class="toc-text">4 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-ELMessage-%E5%BC%B9%E6%A1%86%E6%A0%B7%E5%BC%8F%E6%9C%AA%E7%94%9F%E6%95%88"><span class="toc-text">4.1 ELMessage 弹框样式未生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9B%BE%E6%A0%87%E4%BD%BF%E7%94%A8"><span class="toc-text">4.2 图标使用</span></a></li></ol></li></ol>
     </article>
   
   
