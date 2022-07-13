@@ -1,152 +1,114 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
-  <meta charset="UTF-8">
-  <meta 
+  <meta charset="UTF-8" />
+  <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <meta 
-    http-equiv="X-UA-Compatible" 
-    content="ie=edge">
-  <meta 
-    name="theme-color" 
-    content="#fff" 
-    id="theme-color">
-  <meta 
-    name="description" 
-    content="Yana&#39;s Blog">
-  <link 
-    rel="icon" 
-    href="/">
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
   <title>归档</title>
-  
-    
-      <meta 
-        property="og:title" 
-        content="归档">
-    
-    
-      <meta 
-        property="og:url" 
-        content="https://yanadh.github.io/archives/2022/07/index.html">
-    
-    
-      <meta 
-        property="og:img" 
-        content="/images/avatar.jpg">
-    
-    
-    
-  
-  
-  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
-  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
-  <link rel="preload" href="/css/main.css" as="style" >
-  
-  
-  <link rel="stylesheet" href="/css/main.css">
-  
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
-  
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
-  
-  
-  
+   
+  <meta
+    property="og:title"
+    content="归档"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/archives/2022/07/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">   
   <script>
     function loadScript(url, cb) {
-      var script = document.createElement('script');
-      script.src = url;
-      if (cb) script.onload = cb;
-      script.async = true;
-      document.body.appendChild(script);
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
     }
     function loadCSS(href, data, attr) {
-      var sheet = document.createElement('link');
-      sheet.ref = 'stylesheet';
-      sheet.href = href;
-      sheet.dataset[data] = attr;
-      document.head.appendChild(sheet);
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
     }
     function changeCSS(cssFile, data, attr) {
-      var oldlink = document.querySelector(data);
-      var newlink = document.createElement("link");
-      newlink.setAttribute("rel", "stylesheet");
-      newlink.setAttribute("href", cssFile);
-      newlink.dataset.prism = attr;
-      document.head.replaceChild(newlink, oldlink);
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
     }
   </script>
-  
     
-  
   <script>
     // control reverse button
     var reverseDarkList = {
       dark: 'light',
-      light: 'dark'
-    };
+      light: 'dark',
+    }
     var themeColor = {
       dark: '#1c1c1e',
-      light: '#fff'
+      light: '#fff',
     }
     // get the data of css prefers-color-scheme
-    var getCssMediaQuery = function() {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    };
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
     // reverse current darkmode setting function
-    var reverseDarkModeSetting = function() {
-      var setting = localStorage.getItem('user-color-scheme');
-      if(reverseDarkList[setting]) {
-        setting = reverseDarkList[setting];
-      } else if(setting === null) {
-        setting = reverseDarkList[getCssMediaQuery()];
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
       } else {
-        return;
+        return
       }
-      localStorage.setItem('user-color-scheme', setting);
-      return setting;
-    };
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
     // apply current darkmode setting
   </script>
   
-    <script>
-      var setDarkmode = function(mode) {
-      var setting = mode || localStorage.getItem('user-color-scheme');
-      if(setting === getCssMediaQuery()) {
-        document.documentElement.removeAttribute('data-user-color-scheme');
-        localStorage.removeItem('user-color-scheme');
-        document.getElementById('theme-color').content = themeColor[setting];
-        document.getElementById('theme-color').dataset.mode = setting;
-      } else if(reverseDarkList[setting]) {
-        document.documentElement.setAttribute('data-user-color-scheme', setting);
-        document.getElementById('theme-color').content = themeColor[setting];
-        document.getElementById('theme-color').dataset.mode = setting;
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
       } else {
-        document.documentElement.removeAttribute('data-user-color-scheme');
-        localStorage.removeItem('user-color-scheme');
-        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
-        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
       }
-    };
-    setDarkmode();
-    </script>
-  
-  
-  
-    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
-    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
-  
-  
-    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
-  
-  
-  
-  
-  
-    
-    <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
-  
-  
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
 <meta name="generator" content="Hexo 6.2.0"></head>
 
   <body>
@@ -155,6 +117,13 @@
       <nav class="navbar">
   <div class="navbar-logo">
     <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
       
       <span class="navbar-logo-dsc">Yana's Blog</span>
       </a>
@@ -253,6 +222,22 @@
     <div class="archive-timeline-item">
       <div class="archive-timeline-post">
         <div class="card card-content">
+          <div class="archive-timeline-post-date">2022-07-13</div>
+          <div class="archive-timeline-post-content">
+            <a 
+              href="/2022/07/13/hexo-advanced/"
+              class="archive-timeline-post-item">
+              Hexo 高级设置
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    
+    <div class="archive-timeline-item">
+      <div class="archive-timeline-post">
+        <div class="card card-content">
           <div class="archive-timeline-post-date">2022-07-11</div>
           <div class="archive-timeline-post-content">
             <a 
@@ -310,13 +295,13 @@
     height="88"
     alt="author avatar">
 
-<p class="author-name">杜欢</p>
+<p class="author-name">Yana</p>
 <p class="author-description">随笔，方便后续查看</p>
 <div class="author-message">
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>3</span>
+    <span>4</span>
     <span>文章</span>
   </a>
   <a 
@@ -361,7 +346,7 @@
       <a href="/categories/%E6%8A%80%E6%9C%AF/">
         <div class="categories-list-item">
           技术
-          <span class="categories-list-item-badge">3</span>
+          <span class="categories-list-item-badge">4</span>
         </div>
       </a>
     
@@ -386,15 +371,15 @@
       </a>
     
       <a 
-        href="/tags/Cli/" 
-        title="Cli">
-        <div class="tags-list-item">Cli</div>
-      </a>
-    
-      <a 
         href="/tags/Hexo/" 
         title="Hexo">
         <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
       </a>
     
   </div>
@@ -428,12 +413,16 @@
         
       
     
+      
+        
+      
+    
     
       <a 
         href="/archives/2022" 
         class="archive-card-list-item">
         2022
-        <span class="archive-card-list-item-badge">3</span>
+        <span class="archive-card-list-item-badge">4</span>
       </a>
     
   </div>
@@ -456,6 +445,11 @@
     </i>最近文章
   </div>
   <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-13</div>
+        <a href="/2022/07/13/hexo-advanced/"><div class="recent-posts-item-content">Hexo 高级设置</div></a>
+      </div>
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-07-11</div>
@@ -503,12 +497,16 @@
         
       
     
+      
+        
+      
+    
     
       <a 
         href="/archives/2022" 
         class="archive-card-list-item">
         2022
-        <span class="archive-card-list-item-badge">3</span>
+        <span class="archive-card-list-item-badge">4</span>
       </a>
     
   </div>

@@ -1574,3 +1574,17 @@ mjx-container svg:focus {
 .style .token.string {
   background: none !important;
 }
+.reward-container {
+  margin: 30px 0 20px;
+  text-align: center;
+}
+.reward-container #reward-button {
+  display: inline-block;
+  color: #fff;
+  background-color: #ec7259;
+  border-color: #ec7259;
+  font-size: 16px;
+  padding: 8px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+}
