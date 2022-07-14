@@ -1578,13 +1578,22 @@ mjx-container svg:focus {
   margin: 30px 0 20px;
   text-align: center;
 }
-.reward-container #reward-button {
+.reward-container .reward-button {
   display: inline-block;
   color: #fff;
   background-color: #ec7259;
-  border-color: #ec7259;
   font-size: 16px;
   padding: 8px 16px;
-  border-radius: 16px;
+  border-radius: 20px;
   cursor: pointer;
+  user-select: none;
+}
+.reward-container .reward-pay {
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+}
+.reward-container .reward-pay img {
+  max-width: 150px;
 }
