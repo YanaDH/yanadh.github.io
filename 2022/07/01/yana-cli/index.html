@@ -35,7 +35,7 @@
   />
   <meta
     property="og:article:author"
-    content="Yana"
+    content="duhuan"
   />
    
   <meta property="og:article:tag" content="Cli" />
@@ -387,6 +387,34 @@
 
   </div>
   
+    <div class="reward-container">
+  
+  <span class="reward-button">赞赏支持</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
   <div>
     
       <div 
@@ -397,7 +425,7 @@
             target="_blank" 
             rel="nofollow noopener noreferrer" 
             href="/about">
-            Yana
+            duhuan
           </a>
         </p>
         <p>
@@ -490,7 +518,7 @@
     height="88"
     alt="author avatar">
 
-<p class="author-name">Yana</p>
+<p class="author-name">duhuan</p>
 <p class="author-description">随笔，方便后续查看</p>
 <div class="author-message">
   <a 
@@ -572,12 +600,6 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Element-Plus/" 
-        title="Element Plus">
-        <div class="tags-list-item">Element Plus</div>
-      </a>
-    
-      <a 
         href="/tags/Hexo/" 
         title="Hexo">
         <div class="tags-list-item">Hexo</div>
@@ -587,6 +609,12 @@
         href="/tags/Cli/" 
         title="Cli">
         <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
       </a>
     
   </div>
@@ -788,6 +816,10 @@
       </script>
      
     
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
     
   </body>
 </html>
