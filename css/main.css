@@ -1581,7 +1581,7 @@ mjx-container svg:focus {
 .reward-container .reward-button {
   display: inline-block;
   color: #fff;
-  background-color: #ec7259;
+  background: linear-gradient(90deg, #fc5531 0%, #f0ad30 100%);
   font-size: 16px;
   padding: 8px 16px;
   border-radius: 20px;
