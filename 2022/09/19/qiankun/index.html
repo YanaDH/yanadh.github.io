@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>qiankun + Vite 实现最简微前端</title>
+   
+  <meta
+    property="og:title"
+    content="qiankun + Vite 实现最简微前端"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2022/09/19/qiankun/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2022-09-19" />
+  <meta
+    property="og:article:modified_time"
+    content="2022-09-22"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+   
+  <meta property="og:article:tag" content="微前端" />
+  
+  <meta property="og:article:tag" content="qiankun" />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      qiankun + Vite 实现最简微前端
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-09-19T02:09:46.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-09-19</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.5k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+            class="post-meta-link">
+            微前端
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/qiankun/" 
+            class="post-meta-link">
+            qiankun
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E4%B8%BB%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun">2 主应用接入 qiankun</a></li>
+<li><a href="#3-%E5%BE%AE%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun">3 微应用接入 qiankun</a></li>
+<li><a href="#4-%E5%BA%94%E7%94%A8%E9%97%B4%E9%80%9A%E4%BF%A1">4 应用间通信</a></li>
+</ul>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><blockquote>
+<p>前言摘抄自 <a target="_blank" rel="noopener" href="https://qiankun.umijs.org/zh/guide">qiankun</a> 官网微前端介绍</p>
+</blockquote>
+<h3 id="1-1-微前端定义"><a href="#1-1-微前端定义" class="headerlink" title="1.1 微前端定义"></a>1.1 微前端定义</h3><p>微前端是一种多个团队通过独立发布功能的方式来共同构建现代化 web 应用的技术手段及方法策略。微前端架构旨在解决单体应用在一个相对长的时间跨度下，由于参与的人员、团队的增多、变迁，从一个普通应用演变成一个巨石应用(Frontend Monolith)后，随之而来的应用不可维护的问题。这类问题在企业级 Web 应用中尤其常见。</p>
+<h3 id="1-2-微前端架构核心价值"><a href="#1-2-微前端架构核心价值" class="headerlink" title="1.2 微前端架构核心价值"></a>1.2 微前端架构核心价值</h3><ul>
+<li>技术栈无关<br>主框架不限制接入应用的技术栈，微应用具备完全自主权</li>
+<li>独立开发、独立部署<br>微应用仓库独立，前后端可独立开发，部署完成后主框架自动完成同步更新</li>
+<li>增量升级<br>在面对各种复杂场景时，我们通常很难对一个已经存在的系统做全量的技术栈升级或重构，而微前端是一种非常好的实施渐进式重构的手段和策略</li>
+<li>独立运行时<br>每个微应用之间状态隔离，运行时状态不共享</li>
+</ul>
+<h2 id="2-主应用接入-qiankun"><a href="#2-主应用接入-qiankun" class="headerlink" title="2 主应用接入 qiankun"></a>2 主应用接入 qiankun</h2><h3 id="2-1-安装-qiankun"><a href="#2-1-安装-qiankun" class="headerlink" title="2.1 安装 qiankun"></a>2.1 安装 qiankun</h3><pre class="highlight"><span class="line">npm i qiankun</span><br></pre>
+
+<h3 id="2-2-基于路由配置方式接入"><a href="#2-2-基于路由配置方式接入" class="headerlink" title="2.2 基于路由配置方式接入"></a>2.2 基于路由配置方式接入</h3><ul>
+<li><p>main.ts</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; registerMicroApps, start &#125; <span class="keyword">from</span> <span class="string">&#x27;qiankun&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">&#x27;./router&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">createApp</span>(<span class="title class_">App</span>)</span><br><span class="line">app.<span class="title function_">use</span>(router)</span><br><span class="line">app.<span class="title function_">mount</span>(<span class="string">&#x27;#app&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册微应用</span></span><br><span class="line"><span class="title function_">registerMicroApps</span>(</span><br><span class="line">  [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;subApp&#x27;</span>, <span class="comment">// 必须与微应用注册名字相同</span></span><br><span class="line">      <span class="attr">entry</span>: <span class="string">&#x27;http://localhost:8000&#x27;</span>, <span class="comment">// 入口路径，开发时为微应用所启本地服务，上线时为微应用线上路径</span></span><br><span class="line">      <span class="attr">container</span>: <span class="string">&#x27;#sub-app-container&#x27;</span>, <span class="comment">// app.vue 配置的挂载容器 id</span></span><br><span class="line">      <span class="attr">activeRule</span>: <span class="string">&#x27;/home&#x27;</span>, <span class="comment">// 当访问路由为 home 时加载微应用</span></span><br><span class="line">      <span class="attr">props</span>: &#123;</span><br><span class="line">        <span class="comment">// 主应用向微应用传递参数</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// 生命周期钩子函数</span></span><br><span class="line">    <span class="comment">// beforeLoad: (app) =&gt; &#123;</span></span><br><span class="line">    <span class="comment">//   console.log(&#x27;beforeLoad&#x27;, app)</span></span><br><span class="line">    <span class="comment">// &#125;,</span></span><br><span class="line">    <span class="comment">// beforeMount: (app) =&gt; &#123;</span></span><br><span class="line">    <span class="comment">//   console.log(&#x27;beforeMount &#x27;, app)</span></span><br><span class="line">    <span class="comment">// &#125;,</span></span><br><span class="line">    <span class="comment">// afterMount: (app) =&gt; &#123;</span></span><br><span class="line">    <span class="comment">//   console.log(&#x27;afterMount&#x27;, app)</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="comment">// beforeUnmount: (app) =&gt; &#123;</span></span><br><span class="line">    <span class="comment">//   console.log(&#x27;beforeUnmount &#x27;, app)</span></span><br><span class="line">    <span class="comment">// &#125;,</span></span><br><span class="line">    <span class="comment">// afterUnmount: (app) =&gt; &#123;</span></span><br><span class="line">    <span class="comment">//   console.log(&#x27;afterUnmount&#x27;, app)</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">  &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动 qiankun</span></span><br><span class="line"><span class="title function_">start</span>()</span><br></pre>
+</li>
+<li><p>app.vue</p>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;!-- 提供挂载容器 --&gt;</span><br><span class="line">  &lt;div id=&quot;sub-app-container&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></li>
+</ul>
+<h3 id="2-3-手动加载微应用方式接入"><a href="#2-3-手动加载微应用方式接入" class="headerlink" title="2.3 手动加载微应用方式接入"></a>2.3 手动加载微应用方式接入</h3><ul>
+<li>subApp.vue<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;button @click=&quot;loadApp&quot;&gt;挂载微应用&lt;/button&gt;</span><br><span class="line">  &lt;button @click=&quot;unloadApp&quot;&gt;卸载微应用&lt;/button&gt;</span><br><span class="line">  &lt;!-- 提供挂载容器 --&gt;</span><br><span class="line">  &lt;div id=&quot;sub-app-container&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">import &#123; ref &#125; from &#x27;vue&#x27;</span><br><span class="line">import &#123; loadMicroApp &#125; from &#x27;qiankun&#x27;</span><br><span class="line"></span><br><span class="line">let microApp: any = null // 微应用实例</span><br><span class="line"></span><br><span class="line">const loadApp = () =&gt; &#123;</span><br><span class="line">  if (microApp) return</span><br><span class="line">  microApp = loadMicroApp(&#123;</span><br><span class="line">    name: &#x27;subApp&#x27;, // 必须与微应用注册名字相同</span><br><span class="line">    entry: &#x27;http://localhost:8000&#x27;, // 入口路径，开发时为微应用所启本地服务，上线时为微应用线上路径</span><br><span class="line">    container: &#x27;#sub-app-container&#x27;,</span><br><span class="line">    props: &#123;</span><br><span class="line">      // 主应用向微应用传递参数</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  microApp.mountPromise.then(() =&gt; &#123;</span><br><span class="line">    // 微应用加载完成后回调</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const unloadApp = () =&gt; &#123;</span><br><span class="line">  if (!microApp) return</span><br><span class="line">  microApp.unmount() // 卸载微应用</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></li>
+</ul>
+<h2 id="3-微应用接入-qiankun"><a href="#3-微应用接入-qiankun" class="headerlink" title="3 微应用接入 qiankun"></a>3 微应用接入 qiankun</h2><h3 id="3-1-安装-vite-plugin-qiankun"><a href="#3-1-安装-vite-plugin-qiankun" class="headerlink" title="3.1 安装 vite-plugin-qiankun"></a>3.1 安装 vite-plugin-qiankun</h3><blockquote>
+<p>qiankun 暂不支持 Vite 方式接入，需安装 vite-plugin-qiankun</p>
+</blockquote>
+<pre class="highlight"><span class="line">npm i vite-plugin-qiankun</span><br></pre>
+
+<h3 id="3-2-接入-qiankun"><a href="#3-2-接入-qiankun" class="headerlink" title="3.2 接入 qiankun"></a>3.2 接入 qiankun</h3><ul>
+<li><p>vite.config.ts</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&#x27;vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> qiankun <span class="keyword">from</span> <span class="string">&#x27;vite-plugin-qiankun&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(<span class="function">(<span class="params">mode</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">      <span class="title function_">qiankun</span>(<span class="string">&#x27;subApp&#x27;</span>, &#123; <span class="comment">// 微应用名字，与主应用注册的微应用名字保持一致</span></span><br><span class="line">        <span class="attr">useDevMode</span>: <span class="literal">true</span>,</span><br><span class="line">      &#125;),</span><br><span class="line">    ],</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre>
+</li>
+<li><p>main.ts</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">  renderWithQiankun,</span><br><span class="line">  qiankunWindow,</span><br><span class="line">  <span class="title class_">QiankunProps</span>,</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&#x27;vite-plugin-qiankun/dist/helper&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">render</span> = (<span class="params">props: QiankunProps = &#123;&#125;</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; container &#125; = props</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">app</span>: <span class="built_in">string</span> | <span class="title class_">Element</span> = container?.<span class="title function_">querySelector</span>(<span class="string">&#x27;#subApp&#x27;</span>) || <span class="string">&#x27;#subApp&#x27;</span> <span class="comment">// 避免 id 重复导致微应用挂载失败</span></span><br><span class="line">  <span class="title function_">createApp</span>(<span class="title class_">App</span>).<span class="title function_">mount</span>(app)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">initQianKun</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="title function_">renderWithQiankun</span>(&#123;</span><br><span class="line">    <span class="title function_">bootstrap</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：bootstrap&#x27;</span>)</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">mount</span>(<span class="params">props</span>) &#123; <span class="comment">// 获取主应用传入数据</span></span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：mount&#x27;</span>, props)</span><br><span class="line">      <span class="title function_">render</span>(props)</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">unmount</span>(<span class="params">props</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：unmount&#x27;</span>, props)</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">update</span>(<span class="params">props</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：update&#x27;</span>, props)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">qiankunWindow.<span class="property">__POWERED_BY_QIANKUN__</span> ? <span class="title function_">initQianKun</span>() : <span class="title function_">render</span>() <span class="comment">// 判断是否使用 qiankun ，保证项目可以独立运行</span></span><br></pre></li>
+</ul>
+<h2 id="4-应用间通信"><a href="#4-应用间通信" class="headerlink" title="4 应用间通信"></a>4 应用间通信</h2><h3 id="4-1-全局挂载"><a href="#4-1-全局挂载" class="headerlink" title="4.1 全局挂载"></a>4.1 全局挂载</h3><ul>
+<li>props 直接传递<pre class="highlight"><span class="line"><span class="comment">// 主应用在注册微应用时通过props传参</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;subApp&#x27;</span>, <span class="comment">// 必须与微应用注册名字相同</span></span><br><span class="line">  <span class="attr">entry</span>: <span class="string">&#x27;http://localhost:8000&#x27;</span>, <span class="comment">// 入口路径，开发时为微应用所启本地服务，上线时为微应用线上路径</span></span><br><span class="line">  <span class="attr">container</span>: <span class="string">&#x27;#sub-app-container&#x27;</span>, <span class="comment">// 挂载容器 id</span></span><br><span class="line">  <span class="attr">props</span>: &#123;</span><br><span class="line">    <span class="comment">// 主应用向微应用传递参数</span></span><br><span class="line">    <span class="attr">msg</span>: <span class="string">&#x27;主应用参数&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></li>
+<li>window 全局挂载<pre class="highlight"><span class="line"><span class="keyword">const</span> <span class="title function_">testFun</span> = (<span class="params"></span>) =&gt; &#123;&#125;</span><br><span class="line"><span class="variable language_">window</span>[subApp] = &#123; testFun &#125;</span><br></pre></li>
+</ul>
+<h3 id="4-2-initGlobalState"><a href="#4-2-initGlobalState" class="headerlink" title="4.2 initGlobalState"></a>4.2 initGlobalState</h3><blockquote>
+<p>该 API 虽然还在官方文档中展示，但 qiankun 源代码中已不推荐使用，但未提供新的通信方案</p>
+</blockquote>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220920/2022092001.png" class="lozad post-image"src="/../images/20220920/2022092001.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220920/2022092002.png" class="lozad post-image"src="/../images/20220920/2022092002.png"></p>
+<ul>
+<li><p>主应用<br>新增 actions.ts 文件</p>
+<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; initGlobalState, <span class="title class_">MicroAppStateActions</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;qiankun&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> state = &#123;</span><br><span class="line">  <span class="attr">msg</span>: <span class="string">&#x27;主应用消息&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化 state</span></span><br><span class="line"><span class="keyword">const</span> <span class="attr">actions</span>: <span class="title class_">MicroAppStateActions</span> = <span class="title function_">initGlobalState</span>(state)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> actions</span><br></pre>
+</li>
+<li><p>subApp.vue</p>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;button @click=&quot;clickButton&quot;&gt;主应用按钮&lt;/button&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">import actions from &#x27;@/actions&#x27;</span><br><span class="line"></span><br><span class="line">actions.onGlobalStateChange((state, prevState) =&gt; &#123;</span><br><span class="line">  console.log(state, prevState)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">const clickButton = () =&gt; &#123;</span><br><span class="line">  actions.setGlobalState(&#123;</span><br><span class="line">    msg: &#x27;主应用修改主应用消息&#x27;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre>
+</li>
+<li><p>子应用<br>main.ts</p>
+<pre class="highlight"><span class="line"><span class="keyword">const</span> <span class="title function_">initQianKun</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="title function_">renderWithQiankun</span>(&#123;</span><br><span class="line">    <span class="title function_">bootstrap</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：bootstrap&#x27;</span>)</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">mount</span>(<span class="params">props</span>) &#123; <span class="comment">// 获取主应用传入数据</span></span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：mount&#x27;</span>, props)</span><br><span class="line">      props.<span class="property">actions</span>.<span class="title function_">setGlobalState</span>(&#123; <span class="attr">msg</span>: <span class="string">&#x27;微应用修改主应用消息&#x27;</span> &#125;)</span><br><span class="line">      <span class="title function_">render</span>(props)</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">unmount</span>(<span class="params">props</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：unmount&#x27;</span>, props)</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">update</span>(<span class="params">props</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;微应用：update&#x27;</span>, props)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></li>
+</ul>
+
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2022/09/19/qiankun/">
+            https://yanadh.github.io/2022/09/19/qiankun/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/08/30/element-plus-menu/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Vue3 + Element Plus 多级嵌套菜单动态渲染 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%BE%AE%E5%89%8D%E7%AB%AF%E5%AE%9A%E4%B9%89"><span class="toc-text">1.1 微前端定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%BE%AE%E5%89%8D%E7%AB%AF%E6%9E%B6%E6%9E%84%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC"><span class="toc-text">1.2 微前端架构核心价值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%BB%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">2 主应用接入 qiankun</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%AE%89%E8%A3%85-qiankun"><span class="toc-text">2.1 安装 qiankun</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="toc-text">2.2 基于路由配置方式接入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%89%8B%E5%8A%A8%E5%8A%A0%E8%BD%BD%E5%BE%AE%E5%BA%94%E7%94%A8%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="toc-text">2.3 手动加载微应用方式接入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%BE%AE%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">3 微应用接入 qiankun</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85-vite-plugin-qiankun"><span class="toc-text">3.1 安装 vite-plugin-qiankun</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">3.2 接入 qiankun</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%BA%94%E7%94%A8%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="toc-text">4 应用间通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%85%A8%E5%B1%80%E6%8C%82%E8%BD%BD"><span class="toc-text">4.1 全局挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-initGlobalState"><span class="toc-text">4.2 initGlobalState</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>9</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>8</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%BE%AE%E5%89%8D%E7%AB%AF%E5%AE%9A%E4%B9%89"><span class="toc-text">1.1 微前端定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%BE%AE%E5%89%8D%E7%AB%AF%E6%9E%B6%E6%9E%84%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC"><span class="toc-text">1.2 微前端架构核心价值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%BB%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">2 主应用接入 qiankun</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%AE%89%E8%A3%85-qiankun"><span class="toc-text">2.1 安装 qiankun</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="toc-text">2.2 基于路由配置方式接入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%89%8B%E5%8A%A8%E5%8A%A0%E8%BD%BD%E5%BE%AE%E5%BA%94%E7%94%A8%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="toc-text">2.3 手动加载微应用方式接入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%BE%AE%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">3 微应用接入 qiankun</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85-vite-plugin-qiankun"><span class="toc-text">3.1 安装 vite-plugin-qiankun</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">3.2 接入 qiankun</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%BA%94%E7%94%A8%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="toc-text">4 应用间通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%85%A8%E5%B1%80%E6%8C%82%E8%BD%BD"><span class="toc-text">4.1 全局挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-initGlobalState"><span class="toc-text">4.2 initGlobalState</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">9</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%BE%AE%E5%89%8D%E7%AB%AF%E5%AE%9A%E4%B9%89"><span class="toc-text">1.1 微前端定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%BE%AE%E5%89%8D%E7%AB%AF%E6%9E%B6%E6%9E%84%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC"><span class="toc-text">1.2 微前端架构核心价值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%BB%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">2 主应用接入 qiankun</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%AE%89%E8%A3%85-qiankun"><span class="toc-text">2.1 安装 qiankun</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="toc-text">2.2 基于路由配置方式接入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%89%8B%E5%8A%A8%E5%8A%A0%E8%BD%BD%E5%BE%AE%E5%BA%94%E7%94%A8%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="toc-text">2.3 手动加载微应用方式接入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%BE%AE%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">3 微应用接入 qiankun</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85-vite-plugin-qiankun"><span class="toc-text">3.1 安装 vite-plugin-qiankun</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%8E%A5%E5%85%A5-qiankun"><span class="toc-text">3.2 接入 qiankun</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%BA%94%E7%94%A8%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="toc-text">4 应用间通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%85%A8%E5%B1%80%E6%8C%82%E8%BD%BD"><span class="toc-text">4.1 全局挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-initGlobalState"><span class="toc-text">4.2 initGlobalState</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-19</div>
+        <a href="/2022/09/19/qiankun/"><div class="recent-posts-item-content">qiankun + Vite 实现最简微前端</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-08-30</div>
+        <a href="/2022/08/30/element-plus-menu/"><div class="recent-posts-item-content">Vue3 + Element Plus 多级嵌套菜单动态渲染</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-08-11</div>
+        <a href="/2022/08/11/element-plus-dropdown/"><div class="recent-posts-item-content">Vue3 + Element Plus 实现动态标签页及右键菜单</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-07-29</div>
+        <a href="/2022/07/29/setTimeout/"><div class="recent-posts-item-content">setTimeout 与 setInterval —— 实现优雅轮询</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>
