@@ -31,7 +31,7 @@
   <meta property="og:article:published_time" content="2022-07-29" />
   <meta
     property="og:article:modified_time"
-    content="2022-07-29"
+    content="2022-09-30"
   />
   <meta
     property="og:article:author"
@@ -249,7 +249,7 @@
     
     
       <span class="dot"></span>
-      <span>686 字</span>
+      <span>689 字</span>
     
   </div>
   
@@ -276,12 +276,11 @@
   <div 
     id="section" 
     class="post-content">
-    <ol>
-<li><a href="#%E5%AE%9A%E4%B9%89%E4%B8%8E%E7%94%A8%E6%B3%95">定义与用法</a></li>
-<li><a href="#setInterval%E7%BC%BA%E9%99%B7">setInterval缺陷</a></li>
-<li><a href="#%E4%BC%98%E9%9B%85%E8%BD%AE%E8%AF%A2">优雅轮询</a></li>
-</ol>
-<p><span id="定义与用法"></span></p>
+    <ul>
+<li><a href="#1-%E5%AE%9A%E4%B9%89%E4%B8%8E%E7%94%A8%E6%B3%95">1 定义与用法</a></li>
+<li><a href="#2-setinterval%E7%BC%BA%E9%99%B7">2 setInterval缺陷</a></li>
+<li><a href="#3-%E4%BC%98%E9%9B%85%E8%BD%AE%E8%AF%A2">3 优雅轮询</a></li>
+</ul>
 <h2 id="1-定义与用法"><a href="#1-定义与用法" class="headerlink" title="1 定义与用法"></a>1 定义与用法</h2><h3 id="1-1-setTimeout"><a href="#1-1-setTimeout" class="headerlink" title="1.1 setTimeout"></a>1.1 setTimeout</h3><h4 id="1-1-1-定义"><a href="#1-1-1-定义" class="headerlink" title="1.1.1 定义"></a>1.1.1 定义</h4><p>在指定的毫秒数后调用函数或计算表达式</p>
 <h4 id="1-1-2-用法"><a href="#1-1-2-用法" class="headerlink" title="1.1.2 用法"></a>1.1.2 用法</h4><pre class="highlight"><span class="line"><span class="built_in">setTimeout</span>(code/<span class="keyword">function</span>, milliseconds, param1, param2, ...)</span><br></pre>
 
@@ -300,7 +299,6 @@
 <li>param1, param2 ：可选，传给执行函数的其他参数</li>
 <li>返回值          ：返回一个 ID（数字），可以将这个ID传递给 clearInterval() 来取消执行<pre class="highlight"><span class="line"><span class="keyword">const</span> <span class="title function_">fun</span> = (<span class="params">param1, param2</span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(param1, param2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// setInterval(fun) //milliseconds 参数必须，否则疯狂执行代码块</span></span><br><span class="line"><span class="built_in">setInterval</span>(fun, <span class="number">1000</span>, <span class="string">&#x27;param1&#x27;</span>, <span class="string">&#x27;param2&#x27;</span>)</span><br></pre></li>
 </ul>
-<p><span id="setInterval缺陷"></span></p>
 <h2 id="2-setInterval缺陷"><a href="#2-setInterval缺陷" class="headerlink" title="2 setInterval缺陷"></a>2 setInterval缺陷</h2><h3 id="2-1-无视代码错误"><a href="#2-1-无视代码错误" class="headerlink" title="2.1 无视代码错误"></a>2.1 无视代码错误</h3><p>即使调用的代码报错了， setInterval 还是会周期性调用代码块</p>
 <pre class="highlight"><span class="line"><span class="keyword">let</span> count = <span class="number">1</span></span><br><span class="line"><span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    count++</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(count);</span><br><span class="line">    <span class="keyword">if</span>(count &gt; <span class="number">3</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;setInterval 报错&#x27;</span>)</span><br><span class="line">&#125;, <span class="number">1000</span>)</span><br></pre>
 <p>改用 setTimeout</p>
@@ -312,7 +310,6 @@
 <pre class="highlight"><span class="line"><span class="keyword">const</span> <span class="title function_">http</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>()</span><br><span class="line">    &#125;, <span class="number">3000</span>);</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">fun</span> = (<span class="params"></span>) =&gt;&#123;</span><br><span class="line">  <span class="built_in">setTimeout</span>(<span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="title function_">http</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;setTimeout&#x27;</span>);</span><br><span class="line">    <span class="title function_">fun</span>()</span><br><span class="line">  &#125;, <span class="number">1000</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">fun</span>()</span><br></pre>
 
 <h3 id="2-3-不保证间隔执行"><a href="#2-3-不保证间隔执行" class="headerlink" title="2.3 不保证间隔执行"></a>2.3 不保证间隔执行</h3><p>setInterval 周期性添加执行器到任务队列，如果调用的代码执行的时间大于设置时间间隔，它会跳过调用，这就导致漏执行</p>
-<p><span id="优雅轮询"></span></p>
 <h2 id="3-优雅轮询"><a href="#3-优雅轮询" class="headerlink" title="3 优雅轮询"></a>3 优雅轮询</h2><p>递归调用 setTimeout() ，不需要后调用 clearTimeout() 清除定时器</p>
 <pre class="highlight"><span class="line"><span class="keyword">let</span> timer = <span class="literal">null</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">interval</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 执行代码块</span></span><br><span class="line">    <span class="title function_">interval</span>()</span><br><span class="line">  &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">interval</span>()</span><br><span class="line"><span class="comment">// 清除</span></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">clearTimeout</span>(timer)</span><br><span class="line">&#125;, <span class="number">5000</span>);</span><br></pre>
   </div>
@@ -468,7 +465,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>9</span>
+    <span>10</span>
     <span>文章</span>
   </a>
   <a 
@@ -525,7 +522,7 @@
       <a href="/categories/%E6%8A%80%E6%9C%AF/">
         <div class="categories-list-item">
           技术
-          <span class="categories-list-item-badge">9</span>
+          <span class="categories-list-item-badge">10</span>
         </div>
       </a>
     
@@ -624,6 +621,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-30</div>
+        <a href="/2022/09/30/vue3-hooks/"><div class="recent-posts-item-content">Vue3组合式函数——Vue hooks</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-09-19</div>
         <a href="/2022/09/19/qiankun/"><div class="recent-posts-item-content">qiankun + Vite 实现最简微前端</div></a>
       </div>
@@ -636,11 +638,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-08-11</div>
         <a href="/2022/08/11/element-plus-dropdown/"><div class="recent-posts-item-content">Vue3 + Element Plus 实现动态标签页及右键菜单</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-07-29</div>
-        <a href="/2022/07/29/setTimeout/"><div class="recent-posts-item-content">setTimeout 与 setInterval —— 实现优雅轮询</div></a>
       </div>
     
   </div>

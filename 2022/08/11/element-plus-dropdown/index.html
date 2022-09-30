@@ -31,7 +31,7 @@
   <meta property="og:article:published_time" content="2022-08-11" />
   <meta
     property="og:article:modified_time"
-    content="2022-09-19"
+    content="2022-09-30"
   />
   <meta
     property="og:article:author"
@@ -287,16 +287,14 @@
   <div 
     id="section" 
     class="post-content">
-    <ol>
-<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
-<li><a href="#%E7%94%9F%E6%88%90%E5%8A%A8%E6%80%81%E6%A0%87%E7%AD%BE%E9%A1%B5">生成动态标签页</a></li>
-<li><a href="#%E7%94%9F%E6%88%90%E5%8F%B3%E9%94%AE%E8%8F%9C%E5%8D%95">生成右键菜单</a></li>
-</ol>
-<p><span id="前言"></span></p>
+    <ul>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E7%94%9F%E6%88%90%E5%8A%A8%E6%80%81%E6%A0%87%E7%AD%BE%E9%A1%B5">2 生成动态标签页</a></li>
+<li><a href="#3-%E7%94%9F%E6%88%90%E5%8F%B3%E9%94%AE%E8%8F%9C%E5%8D%95">3 生成右键菜单</a></li>
+</ul>
 <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><h3 id="1-1-目的"><a href="#1-1-目的" class="headerlink" title="1.1 目的"></a>1.1 目的</h3><p>Tabs 动态标签页实现右键菜单【关闭当前标签页】、【关闭左侧标签页】、【关闭右侧标签页】、【关闭其他标签页】、【关闭全部标签页】功能<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20220811/2022081101.png" class="lozad post-image"src="/../images/20220811/2022081101.png"></p>
 <h3 id="1-2-普通右键菜单"><a href="#1-2-普通右键菜单" class="headerlink" title="1.2 普通右键菜单"></a>1.2 普通右键菜单</h3><p>网上使用比较多的是<code>v-contextmenu</code>插件实现右键菜单，但该插件对于<code>v-for</code>循环生成的元素失效，插件内部右键菜单显示执行的是<code>emit(&#39;show&#39;)</code>未传入当前元素节点（可能后续会修复），且样式需要自行修改</p>
 <h3 id="1-3-本文右键菜单方式"><a href="#1-3-本文右键菜单方式" class="headerlink" title="1.3 本文右键菜单方式"></a>1.3 本文右键菜单方式</h3><p>本文使用<code>element-plus</code>自带的<code>el-dropdown</code>实现右键菜单</p>
-<p><span id="生成动态标签页"></span></p>
 <h2 id="2-生成动态标签页"><a href="#2-生成动态标签页" class="headerlink" title="2 生成动态标签页"></a>2 生成动态标签页</h2><h3 id="2-1-准备变量容器"><a href="#2-1-准备变量容器" class="headerlink" title="2.1 准备变量容器"></a>2.1 准备变量容器</h3><pre class="highlight"><span class="line">&lt;script setup lang=<span class="string">&quot;ts&quot;</span>&gt;</span><br><span class="line"><span class="keyword">import</span> &#123; ref &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">TabType</span> &#123;</span><br><span class="line">  <span class="attr">title</span>: <span class="built_in">string</span> <span class="comment">//标签页显示名称</span></span><br><span class="line">  <span class="attr">componentName</span>: <span class="built_in">string</span> <span class="comment">//动态组件名</span></span><br><span class="line">  <span class="attr">data</span>: <span class="built_in">any</span> <span class="comment">//动态组件传参</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">TabListType</span> <span class="keyword">extends</span> <span class="title class_">TabType</span> &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span> <span class="comment">//标签页唯一标识，添加标签页时根据 componentName 自动生成</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> tabList = ref&lt;<span class="title class_">TabListType</span>[]&gt;([]) <span class="comment">//存放标签页数组</span></span><br><span class="line"><span class="keyword">const</span> tabValue = <span class="title function_">ref</span>(<span class="string">&#x27;home&#x27;</span>) <span class="comment">//存放当前激活标签页，默认激活首页</span></span><br><span class="line">&lt;/script&gt;</span><br></pre>
 
 <h3 id="2-2-构造标签页"><a href="#2-2-构造标签页" class="headerlink" title="2.2 构造标签页"></a>2.2 构造标签页</h3><ul>
@@ -307,7 +305,6 @@
 
 <h3 id="2-4-动态移除标签页"><a href="#2-4-动态移除标签页" class="headerlink" title="2.4 动态移除标签页"></a>2.4 动态移除标签页</h3><pre class="highlight"><span class="line"><span class="keyword">const</span> <span class="title function_">removeTab</span> = (<span class="params">targetName: <span class="built_in">string</span></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> index = tabList.<span class="property">value</span>.<span class="title function_">findIndex</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> item.<span class="property">name</span> === targetName)</span><br><span class="line">  tabList.<span class="property">value</span>.<span class="title function_">splice</span>(index, <span class="number">1</span>)</span><br><span class="line">  <span class="comment">//当前激活标签页与触发右键菜单标签页是同一页</span></span><br><span class="line">  <span class="keyword">if</span> (targetName === tabValue.<span class="property">value</span>) &#123;</span><br><span class="line">    <span class="comment">//当前激活标签页是标签页数组的第一个，则将激活标签页设置为 home</span></span><br><span class="line">    <span class="comment">//当前激活标签页不是标签页数组的第一个，则将激活标签页设置为当前激活标签页的前一页</span></span><br><span class="line">    tabValue.<span class="property">value</span> = index === <span class="number">0</span> ? <span class="string">&#x27;home&#x27;</span> : tabList.<span class="property">value</span>[index - <span class="number">1</span>].<span class="property">name</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">removeTab</span>(<span class="string">&#x27;tag1&#x27;</span>)</span><br></pre>
 
-<p><span id="生成右键菜单"></span></p>
 <h2 id="3-生成右键菜单"><a href="#3-生成右键菜单" class="headerlink" title="3 生成右键菜单"></a>3 生成右键菜单</h2><h3 id="3-1-扩展标签页"><a href="#3-1-扩展标签页" class="headerlink" title="3.1 扩展标签页"></a>3.1 扩展标签页</h3><pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;el-tabs v-model=&quot;tabValue&quot; type=&quot;card&quot; @tab-remove=&quot;removeTab&quot;&gt;</span><br><span class="line">    &lt;el-tab-pane label=&quot;首页&quot; name=&quot;home&quot;&gt;</span><br><span class="line">      &lt;Home /&gt;</span><br><span class="line">    &lt;/el-tab-pane&gt;</span><br><span class="line">    &lt;el-tab-pane v-for=&quot;item in tabList&quot; :name=&quot;item.name&quot; :key=&quot;item.name&quot; closable&gt;</span><br><span class="line">      &lt;!-- 右键菜单开始：自定义标签页显示名称，保证每个标签页都能实现右键菜单 --&gt;</span><br><span class="line">      &lt;template #label&gt;</span><br><span class="line">        &lt;el-dropdown</span><br><span class="line">          trigger=&quot;contextmenu&quot;</span><br><span class="line">          :id=&quot;item.name&quot;</span><br><span class="line">          @visible-change=&quot;handleChange($event, item.name)&quot;</span><br><span class="line">          ref=&quot;dropdownRef&quot;</span><br><span class="line">        &gt;</span><br><span class="line">          &lt;span :class=&quot;tabValue === item.name ? &#x27;label&#x27; : &#x27;&#x27;&quot;&gt;&#123;&#123; item.title &#125;&#125;&lt;/span&gt;</span><br><span class="line">          &lt;template #dropdown&gt;</span><br><span class="line">            &lt;el-dropdown-menu&gt;</span><br><span class="line">              &lt;el-dropdown-item @click=&quot;removeTab(item.name)&quot;&gt;</span><br><span class="line">                &lt;el-icon&gt;&lt;Close /&gt;&lt;/el-icon&gt;关闭当前标签页</span><br><span class="line">              &lt;/el-dropdown-item&gt;</span><br><span class="line">              &lt;el-dropdown-item</span><br><span class="line">                @click=&quot;removeTab(item.name, &#x27;left&#x27;)&quot;</span><br><span class="line">                v-if=&quot;show(item.name, &#x27;left&#x27;)&quot;</span><br><span class="line">              &gt;</span><br><span class="line">                &lt;el-icon&gt;&lt;DArrowLeft /&gt;&lt;/el-icon&gt;关闭左侧标签页</span><br><span class="line">              &lt;/el-dropdown-item&gt;</span><br><span class="line">              &lt;el-dropdown-item</span><br><span class="line">                @click=&quot;removeTab(item.name, &#x27;right&#x27;)&quot;</span><br><span class="line">                v-if=&quot;show(item.name, &#x27;right&#x27;)&quot;</span><br><span class="line">              &gt;</span><br><span class="line">                &lt;el-icon&gt;&lt;DArrowRight /&gt;&lt;/el-icon&gt;关闭右侧标签页</span><br><span class="line">              &lt;/el-dropdown-item&gt;</span><br><span class="line">              &lt;el-dropdown-item</span><br><span class="line">                @click=&quot;removeTab(item.name, &#x27;other&#x27;)&quot;</span><br><span class="line">                v-if=&quot;tabList.length &gt; 1&quot;</span><br><span class="line">              &gt;</span><br><span class="line">                &lt;el-icon&gt;&lt;Operation /&gt;&lt;/el-icon&gt;关闭其他标签页</span><br><span class="line">              &lt;/el-dropdown-item&gt;</span><br><span class="line">              &lt;el-dropdown-item @click=&quot;removeTab(item.name, &#x27;all&#x27;)&quot;&gt;</span><br><span class="line">                &lt;el-icon&gt;&lt;Minus /&gt;&lt;/el-icon&gt;关闭全部标签页</span><br><span class="line">              &lt;/el-dropdown-item&gt;</span><br><span class="line">            &lt;/el-dropdown-menu&gt;</span><br><span class="line">          &lt;/template&gt;</span><br><span class="line">        &lt;/el-dropdown&gt;</span><br><span class="line">      &lt;/template&gt;</span><br><span class="line">      &lt;!-- 右键菜单结束 --&gt;</span><br><span class="line">      &lt;component :is=&quot;item.componentName&quot; v-bind=&quot;item.data&quot;&gt;</span><br><span class="line">      &lt;/component&gt;</span><br><span class="line">    &lt;/el-tab-pane&gt;</span><br><span class="line">  &lt;/el-tabs&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre>
 
 <h3 id="3-2-增加-show-方法"><a href="#3-2-增加-show-方法" class="headerlink" title="3.2 增加 show 方法"></a>3.2 增加 show 方法</h3><ul>
@@ -474,7 +471,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>9</span>
+    <span>10</span>
     <span>文章</span>
   </a>
   <a 
@@ -531,7 +528,7 @@
       <a href="/categories/%E6%8A%80%E6%9C%AF/">
         <div class="categories-list-item">
           技术
-          <span class="categories-list-item-badge">9</span>
+          <span class="categories-list-item-badge">10</span>
         </div>
       </a>
     
@@ -630,6 +627,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-30</div>
+        <a href="/2022/09/30/vue3-hooks/"><div class="recent-posts-item-content">Vue3组合式函数——Vue hooks</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-09-19</div>
         <a href="/2022/09/19/qiankun/"><div class="recent-posts-item-content">qiankun + Vite 实现最简微前端</div></a>
       </div>
@@ -642,11 +644,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2022-08-11</div>
         <a href="/2022/08/11/element-plus-dropdown/"><div class="recent-posts-item-content">Vue3 + Element Plus 实现动态标签页及右键菜单</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-07-29</div>
-        <a href="/2022/07/29/setTimeout/"><div class="recent-posts-item-content">setTimeout 与 setInterval —— 实现优雅轮询</div></a>
       </div>
     
   </div>
