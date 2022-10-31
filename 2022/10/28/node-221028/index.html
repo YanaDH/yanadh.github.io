@@ -31,7 +31,7 @@
   <meta property="og:article:published_time" content="2022-10-28" />
   <meta
     property="og:article:modified_time"
-    content="2022-10-28"
+    content="2022-10-31"
   />
   <meta
     property="og:article:author"
@@ -348,7 +348,7 @@
 <blockquote>
 <p>原因：代码在运行的时候，会以执行 node 命令时所处的目录，动态拼接出被操作文件的完整路径<br>解决方案：在使用 fs 模块操作文件时，直接提供完整的路径，不要提供 .&#x2F; 或 ..&#x2F;开头的相对路径，从而防止路径动态拼接的问题</p>
 </blockquote>
-<pre class="highlight"><span class="line"><span class="comment">// __dirname 表示当前文件所在目录</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&quot;fs&quot;</span>);</span><br><span class="line">fs.<span class="title function_">readFile</span>(__dirname + <span class="string">&quot;/files/成绩.txt&quot;</span>, <span class="string">&quot;utf8&quot;</span>);</span><br></pre>
+<pre class="highlight"><span class="line"><span class="comment">// __dirname 表示当前执行脚本所在的目录</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&quot;fs&quot;</span>);</span><br><span class="line">fs.<span class="title function_">readFile</span>(__dirname + <span class="string">&quot;/files/成绩.txt&quot;</span>, <span class="string">&quot;utf8&quot;</span>);</span><br></pre>
   </div>
   
     <div class="reward-container">
@@ -564,9 +564,9 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Hexo/" 
-        title="Hexo">
-        <div class="tags-list-item">Hexo</div>
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
       </a>
     
       <a 
@@ -576,39 +576,15 @@
       </a>
     
       <a 
-        href="/tags/Vue3/" 
-        title="Vue3">
-        <div class="tags-list-item">Vue3</div>
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
       </a>
     
       <a 
-        href="/tags/GitHub/" 
-        title="GitHub">
-        <div class="tags-list-item">GitHub</div>
-      </a>
-    
-      <a 
-        href="/tags/Pinia/" 
-        title="Pinia">
-        <div class="tags-list-item">Pinia</div>
-      </a>
-    
-      <a 
-        href="/tags/JS/" 
-        title="JS">
-        <div class="tags-list-item">JS</div>
-      </a>
-    
-      <a 
-        href="/tags/qiankun/" 
-        title="qiankun">
-        <div class="tags-list-item">qiankun</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
-        title="微前端">
-        <div class="tags-list-item">微前端</div>
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
       </a>
     
       <a 
@@ -618,9 +594,33 @@
       </a>
     
       <a 
-        href="/tags/Node/" 
-        title="Node">
-        <div class="tags-list-item">Node</div>
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
       </a>
     
   </div>
