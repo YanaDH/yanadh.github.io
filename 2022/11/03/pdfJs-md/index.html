@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>Vue3 + PDF.js 实现 PDF 预览</title>
+   
+  <meta
+    property="og:title"
+    content="Vue3 + PDF.js 实现 PDF 预览"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2022/11/03/pdfJs-md/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2022-11-03" />
+  <meta
+    property="og:article:modified_time"
+    content="2022-11-04"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+        <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Vue3 + PDF.js 实现 PDF 预览
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-11-03T06:44:53.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-11-03</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>580 字</span>
+    
+  </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-pdf-%E9%A2%84%E8%A7%88%E6%B5%8B%E8%AF%95">2 PDF 预览测试</a></li>
+<li><a href="#3-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E9%A1%B9">3 修改配置项</a></li>
+<li><a href="#4-%E7%A7%BB%E9%99%A4%E9%83%A8%E5%88%86%E6%8C%89%E9%92%AE">4 移除部分按钮</a></li>
+<li><a href="#5-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">5 错误处理</a></li>
+</ul>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p><a target="_blank" rel="noopener" href="http://mozilla.github.io/pdf.js/">PDF.js</a> 官网</p>
+<ul>
+<li>本文使用的 PDF.js 版本为：v3.0.279</li>
+<li>本文未使用 npm 形式在项目中引入 PDF.js 依赖，因为该形式引入的 PDF.js 需要自己写额外页面样式及按钮，而直接在官网下载可以使用 PDF.js 默认提供的 viewer ，不用再增加额外代码，即可实现 PDF 预览等功能<pre class="highlight"><span class="line"><span class="comment"># 使用 npm 形式在项目中引入 PDF.js 依赖</span></span><br><span class="line">npm i pdfjs-dist</span><br></pre></li>
+<li>效果预览<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110301.png" class="lozad post-image"src="/../images/20221103/2022110301.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110302.png" class="lozad post-image"src="/../images/20221103/2022110302.png"></li>
+</ul>
+<h2 id="2-PDF-预览测试"><a href="#2-PDF-预览测试" class="headerlink" title="2 PDF 预览测试"></a>2 PDF 预览测试</h2><h3 id="2-1-下载-PDF-js"><a href="#2-1-下载-PDF-js" class="headerlink" title="2.1 下载 PDF.js"></a>2.1 下载 PDF.js</h3><p>在 <a target="_blank" rel="noopener" href="http://mozilla.github.io/pdf.js/getting_started/#download">PDF.js</a> 官网下载 PDF.js ，解压后放到 public&#x2F;static 下<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110303.png" class="lozad post-image"src="/../images/20221103/2022110303.png"></p>
+<h3 id="2-2-window-open-直接打开"><a href="#2-2-window-open-直接打开" class="headerlink" title="2.2 window.open 直接打开"></a>2.2 window.open 直接打开</h3><pre class="highlight"><span class="line"><span class="comment">// 默认打开 public/static/pdf/web/compressed.tracemonkey-pldi-09.pdf</span></span><br><span class="line"><span class="comment">// 测试 pdf 有点大，第一次打开可能会有点慢，只要有进度条就是正常加载中</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;static/pdf/web/viewer.html&#x27;</span>)</span><br><span class="line"><span class="comment">// 传入 pdf 文件地址</span></span><br><span class="line"><span class="keyword">const</span> fileUrl = <span class="string">&#x27;xxx&#x27;</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;static/pdf/web/viewer.html?file=&#x27;</span> + fileUrl)</span><br></pre>
+
+<h3 id="2-3-弹框形式打开"><a href="#2-3-弹框形式打开" class="headerlink" title="2.3 弹框形式打开"></a>2.3 弹框形式打开</h3><pre class="highlight"><span class="line">&lt;el-dialog v-model=&quot;dialogVisible&quot;&gt;</span><br><span class="line">  &lt;iframe :src=&quot;&#x27;static/pdf/web/viewer.html?file=&#x27; + fileUrl&quot;</span><br><span class="line">    style=&quot;width: 100%; height: 440px&quot;</span><br><span class="line">  &gt;&lt;/iframe&gt;</span><br><span class="line">&lt;/el-dialog&gt;</span><br></pre>
+
+<h2 id="3-修改配置项"><a href="#3-修改配置项" class="headerlink" title="3 修改配置项"></a>3 修改配置项</h2><h3 id="3-1-修改主题色为暗色系"><a href="#3-1-修改主题色为暗色系" class="headerlink" title="3.1 修改主题色为暗色系"></a>3.1 修改主题色为暗色系</h3><p>修改 public&#x2F;static&#x2F;pdf&#x2F;web&#x2F;viewer.js</p>
+<pre class="highlight"><span class="line"><span class="attr">AUTOMATIC</span>: <span class="number">0</span>, <span class="comment">// 跟随浏览器</span></span><br><span class="line"><span class="attr">LIGHT</span>: <span class="number">1</span>, <span class="comment">// 亮色</span></span><br><span class="line"><span class="attr">DARK</span>: <span class="number">2</span> <span class="comment">// 暗色</span></span><br></pre>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110304.png" class="lozad post-image"src="/../images/20221103/2022110304.png"></p>
+<h3 id="3-2-修改默认语言为简体中文"><a href="#3-2-修改默认语言为简体中文" class="headerlink" title="3.2 修改默认语言为简体中文"></a>3.2 修改默认语言为简体中文</h3><p>修改 public&#x2F;static&#x2F;pdf&#x2F;web&#x2F;viewer.js<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110305.png" class="lozad post-image"src="/../images/20221103/2022110305.png"></p>
+<h3 id="3-3-打开-PDF-后默认跳转到某一页"><a href="#3-3-打开-PDF-后默认跳转到某一页" class="headerlink" title="3.3 打开 PDF 后默认跳转到某一页"></a>3.3 打开 PDF 后默认跳转到某一页</h3><pre class="highlight"><span class="line"><span class="comment">// 添加 #page=2 默认跳转到第二页</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">open</span>(<span class="string">&#x27;static/pdf/web/viewer.html?file=&#x27;</span> + fileUrl + <span class="string">&#x27;#page=2&#x27;</span>)</span><br></pre>
+
+<h2 id="4-移除部分按钮"><a href="#4-移除部分按钮" class="headerlink" title="4 移除部分按钮"></a>4 移除部分按钮</h2><h3 id="4-1-简单按钮移除"><a href="#4-1-简单按钮移除" class="headerlink" title="4.1 简单按钮移除"></a>4.1 简单按钮移除</h3><p>例：移除[打印]按钮<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110306.png" class="lozad post-image"src="/../images/20221103/2022110306.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110307.png" class="lozad post-image"src="/../images/20221103/2022110307.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110308.png" class="lozad post-image"src="/../images/20221103/2022110308.png"></p>
+<h3 id="4-2-复杂按钮移除"><a href="#4-2-复杂按钮移除" class="headerlink" title="4.2 复杂按钮移除"></a>4.2 复杂按钮移除</h3><p>例：移除[文本]按钮，由于该按钮点击后会出现面板，所以除了移除当前按钮相关代码外，还要移除面板相关代码<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110309.png" class="lozad post-image"src="/../images/20221103/2022110309.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110310.png" class="lozad post-image"src="/../images/20221103/2022110310.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110311.png" class="lozad post-image"src="/../images/20221103/2022110311.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110312.png" class="lozad post-image"src="/../images/20221103/2022110312.png"></p>
+<h2 id="5-错误处理"><a href="#5-错误处理" class="headerlink" title="5 错误处理"></a>5 错误处理</h2><h3 id="5-1-跨域报错"><a href="#5-1-跨域报错" class="headerlink" title="5.1 跨域报错"></a>5.1 跨域报错</h3><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110313.png" class="lozad post-image"src="/../images/20221103/2022110313.png"><br>注释 public&#x2F;static&#x2F;pdf&#x2F;web&#x2F;viewer.js 代码<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110314.png" class="lozad post-image"src="/../images/20221103/2022110314.png"></p>
+<h3 id="5-2-默认语言为简体中文，但下载按钮仍显示为“Save”"><a href="#5-2-默认语言为简体中文，但下载按钮仍显示为“Save”" class="headerlink" title="5.2 默认语言为简体中文，但下载按钮仍显示为“Save”"></a>5.2 默认语言为简体中文，但下载按钮仍显示为“Save”</h3><p>修改 public&#x2F;static&#x2F;pdf&#x2F;web&#x2F;viewer.html 第159、276行代码<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110315.png" class="lozad post-image"src="/../images/20221103/2022110315.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110316.png" class="lozad post-image"src="/../images/20221103/2022110316.png"><br>如果需要使用到以下两种语言，也需要将 save_label 改为 download_label<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20221103/2022110317.png" class="lozad post-image"src="/../images/20221103/2022110317.png"></p>
+
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2022/11/03/pdfJs-md/">
+            https://yanadh.github.io/2022/11/03/pdfJs-md/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/10/28/node-221028/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Node.js 入门 —— fs 文件系统模块 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-PDF-%E9%A2%84%E8%A7%88%E6%B5%8B%E8%AF%95"><span class="toc-text">2 PDF 预览测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%B8%8B%E8%BD%BD-PDF-js"><span class="toc-text">2.1 下载 PDF.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-window-open-%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80"><span class="toc-text">2.2 window.open 直接打开</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%BC%B9%E6%A1%86%E5%BD%A2%E5%BC%8F%E6%89%93%E5%BC%80"><span class="toc-text">2.3 弹框形式打开</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E9%A1%B9"><span class="toc-text">3 修改配置项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E8%89%B2%E4%B8%BA%E6%9A%97%E8%89%B2%E7%B3%BB"><span class="toc-text">3.1 修改主题色为暗色系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80%E4%B8%BA%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87"><span class="toc-text">3.2 修改默认语言为简体中文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%89%93%E5%BC%80-PDF-%E5%90%8E%E9%BB%98%E8%AE%A4%E8%B7%B3%E8%BD%AC%E5%88%B0%E6%9F%90%E4%B8%80%E9%A1%B5"><span class="toc-text">3.3 打开 PDF 后默认跳转到某一页</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A7%BB%E9%99%A4%E9%83%A8%E5%88%86%E6%8C%89%E9%92%AE"><span class="toc-text">4 移除部分按钮</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E7%AE%80%E5%8D%95%E6%8C%89%E9%92%AE%E7%A7%BB%E9%99%A4"><span class="toc-text">4.1 简单按钮移除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%A4%8D%E6%9D%82%E6%8C%89%E9%92%AE%E7%A7%BB%E9%99%A4"><span class="toc-text">4.2 复杂按钮移除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-text">5 错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E8%B7%A8%E5%9F%9F%E6%8A%A5%E9%94%99"><span class="toc-text">5.1 跨域报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80%E4%B8%BA%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%EF%BC%8C%E4%BD%86%E4%B8%8B%E8%BD%BD%E6%8C%89%E9%92%AE%E4%BB%8D%E6%98%BE%E7%A4%BA%E4%B8%BA%E2%80%9CSave%E2%80%9D"><span class="toc-text">5.2 默认语言为简体中文，但下载按钮仍显示为“Save”</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>13</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>10</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-PDF-%E9%A2%84%E8%A7%88%E6%B5%8B%E8%AF%95"><span class="toc-text">2 PDF 预览测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%B8%8B%E8%BD%BD-PDF-js"><span class="toc-text">2.1 下载 PDF.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-window-open-%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80"><span class="toc-text">2.2 window.open 直接打开</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%BC%B9%E6%A1%86%E5%BD%A2%E5%BC%8F%E6%89%93%E5%BC%80"><span class="toc-text">2.3 弹框形式打开</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E9%A1%B9"><span class="toc-text">3 修改配置项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E8%89%B2%E4%B8%BA%E6%9A%97%E8%89%B2%E7%B3%BB"><span class="toc-text">3.1 修改主题色为暗色系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80%E4%B8%BA%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87"><span class="toc-text">3.2 修改默认语言为简体中文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%89%93%E5%BC%80-PDF-%E5%90%8E%E9%BB%98%E8%AE%A4%E8%B7%B3%E8%BD%AC%E5%88%B0%E6%9F%90%E4%B8%80%E9%A1%B5"><span class="toc-text">3.3 打开 PDF 后默认跳转到某一页</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A7%BB%E9%99%A4%E9%83%A8%E5%88%86%E6%8C%89%E9%92%AE"><span class="toc-text">4 移除部分按钮</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E7%AE%80%E5%8D%95%E6%8C%89%E9%92%AE%E7%A7%BB%E9%99%A4"><span class="toc-text">4.1 简单按钮移除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%A4%8D%E6%9D%82%E6%8C%89%E9%92%AE%E7%A7%BB%E9%99%A4"><span class="toc-text">4.2 复杂按钮移除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-text">5 错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E8%B7%A8%E5%9F%9F%E6%8A%A5%E9%94%99"><span class="toc-text">5.1 跨域报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80%E4%B8%BA%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%EF%BC%8C%E4%BD%86%E4%B8%8B%E8%BD%BD%E6%8C%89%E9%92%AE%E4%BB%8D%E6%98%BE%E7%A4%BA%E4%B8%BA%E2%80%9CSave%E2%80%9D"><span class="toc-text">5.2 默认语言为简体中文，但下载按钮仍显示为“Save”</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">13</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-PDF-%E9%A2%84%E8%A7%88%E6%B5%8B%E8%AF%95"><span class="toc-text">2 PDF 预览测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%B8%8B%E8%BD%BD-PDF-js"><span class="toc-text">2.1 下载 PDF.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-window-open-%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80"><span class="toc-text">2.2 window.open 直接打开</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%BC%B9%E6%A1%86%E5%BD%A2%E5%BC%8F%E6%89%93%E5%BC%80"><span class="toc-text">2.3 弹框形式打开</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E9%A1%B9"><span class="toc-text">3 修改配置项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E8%89%B2%E4%B8%BA%E6%9A%97%E8%89%B2%E7%B3%BB"><span class="toc-text">3.1 修改主题色为暗色系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80%E4%B8%BA%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87"><span class="toc-text">3.2 修改默认语言为简体中文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%89%93%E5%BC%80-PDF-%E5%90%8E%E9%BB%98%E8%AE%A4%E8%B7%B3%E8%BD%AC%E5%88%B0%E6%9F%90%E4%B8%80%E9%A1%B5"><span class="toc-text">3.3 打开 PDF 后默认跳转到某一页</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A7%BB%E9%99%A4%E9%83%A8%E5%88%86%E6%8C%89%E9%92%AE"><span class="toc-text">4 移除部分按钮</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E7%AE%80%E5%8D%95%E6%8C%89%E9%92%AE%E7%A7%BB%E9%99%A4"><span class="toc-text">4.1 简单按钮移除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%A4%8D%E6%9D%82%E6%8C%89%E9%92%AE%E7%A7%BB%E9%99%A4"><span class="toc-text">4.2 复杂按钮移除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-text">5 错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E8%B7%A8%E5%9F%9F%E6%8A%A5%E9%94%99"><span class="toc-text">5.1 跨域报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80%E4%B8%BA%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%EF%BC%8C%E4%BD%86%E4%B8%8B%E8%BD%BD%E6%8C%89%E9%92%AE%E4%BB%8D%E6%98%BE%E7%A4%BA%E4%B8%BA%E2%80%9CSave%E2%80%9D"><span class="toc-text">5.2 默认语言为简体中文，但下载按钮仍显示为“Save”</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-11-03</div>
+        <a href="/2022/11/03/pdfJs-md/"><div class="recent-posts-item-content">Vue3 + PDF.js 实现 PDF 预览</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-10-28</div>
+        <a href="/2022/10/28/node-221028/"><div class="recent-posts-item-content">Node.js 入门 —— fs 文件系统模块</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-10-09</div>
+        <a href="/2022/10/09/pinia-plugin-persist/"><div class="recent-posts-item-content">Vue3 + Pinia 持久化存储</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-09-30</div>
+        <a href="/2022/09/30/vue3-hooks/"><div class="recent-posts-item-content">Vue3组合式函数 —— Vue hooks</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>
