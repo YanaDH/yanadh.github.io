@@ -13,14 +13,14 @@
     content="Yana&#39;s Blog"
   />
   <link rel="icon" href="/images/favicon.ico" />
-  <title>Vue3组合式函数 —— Vue hooks</title>
+  <title>Vue3 动态路由</title>
    
   <meta
     property="og:title"
-    content="Vue3组合式函数 —— Vue hooks"
+    content="Vue3 动态路由"
   />
    
-  <meta property="og:url" content="https://yanadh.github.io/2022/09/30/vue3-hooks/index.html" />
+  <meta property="og:url" content="https://yanadh.github.io/2022/11/25/vue3-dynamic-routing/index.html" />
    
   <meta
     property="og:img"
@@ -28,10 +28,10 @@
   />
     
   <meta property="og:type" content="article" />
-  <meta property="og:article:published_time" content="2022-09-30" />
+  <meta property="og:article:published_time" content="2022-11-25" />
   <meta
     property="og:article:modified_time"
-    content="2022-10-28"
+    content="2022-11-25"
   />
   <meta
     property="og:article:author"
@@ -39,6 +39,8 @@
   />
    
   <meta property="og:article:tag" content="Vue3" />
+  
+  <meta property="og:article:tag" content="Vue Router4" />
        <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
   <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
@@ -226,16 +228,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Vue3组合式函数 —— Vue hooks
+      Vue3 动态路由
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2022-09-30T06:48:39.000Z">
+    <time datetime="2022-11-25T08:14:29.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2022-09-30</span>
+      <span>2022-11-25</span>
     </time>
     
       <span class="dot"></span>
@@ -249,7 +251,7 @@
     
     
       <span class="dot"></span>
-      <span>601 字</span>
+      <span>323 字</span>
     
   </div>
   
@@ -269,6 +271,15 @@
             Vue3
           </a>
         
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/Vue-Router4/" 
+            class="post-meta-link">
+            Vue Router4
+          </a>
+        
       </div>
     </div>
   
@@ -277,34 +288,18 @@
     id="section" 
     class="post-content">
     <ul>
-<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
-<li><a href="#2-%E6%8A%80%E6%9C%AF%E7%BB%86%E8%8A%82">2 技术细节</a></li>
-<li><a href="#3-%E7%A4%BA%E4%BE%8B">3 示例</a></li>
+<li><a href="#1-%E4%BF%AE%E6%94%B9-routerts-%E6%96%87%E4%BB%B6">1 修改 router.ts 文件</a></li>
+<li><a href="#2-%E6%B7%BB%E5%8A%A0-activeroutests-%E6%96%87%E4%BB%B6">2 添加 activeRoutes.ts 文件</a></li>
+<li><a href="#3-%E4%BF%AE%E6%94%B9%E7%99%BB%E5%BD%95-vue-%E6%96%87%E4%BB%B6">3 修改登录 Vue 文件</a></li>
+<li><a href="#4-%E4%BF%AE%E6%94%B9%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95-vue-%E6%96%87%E4%BB%B6">4 修改退出登录 Vue 文件</a></li>
 </ul>
-<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><blockquote>
-<p>前言摘抄自 <a target="_blank" rel="noopener" href="https://cn.vuejs.org/guide/reusability/composables.html">Vue.js</a> 官网组合式函数介绍</p>
-</blockquote>
-<h3 id="1-1-什么是“组合式函数”"><a href="#1-1-什么是“组合式函数”" class="headerlink" title="1.1 什么是“组合式函数”"></a>1.1 什么是“组合式函数”</h3><p>在 Vue 应用的概念中，“组合式函数”(Composables) 是一个利用 Vue 的组合式 API 来<code>封装</code>和<code>复用有状态逻辑</code>的<code>函数</code>。</p>
-<h3 id="1-2-和-Mixin-的对比"><a href="#1-2-和-Mixin-的对比" class="headerlink" title="1.2 和 Mixin 的对比"></a>1.2 和 Mixin 的对比</h3><div class="post-note note-info"><p>“组合式函数”和 Vue 2 中的 mixins 功能比较相近，它也让我们能够<code>把组件逻辑提取到可复用的单元里</code>。然而 mixins 有三个主要的短板：</p></div>
+<h2 id="1-修改-router-ts-文件"><a href="#1-修改-router-ts-文件" class="headerlink" title="1 修改 router.ts 文件"></a>1 修改 router.ts 文件</h2><pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; addActiveRoutes &#125; <span class="keyword">from</span> <span class="string">&#x27;./activeRoutes&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> init = <span class="literal">true</span></span><br><span class="line">router.<span class="title function_">beforeEach</span>(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 刷新时重新加载动态路由</span></span><br><span class="line">  <span class="keyword">if</span> (init) &#123;</span><br><span class="line">    init = <span class="literal">false</span></span><br><span class="line">    <span class="title function_">addActiveRoutes</span>()</span><br><span class="line">    <span class="title function_">next</span>(to)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> router</span><br></pre>
 
-<ol>
-<li>不清晰的数据来源：当使用了多个 mixin 时，实例上的数据属性来自哪个 mixin 变得不清晰，这使追溯实现和理解组件行为变得困难。这也是我们推荐在组合式函数中使用 ref + 解构模式的理由：让属性的来源在消费组件时一目了然。</li>
-<li>命名空间冲突：多个来自不同作者的 mixin 可能会注册相同的属性名，造成命名冲突。若使用组合式函数，你可以通过在解构变量时对变量进行重命名来避免相同的键名。</li>
-<li>隐式的跨 mixin 交流：多个 mixin 需要依赖共享的属性名来进行相互作用，这使得它们隐性地耦合在一起。而一个组合式函数的返回值可以作为另一个组合式函数的参数被传入，像普通函数那样。</li>
-</ol>
-<h2 id="2-技术细节"><a href="#2-技术细节" class="headerlink" title="2 技术细节"></a>2 技术细节</h2><ul>
-<li>命名规范：组合式函数约定用驼峰命名法命名，并以“use”作为开头</li>
-<li>复用有状态逻辑：变量使用 ref 包裹并抛出</li>
-<li>生命周期钩子：可使用 vue 组件生命周期钩子函数，会先进入组合式函数生命周期，再进入组件内部生命周期</li>
-</ul>
-<h2 id="3-示例"><a href="#3-示例" class="headerlink" title="3 示例"></a>3 示例</h2><ul>
-<li><p>新增 useCustomTab.ts 文件</p>
-<pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; ref, onActivated &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> loading = <span class="title function_">ref</span>(<span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">getData</span> = (<span class="params">isLoading: <span class="built_in">boolean</span></span>) =&gt; &#123;</span><br><span class="line">    <span class="comment">// isLoading：组件传入参数</span></span><br><span class="line">    loading.<span class="property">value</span> = isLoading</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 模拟异步接口请求完成后取消 loading</span></span><br><span class="line">      loading.<span class="property">value</span> = <span class="literal">false</span></span><br><span class="line">    &#125;, <span class="number">3000</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">onActivated</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">getData</span>(<span class="literal">true</span>) <span class="comment">// 先调用</span></span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    loading,</span><br><span class="line">    getData</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre>
-</li>
-<li><p>在组件中使用</p>
-<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div v-loading=&quot;loading&quot;&gt;</span><br><span class="line">    xxx</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">import useCustomTab from &#x27;@/hooks/useCustomTab&#x27;</span><br><span class="line">const &#123; loading, getData &#125; = useCustomTab()</span><br><span class="line"></span><br><span class="line">onActivated(() =&gt; &#123;</span><br><span class="line">  getData(true) // 后调用</span><br><span class="line">&#125;)</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br></pre></li>
-</ul>
+<h2 id="2-添加-activeRoutes-ts-文件"><a href="#2-添加-activeRoutes-ts-文件" class="headerlink" title="2 添加 activeRoutes.ts 文件"></a>2 添加 activeRoutes.ts 文件</h2><pre class="highlight"><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">RouteRecordRaw</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;vue-router&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> errorRoute = &#123;</span><br><span class="line">  <span class="attr">path</span>: <span class="string">&#x27;/:pathMatch(.*)&#x27;</span>,</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;Error&#x27;</span>,</span><br><span class="line">  <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="title function_">import</span>(<span class="string">&#x27;@/views/Error.vue&#x27;</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">activeRoutes</span>: <span class="title class_">RouteRecordRaw</span>[] = [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/A&#x27;</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;A&#x27;</span>,</span><br><span class="line">    <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="title function_">import</span>(<span class="string">&#x27;@/A.vue&#x27;</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/B&#x27;</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;B&#x27;</span>,</span><br><span class="line">    <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="title function_">import</span>(<span class="string">&#x27;@/B.vue&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">addActiveRoutes</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (***) &#123; <span class="comment">// 添加判断条件</span></span><br><span class="line">    activeRoutes.<span class="title function_">forEach</span>(<span class="function">(<span class="params">route</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (router.<span class="title function_">hasRoute</span>(route.<span class="property">name</span>)) <span class="keyword">return</span> <span class="comment">// 避免重复添加</span></span><br><span class="line">      router.<span class="title function_">addRoute</span>(route)</span><br><span class="line">      <span class="comment">// router.addRoute(&#x27;Parent&#x27;, route) // 若是某个路由的子路由，第一个参数为该路由name</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 错误路由必须在动态路由后添加，否则会被匹配上</span></span><br><span class="line">  router.<span class="title function_">addRoute</span>(errorRoute)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">removeActiveRoutes</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  activeRoutes.<span class="title function_">forEach</span>(<span class="function">(<span class="params">route</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (router.<span class="title function_">hasRoute</span>(route.<span class="property">name</span>)) &#123;</span><br><span class="line">      router.<span class="title function_">removeRoute</span>(route.<span class="property">name</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  router.<span class="title function_">removeRoute</span>(<span class="string">&#x27;Error&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre>
 
+<h2 id="3-修改登录-Vue-文件"><a href="#3-修改登录-Vue-文件" class="headerlink" title="3 修改登录 Vue 文件"></a>3 修改登录 Vue 文件</h2><pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; addActiveRoutes &#125; <span class="keyword">from</span> <span class="string">&#x27;@/router/activeRoutes&#x27;</span></span><br><span class="line"><span class="comment">// 登录成功后调用</span></span><br><span class="line"><span class="title function_">addActiveRoutes</span>()</span><br></pre>
+
+<h2 id="4-修改退出登录-Vue-文件"><a href="#4-修改退出登录-Vue-文件" class="headerlink" title="4 修改退出登录 Vue 文件"></a>4 修改退出登录 Vue 文件</h2><pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; removeActiveRoutes &#125; <span class="keyword">from</span> <span class="string">&#x27;@/router/activeRoutes&#x27;</span></span><br><span class="line"><span class="comment">// 退出登录成功后调用</span></span><br><span class="line"><span class="title function_">removeActiveRoutes</span>()</span><br></pre>
   </div>
   
     <div class="reward-container">
@@ -352,8 +347,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://yanadh.github.io/2022/09/30/vue3-hooks/">
-            https://yanadh.github.io/2022/09/30/vue3-hooks/
+            href="https://yanadh.github.io/2022/11/25/vue3-dynamic-routing/">
+            https://yanadh.github.io/2022/11/25/vue3-dynamic-routing/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -365,13 +360,13 @@
   
     <div class="nav-item-prev">
       <a 
-        href="/2022/10/09/vue3-pinia-plugin-persist/" 
+        href="/2022/11/29/vue3-ref/" 
         class="nav-link">
         <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">Vue3 + Pinia 持久化存储 </div>
+            <div class="nav-title">Vue3 模板引用 —— 获取 ref 实例 </div>
           
         </div>
       </a>
@@ -380,12 +375,12 @@
   
     <div class="nav-item-next">
       <a 
-        href="/2022/09/19/qiankun/" 
+        href="/2022/11/18/vue3-chunk-upload/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">qiankun + Vite 实现最简微前端 </div>
+            <div class="nav-title">Vue3 + Element Plus 实现大文件切片上传及进度条展示 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -439,7 +434,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E2%80%9C%E7%BB%84%E5%90%88%E5%BC%8F%E5%87%BD%E6%95%B0%E2%80%9D"><span class="toc-text">1.1 什么是“组合式函数”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%92%8C-Mixin-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-text">1.2 和 Mixin 的对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%8A%80%E6%9C%AF%E7%BB%86%E8%8A%82"><span class="toc-text">2 技术细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%A4%BA%E4%BE%8B"><span class="toc-text">3 示例</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BF%AE%E6%94%B9-router-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">1 修改 router.ts 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B7%BB%E5%8A%A0-activeRoutes-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">2 添加 activeRoutes.ts 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%AE%E6%94%B9%E7%99%BB%E5%BD%95-Vue-%E6%96%87%E4%BB%B6"><span class="toc-text">3 修改登录 Vue 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BF%AE%E6%94%B9%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95-Vue-%E6%96%87%E4%BB%B6"><span class="toc-text">4 修改退出登录 Vue 文件</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -497,7 +492,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E2%80%9C%E7%BB%84%E5%90%88%E5%BC%8F%E5%87%BD%E6%95%B0%E2%80%9D"><span class="toc-text">1.1 什么是“组合式函数”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%92%8C-Mixin-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-text">1.2 和 Mixin 的对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%8A%80%E6%9C%AF%E7%BB%86%E8%8A%82"><span class="toc-text">2 技术细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%A4%BA%E4%BE%8B"><span class="toc-text">3 示例</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BF%AE%E6%94%B9-router-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">1 修改 router.ts 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B7%BB%E5%8A%A0-activeRoutes-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">2 添加 activeRoutes.ts 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%AE%E6%94%B9%E7%99%BB%E5%BD%95-Vue-%E6%96%87%E4%BB%B6"><span class="toc-text">3 修改登录 Vue 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BF%AE%E6%94%B9%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95-Vue-%E6%96%87%E4%BB%B6"><span class="toc-text">4 修改退出登录 Vue 文件</span></a></li></ol>
       </div>
     </article>
   
@@ -617,7 +612,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E2%80%9C%E7%BB%84%E5%90%88%E5%BC%8F%E5%87%BD%E6%95%B0%E2%80%9D"><span class="toc-text">1.1 什么是“组合式函数”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%92%8C-Mixin-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-text">1.2 和 Mixin 的对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%8A%80%E6%9C%AF%E7%BB%86%E8%8A%82"><span class="toc-text">2 技术细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%A4%BA%E4%BE%8B"><span class="toc-text">3 示例</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BF%AE%E6%94%B9-router-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">1 修改 router.ts 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B7%BB%E5%8A%A0-activeRoutes-ts-%E6%96%87%E4%BB%B6"><span class="toc-text">2 添加 activeRoutes.ts 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%AE%E6%94%B9%E7%99%BB%E5%BD%95-Vue-%E6%96%87%E4%BB%B6"><span class="toc-text">3 修改登录 Vue 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BF%AE%E6%94%B9%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95-Vue-%E6%96%87%E4%BB%B6"><span class="toc-text">4 修改退出登录 Vue 文件</span></a></li></ol>
     </article>
   
   
