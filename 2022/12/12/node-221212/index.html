@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>Node.js 入门 —— http 模块</title>
+   
+  <meta
+    property="og:title"
+    content="Node.js 入门 —— http 模块"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2022/12/12/node-221212/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2022-12-12" />
+  <meta
+    property="og:article:modified_time"
+    content="2022-12-16"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+   
+  <meta property="og:article:tag" content="Node" />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Node.js 入门 —— http 模块
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-12-12T08:19:47.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-12-12</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>2k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Node/" 
+            class="post-meta-link">
+            Node
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E4%BB%80%E4%B9%88%E6%98%AF-http-%E6%A8%A1%E5%9D%97">2 什么是 http 模块</a></li>
+<li><a href="#3-http-%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%9C%E7%94%A8">3 http 模块的作用</a></li>
+<li><a href="#4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5">4 服务器相关概念</a></li>
+<li><a href="#5-%E5%88%9B%E5%BB%BA%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84-web-%E6%9C%8D%E5%8A%A1%E5%99%A8">5 创建最基本的 web 服务器</a></li>
+</ul>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>本文内容来自<a target="_blank" rel="noopener" href="https://www.bilibili.com/">bilibili</a> <a target="_blank" rel="noopener" href="https://space.bilibili.com/37974444">黑马程序员</a></p>
+<h3 id="1-1-什么是客户端，什么是服务器"><a href="#1-1-什么是客户端，什么是服务器" class="headerlink" title="1.1 什么是客户端，什么是服务器"></a>1.1 什么是客户端，什么是服务器</h3><p>在网络节点中，负责<code>消费网络资源</code>的电脑叫客户端；负责<code>对外提供网络资源</code>的电脑叫服务器</p>
+<h2 id="2-什么是-http-模块"><a href="#2-什么是-http-模块" class="headerlink" title="2 什么是 http 模块"></a>2 什么是 http 模块</h2><p><code>http 模块</code>是 Node.js 官方提供的、用来<code>创建 web 服务器</code>的模块。通过 http 模块提供的 http.createServer() 方法，就能方便地把一台普通电脑，变成一台 web 服务器，从而对外提供 web 资源服务</p>
+<h2 id="3-http-模块的作用"><a href="#3-http-模块的作用" class="headerlink" title="3 http 模块的作用"></a>3 http 模块的作用</h2><ul>
+<li>服务器与普通电脑的区别在于，服务器上安装了很多 <code>web 服务器软件</code>，例如 IIS 、 Apache 等，通过安装这些服务器软件，就能把一台普通电脑变成一台 web 服务器</li>
+<li>在 Node.js 中，我们不需要使用 IIS 、 Apache 等这些第三方 web 服务器软件。因为我们可以基于 Node.js 提供的 http 模块，通过几行简单的代码，就能轻松地手写一个服务器软件，从而对外提供 web 服务</li>
+</ul>
+<h2 id="4-服务器相关概念"><a href="#4-服务器相关概念" class="headerlink" title="4 服务器相关概念"></a>4 服务器相关概念</h2><h3 id="4-1-IP-地址"><a href="#4-1-IP-地址" class="headerlink" title="4.1 IP 地址"></a>4.1 IP 地址</h3><ul>
+<li>IP 地址就是互联网上每台计算机的唯一地址，因此 IP 地址具有唯一性。如果把“个人电脑”比作“一台电话”，那么“IP 地址”就相当于“电话号码”，只有知道对方 IP 地址的前提下，才能与对应的电脑之间进行数据通信。</li>
+<li>IP 地址的格式：通常使用“点分十进制”表示成（a.b.c.d）的形式，其中 a.b.c.d 都是 0~255 之间的十进制整数，例如用点分十进制表示的 IP 地址（192.168.1.1）</li>
+</ul>
+<div class="post-note note-warning"><p>注意：</p><ul><li>互联网中每台 web 服务器，都有自己的 IP 地址，例如大家可以在终端上运行 ping <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> 命令，即可查看到百度服务器的 IP 地址</li><li>在开发期间，自己的电脑既是一台服务器，也是一个客户端，为了方便测试，可以在自己的浏览器中输入 127.0.0.1 这个 IP 地址，就能把自己的电脑当做一台服务器进行访问了。</li></ul></div>
+
+<h3 id="4-2-域名和域名服务器"><a href="#4-2-域名和域名服务器" class="headerlink" title="4.2 域名和域名服务器"></a>4.2 域名和域名服务器</h3><ul>
+<li>尽管 IP 地址能够唯一地标记网络上的计算机，但 IP 地址是一长串数字，不够直观，且不便于记忆，于是人们又发明了另一套<code>字符型</code>的<code>地址方案</code>，即所谓的域名（Domain Name）地址</li>
+<li>IP 地址和域名是一一对应的关系，这份对应关系存放在一种叫做域名服务器（DNS, Domain Name Server）的电脑中，使用者只需通过好记的域名访问对应的服务器即可，对应的转换工作由域名服务器来实现。因此，域名服务器就是提供 IP 地址和域名之间的转换服务的服务器</li>
+</ul>
+<div class="post-note note-warning"><p>注意：</p><ul><li>单纯使用 IP 地址，互联网中的电脑也能正常工作，但有了域名的加持，能让互联网的世界变得更加便捷</li><li>在开发测试期间，127.0.0.1 对应的域名是 localhost ，它们都代表我们的这台电脑，在使用效果上没有任何区别</li></ul></div>
+
+<h3 id="4-3-端口号"><a href="#4-3-端口号" class="headerlink" title="4.3 端口号"></a>4.3 端口号</h3><ul>
+<li>计算机中的端口号，就好像是现实生活中的门牌号一样，通过门牌号，外卖小哥可以在整栋大楼众多房间中，准确地将外卖送到你的手中。</li>
+<li>同样的道理，在一台电脑中可以运行成百上千个 web 服务器，每个 web 服务器都对应一个唯一的端口号。客户端发送过来的网络请求，通过端口号可以准确地交给对应的 web 服务进行处理</li>
+</ul>
+<div class="post-note note-warning"><p>注意：</p><ul><li>每个端口号不能同时被多个 web 服务占用</li><li>在实际应用中， URL 中的 80 端口可以省略</li></ul></div>
+
+<h2 id="5-创建最基本的-web-服务器"><a href="#5-创建最基本的-web-服务器" class="headerlink" title="5 创建最基本的 web 服务器"></a>5 创建最基本的 web 服务器</h2><h3 id="5-1-基本步骤"><a href="#5-1-基本步骤" class="headerlink" title="5.1 基本步骤"></a>5.1 基本步骤</h3><ol>
+<li>导入 http 模块</li>
+<li>创建 web 服务器实例</li>
+<li>为服务器绑定 request 事件，监听客户端的请求</li>
+<li>启动服务器</li>
+</ol>
+<pre class="highlight"><span class="line"><span class="comment">// 1.导入 http 模块</span></span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&quot;http&quot;</span>);</span><br><span class="line"><span class="comment">// 2.创建 web 服务器实例</span></span><br><span class="line"><span class="keyword">const</span> server = http.<span class="title function_">createServer</span>();</span><br><span class="line"><span class="comment">// 3.为服务器实例绑定 request 事件</span></span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&quot;request&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 只要有客户端来请求服务器，就会触发 request 事件，从而调用这个事件处理函数</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;someone visits our web server&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 4.启动服务器</span></span><br><span class="line">server.<span class="title function_">listen</span>(<span class="number">8080</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;http server running at http://127.0.0.1:8080&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre>
+
+<h3 id="5-2-req-请求对象"><a href="#5-2-req-请求对象" class="headerlink" title="5.2 req 请求对象"></a>5.2 req 请求对象</h3><p>只要服务器接收到了客户端的请求，就会调用通过 server.on 为服务器绑定的 request 事件处理函数<br>如果想在事件处理函数中，访问与客户端相关的数据或属性，可以使用如下方法：</p>
+<pre class="highlight"><span class="line"><span class="comment">// req 是请求对象，包含了与客户端相关的数据和属性</span></span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&quot;request&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 只要有客户端来请求服务器，就会触发 request 事件，从而调用这个事件处理函数</span></span><br><span class="line">  <span class="comment">// req.url ：客户端请求的 url 地址</span></span><br><span class="line">  <span class="keyword">const</span> url = req.<span class="property">url</span>;</span><br><span class="line">  <span class="comment">// req.method ：客户端请求的 method 类型</span></span><br><span class="line">  <span class="keyword">const</span> method = req.<span class="property">method</span>;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">    <span class="string">`Your request url is <span class="subst">$&#123;url&#125;</span>, and the request method is <span class="subst">$&#123;method&#125;</span>`</span></span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br></pre>
+
+<h3 id="5-3-res-响应对象"><a href="#5-3-res-响应对象" class="headerlink" title="5.3 res 响应对象"></a>5.3 res 响应对象</h3><p>在服务器的 request 事件处理函数中，如果想访问与服务端器相关的数据或属性，可以使用如下方法：</p>
+<pre class="highlight"><span class="line"><span class="comment">// res 是响应对象，包含了与服务器相关的数据和属性</span></span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&quot;request&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> str = <span class="string">`Your request url is <span class="subst">$&#123;req.url&#125;</span>, and the request method is <span class="subst">$&#123;req.method&#125;</span>`</span>;</span><br><span class="line">  <span class="comment">// 向客户端发送指定内容，并结束这次请求的处理过程</span></span><br><span class="line">  res.<span class="title function_">end</span>(str);</span><br><span class="line">&#125;);</span><br></pre>
+
+<h3 id="5-4-解决中文乱码问题"><a href="#5-4-解决中文乱码问题" class="headerlink" title="5.4 解决中文乱码问题"></a>5.4 解决中文乱码问题</h3><p>手动设置返回内容的编码格式</p>
+<pre class="highlight"><span class="line"><span class="comment">// res 是响应对象，包含了与服务器相关的数据和属性</span></span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&quot;request&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> str = <span class="string">`您请求的 url 是 <span class="subst">$&#123;req.url&#125;</span>, 请求的 method 类型是 <span class="subst">$&#123;req.method&#125;</span>`</span>;</span><br><span class="line">  res.<span class="title function_">setHeader</span>(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;text/html; charset=utf-8&quot;</span>);</span><br><span class="line">  res.<span class="title function_">end</span>(str);</span><br><span class="line">&#125;);</span><br></pre>
+
+<h3 id="5-5-根据不同的-url-返回不同的内容"><a href="#5-5-根据不同的-url-返回不同的内容" class="headerlink" title="5.5 根据不同的 url 返回不同的内容"></a>5.5 根据不同的 url 返回不同的内容</h3><p>实现步骤</p>
+<ol>
+<li>获取请求的 url 地址</li>
+<li>设置默认的响应内容为 404 Not Found</li>
+<li>判断用户请求是否为 &#x2F; 或 &#x2F;index.html 首页</li>
+<li>判断用户请求是否为 &#x2F;about.html 关于页面</li>
+<li>设置 Content-Type 响应头，避免中文乱码问题</li>
+<li>使用 res.end() 把内容响应给客户端</li>
+</ol>
+<pre class="highlight"><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&quot;http&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> server = http.<span class="title function_">createServer</span>();</span><br><span class="line"></span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&quot;request&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> url = req.<span class="property">url</span>;</span><br><span class="line">  <span class="keyword">let</span> contnet = <span class="string">&quot;&lt;h1&gt;404 Not Found&lt;/h1&gt;&quot;</span>;</span><br><span class="line">  <span class="keyword">if</span> (url === <span class="string">&quot;/&quot;</span> || url === <span class="string">&quot;/index.html&quot;</span>) &#123;</span><br><span class="line">    contnet = <span class="string">&quot;&lt;h1&gt;首页&lt;/h1&gt;&quot;</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url === <span class="string">&quot;/about.html&quot;</span>) &#123;</span><br><span class="line">    contnet = <span class="string">&quot;&lt;h1&gt;关于页面&lt;/h1&gt;&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  res.<span class="title function_">setHeader</span>(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;text/html; charset=utf-8&quot;</span>);</span><br><span class="line">  res.<span class="title function_">end</span>(contnet);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.<span class="title function_">listen</span>(<span class="string">&quot;80&quot;</span>);</span><br></pre>
+
+<h3 id="5-6-返回本地文件"><a href="#5-6-返回本地文件" class="headerlink" title="5.6 返回本地文件"></a>5.6 返回本地文件</h3><p>实现步骤</p>
+<ol>
+<li>导入需要的 node 模块</li>
+<li>创建基本的 web 服务器</li>
+<li>将资源的请求 url 地址映射为文件的存放路径</li>
+<li>读取文件内容并响应给客户端</li>
+<li>优化资源的请求路径</li>
+</ol>
+<pre class="highlight"><span class="line"><span class="comment">// 1. 导入需要的 node 模块</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&quot;fs&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&quot;path&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&quot;http&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 创建基本的 web 服务器</span></span><br><span class="line"><span class="keyword">const</span> server = http.<span class="title function_">createServer</span>();</span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&quot;request&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 3. 将资源的请求 url 地址映射为文件的存放路径</span></span><br><span class="line">  <span class="comment">// 4. 读取文件内容并响应给客户端</span></span><br><span class="line">  <span class="comment">// 5. 优化资源的请求路径</span></span><br><span class="line">  <span class="keyword">const</span> url = req.<span class="property">url</span>;</span><br><span class="line">  fs.<span class="title function_">readFile</span>(</span><br><span class="line">    path.<span class="title function_">join</span>(</span><br><span class="line">      __dirname,</span><br><span class="line">      <span class="string">&quot;../path路径模块/files/&quot;</span>,</span><br><span class="line">      url === <span class="string">&quot;/&quot;</span> ? <span class="string">&quot;index.html&quot;</span> : url</span><br><span class="line">    ),</span><br><span class="line">    <span class="string">&quot;utf-8&quot;</span>,</span><br><span class="line">    <span class="function">(<span class="params">err, dataStr</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (err) <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="string">&quot;404 Not Found&quot;</span>);</span><br><span class="line">      res.<span class="title function_">end</span>(dataStr);</span><br><span class="line">    &#125;</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.<span class="title function_">listen</span>(<span class="string">&quot;80&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;server running at http://127.0.0.1&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre>
+
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2022/12/12/node-221212/">
+            https://yanadh.github.io/2022/12/12/node-221212/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/12/09/node-221208/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Node.js 入门 —— path 路径模块 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">1.1 什么是客户端，什么是服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BB%80%E4%B9%88%E6%98%AF-http-%E6%A8%A1%E5%9D%97"><span class="toc-text">2 什么是 http 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-http-%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3 http 模块的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-text">4 服务器相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-IP-%E5%9C%B0%E5%9D%80"><span class="toc-text">4.1 IP 地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9F%9F%E5%90%8D%E5%92%8C%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">4.2 域名和域名服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="toc-text">4.3 端口号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%88%9B%E5%BB%BA%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84-web-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">5 创建最基本的 web 服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="toc-text">5.1 基本步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-req-%E8%AF%B7%E6%B1%82%E5%AF%B9%E8%B1%A1"><span class="toc-text">5.2 req 请求对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-res-%E5%93%8D%E5%BA%94%E5%AF%B9%E8%B1%A1"><span class="toc-text">5.3 res 响应对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E8%A7%A3%E5%86%B3%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98"><span class="toc-text">5.4 解决中文乱码问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E6%A0%B9%E6%8D%AE%E4%B8%8D%E5%90%8C%E7%9A%84-url-%E8%BF%94%E5%9B%9E%E4%B8%8D%E5%90%8C%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-text">5.5 根据不同的 url 返回不同的内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-6-%E8%BF%94%E5%9B%9E%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6"><span class="toc-text">5.6 返回本地文件</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>18</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>11</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">1.1 什么是客户端，什么是服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BB%80%E4%B9%88%E6%98%AF-http-%E6%A8%A1%E5%9D%97"><span class="toc-text">2 什么是 http 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-http-%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3 http 模块的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-text">4 服务器相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-IP-%E5%9C%B0%E5%9D%80"><span class="toc-text">4.1 IP 地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9F%9F%E5%90%8D%E5%92%8C%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">4.2 域名和域名服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="toc-text">4.3 端口号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%88%9B%E5%BB%BA%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84-web-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">5 创建最基本的 web 服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="toc-text">5.1 基本步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-req-%E8%AF%B7%E6%B1%82%E5%AF%B9%E8%B1%A1"><span class="toc-text">5.2 req 请求对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-res-%E5%93%8D%E5%BA%94%E5%AF%B9%E8%B1%A1"><span class="toc-text">5.3 res 响应对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E8%A7%A3%E5%86%B3%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98"><span class="toc-text">5.4 解决中文乱码问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E6%A0%B9%E6%8D%AE%E4%B8%8D%E5%90%8C%E7%9A%84-url-%E8%BF%94%E5%9B%9E%E4%B8%8D%E5%90%8C%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-text">5.5 根据不同的 url 返回不同的内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-6-%E8%BF%94%E5%9B%9E%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6"><span class="toc-text">5.6 返回本地文件</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">1.1 什么是客户端，什么是服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BB%80%E4%B9%88%E6%98%AF-http-%E6%A8%A1%E5%9D%97"><span class="toc-text">2 什么是 http 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-http-%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3 http 模块的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-text">4 服务器相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-IP-%E5%9C%B0%E5%9D%80"><span class="toc-text">4.1 IP 地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9F%9F%E5%90%8D%E5%92%8C%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">4.2 域名和域名服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="toc-text">4.3 端口号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%88%9B%E5%BB%BA%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84-web-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">5 创建最基本的 web 服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="toc-text">5.1 基本步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-req-%E8%AF%B7%E6%B1%82%E5%AF%B9%E8%B1%A1"><span class="toc-text">5.2 req 请求对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-res-%E5%93%8D%E5%BA%94%E5%AF%B9%E8%B1%A1"><span class="toc-text">5.3 res 响应对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E8%A7%A3%E5%86%B3%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98"><span class="toc-text">5.4 解决中文乱码问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E6%A0%B9%E6%8D%AE%E4%B8%8D%E5%90%8C%E7%9A%84-url-%E8%BF%94%E5%9B%9E%E4%B8%8D%E5%90%8C%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-text">5.5 根据不同的 url 返回不同的内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-6-%E8%BF%94%E5%9B%9E%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6"><span class="toc-text">5.6 返回本地文件</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-12-12</div>
+        <a href="/2022/12/12/node-221212/"><div class="recent-posts-item-content">Node.js 入门 —— http 模块</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-12-09</div>
+        <a href="/2022/12/09/node-221208/"><div class="recent-posts-item-content">Node.js 入门 —— path 路径模块</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-11-29</div>
+        <a href="/2022/11/29/vue3-ref/"><div class="recent-posts-item-content">Vue3 模板引用 —— 获取 ref 实例</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2022-11-25</div>
+        <a href="/2022/11/25/vue3-dynamic-routing/"><div class="recent-posts-item-content">Vue3 动态路由</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>
