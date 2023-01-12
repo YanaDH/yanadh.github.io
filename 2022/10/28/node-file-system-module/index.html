@@ -20,7 +20,7 @@
     content="Node.js 入门 —— fs 文件系统模块"
   />
    
-  <meta property="og:url" content="https://yanadh.github.io/2022/10/28/node-221028/index.html" />
+  <meta property="og:url" content="https://yanadh.github.io/2022/10/28/node-file-system-module/index.html" />
    
   <meta
     property="og:img"
@@ -31,7 +31,7 @@
   <meta property="og:article:published_time" content="2022-10-28" />
   <meta
     property="og:article:modified_time"
-    content="2022-12-16"
+    content="2022-12-09"
   />
   <meta
     property="og:article:author"
@@ -349,7 +349,6 @@
 <p>原因：代码在运行的时候，会以执行 node 命令时所处的目录，动态拼接出被操作文件的完整路径<br>解决方案：在使用 fs 模块操作文件时，直接提供完整的路径，不要提供 .&#x2F; 或 ..&#x2F;开头的相对路径，从而防止路径动态拼接的问题</p>
 </blockquote>
 <pre class="highlight"><span class="line"><span class="comment">// __dirname 表示当前执行脚本所在的目录</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&quot;fs&quot;</span>);</span><br><span class="line">fs.<span class="title function_">readFile</span>(__dirname + <span class="string">&quot;/files/成绩.txt&quot;</span>, <span class="string">&quot;utf8&quot;</span>);</span><br></pre>
-
   </div>
   
     <div class="reward-container">
@@ -397,8 +396,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://yanadh.github.io/2022/10/28/node-221028/">
-            https://yanadh.github.io/2022/10/28/node-221028/
+            href="https://yanadh.github.io/2022/10/28/node-file-system-module/">
+            https://yanadh.github.io/2022/10/28/node-file-system-module/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -503,7 +502,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>18</span>
+    <span>27</span>
     <span>文章</span>
   </a>
   <a 
@@ -515,7 +514,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>11</span>
+    <span>12</span>
     <span>标签</span>
   </a>
 </div>
@@ -560,7 +559,7 @@
       <a href="/categories/%E6%8A%80%E6%9C%AF/">
         <div class="categories-list-item">
           技术
-          <span class="categories-list-item-badge">18</span>
+          <span class="categories-list-item-badge">27</span>
         </div>
       </a>
     
@@ -579,6 +578,12 @@
   <div class="tags-list">
     
       <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
         href="/tags/Vue3/" 
         title="Vue3">
         <div class="tags-list-item">Vue3</div>
@@ -591,15 +596,15 @@
       </a>
     
       <a 
-        href="/tags/Node/" 
-        title="Node">
-        <div class="tags-list-item">Node</div>
-      </a>
-    
-      <a 
         href="/tags/Hexo/" 
         title="Hexo">
         <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
       </a>
     
       <a 
@@ -677,23 +682,23 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-12-12</div>
-        <a href="/2022/12/12/node-221212/"><div class="recent-posts-item-content">Node.js 入门 —— http 模块</div></a>
+        <div class="recent-posts-item-title">2023-01-11</div>
+        <a href="/2023/01/11/git-worktree/"><div class="recent-posts-item-content">git worktree 依赖隔离、多分支开发图文详解</div></a>
       </div>
     
       <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-12-09</div>
-        <a href="/2022/12/09/node-221208/"><div class="recent-posts-item-content">Node.js 入门 —— path 路径模块</div></a>
+        <div class="recent-posts-item-title">2023-01-05</div>
+        <a href="/2023/01/05/node-identity-authentication/"><div class="recent-posts-item-content">Node.js 入门 —— 前后端的身份认证</div></a>
       </div>
     
       <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-11-29</div>
-        <a href="/2022/11/29/vue3-ref/"><div class="recent-posts-item-content">Vue3 模板引用 —— 获取 ref 实例</div></a>
+        <div class="recent-posts-item-title">2023-01-05</div>
+        <a href="/2023/01/05/node-database/"><div class="recent-posts-item-content">Node.js 入门 —— 数据库</div></a>
       </div>
     
       <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2022-11-25</div>
-        <a href="/2022/11/25/vue3-dynamic-routing/"><div class="recent-posts-item-content">Vue3 动态路由</div></a>
+        <div class="recent-posts-item-title">2023-01-03</div>
+        <a href="/2023/01/03/node-interface/"><div class="recent-posts-item-content">Node.js 入门 —— 使用 Express 编写接口</div></a>
       </div>
     
   </div>
@@ -717,6 +722,9 @@
           
             2022
           
+          
+                - 
+                2023
           
         </span>
         &nbsp;

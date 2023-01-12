@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>Node.js 入门 —— 模块化</title>
+   
+  <meta
+    property="og:title"
+    content="Node.js 入门 —— 模块化"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2022/12/14/node-modularization/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2022-12-14" />
+  <meta
+    property="og:article:modified_time"
+    content="2022-12-18"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+   
+  <meta property="og:article:tag" content="Node" />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Node.js 入门 —— 模块化
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-12-14T02:20:01.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-12-14</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.3k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Node/" 
+            class="post-meta-link">
+            Node
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">2 模块化的基本概念</a></li>
+<li><a href="#3-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96">3 node 中的模块化</a></li>
+<li><a href="#4-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F">4 node 中的模块作用域</a></li>
+<li><a href="#5-es6-module">5 es6 module</a></li>
+</ul>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>本文内容来自<a target="_blank" rel="noopener" href="https://www.bilibili.com/">bilibili</a> <a target="_blank" rel="noopener" href="https://space.bilibili.com/37974444">黑马程序员</a></p>
+<h2 id="2-模块化的基本概念"><a href="#2-模块化的基本概念" class="headerlink" title="2 模块化的基本概念"></a>2 模块化的基本概念</h2><h3 id="2-1模块化"><a href="#2-1模块化" class="headerlink" title="2.1模块化"></a>2.1模块化</h3><ul>
+<li><code>模块化</code>是指解决一个<code>复杂问题</code>时，自顶向下逐层<code>把系统划分成若干模块的过程</code>。对于整个系统来说，模块是<code>可组合、可分解、可更换的单位</code>。</li>
+<li>编程领域中的模块化，就是遵<code>循固定规则</code>，把一个<code>大文件</code>拆成<code>独立并相互依赖</code>的<code>多个小模块</code>。</li>
+</ul>
+<div class="post-note note-primary"><p>模块化的好处</p><ol><li>提高代码的<code>复用性</code></li><li>提高代码的<code>可维护性</code></li><li>可以实现<code>按需加载</code></li></ol></div>
+
+<h3 id="2-2-模块化规范"><a href="#2-2-模块化规范" class="headerlink" title="2.2 模块化规范"></a>2.2 模块化规范</h3><p><code>模块化规范</code>就是对代码进行模块化拆分、组合时，需要遵循的规则。</p>
+<ol>
+<li>使用什么样的语法格式来<code>引用模块</code></li>
+<li>使用什么样的语法格式来<code>向外暴露成员</code><br>模块化规范的好处<br>大家都遵循同样的模块化规范写代码，降低了沟通成本，极大方便了各个模块之间的相互调用，利人利己。</li>
+</ol>
+<h2 id="3-node-中的模块化"><a href="#3-node-中的模块化" class="headerlink" title="3 node 中的模块化"></a>3 node 中的模块化</h2><h3 id="3-1-node-中模块化的分类"><a href="#3-1-node-中模块化的分类" class="headerlink" title="3.1 node 中模块化的分类"></a>3.1 node 中模块化的分类</h3><p>Node.js 根据模块的来源不同，将模块分为三大类，分别是：</p>
+<ol>
+<li>内置模块：由 Node.js 官方提供的，如 fs 模块、 path 模块、 http 模块</li>
+<li>自定义模块：用户创建的每一个 .js 文件，都是自定义模块</li>
+<li>外部模块：由第三方开发出来的模块，非 Node.js 官方提供的内置模块，也不是用户创建的自定义模块，使用前需要先下载</li>
+</ol>
+<h3 id="3-2-加载模块"><a href="#3-2-加载模块" class="headerlink" title="3.2 加载模块"></a>3.2 加载模块</h3><p>使用强大的 require() 方法，可以加载需要的内置模块、自定义模块、外部模块进行使用</p>
+<pre class="highlight"><span class="line"><span class="comment">// 加载内置模块</span></span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>)</span><br><span class="line"><span class="comment">// 加载自定义模块</span></span><br><span class="line"><span class="keyword">const</span> custom = <span class="built_in">require</span>(<span class="string">&#x27;./custom.js&#x27;</span>)</span><br><span class="line"><span class="comment">// 加载外部模块</span></span><br><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">&#x27;moment&#x27;</span>)</span><br></pre>
+
+<p>注意：</p>
+<ul>
+<li>使用 require() 方法加载其他模块时，会执行被加载模块中的代码</li>
+<li>在使用 require() 加载用户自定义模块期间，可以省略 .js 的后缀名</li>
+</ul>
+<h2 id="4-node-中的模块作用域"><a href="#4-node-中的模块作用域" class="headerlink" title="4 node 中的模块作用域"></a>4 node 中的模块作用域</h2><h3 id="4-1-什么是模块作用域"><a href="#4-1-什么是模块作用域" class="headerlink" title="4.1 什么是模块作用域"></a>4.1 什么是模块作用域</h3><p>和<code>函数作用域</code>类似，自定义模块中定义的<code>变量</code>、<code>方法</code>等成员，<code>只能在当前模块被访问</code>，这种<code>模块级别的访问限制</code>，叫做<code>模块作用域</code>。</p>
+<h3 id="4-2-模块作用域的好处"><a href="#4-2-模块作用域的好处" class="headerlink" title="4.2 模块作用域的好处"></a>4.2 模块作用域的好处</h3><p>防止全局变量污染问题</p>
+<h3 id="4-3-向外共享模块作用域中的成员"><a href="#4-3-向外共享模块作用域中的成员" class="headerlink" title="4.3 向外共享模块作用域中的成员"></a>4.3 向外共享模块作用域中的成员</h3><p>在每个 .js 自定义模块中都有一个 module 对象，它里面存储了和当前模块有关的信息</p>
+<h4 id="4-3-1-module-exports-对象"><a href="#4-3-1-module-exports-对象" class="headerlink" title="4.3.1 module.exports 对象"></a>4.3.1 module.exports 对象</h4><ul>
+<li>在自定义模块中，可以使用 module.exports 对象，将模块内的成员共享出去，供外界使用。</li>
+<li>外界用 require() 方法导入自定义模块时，得到的就是 module exports 所指向的对象</li>
+</ul>
+<div class="post-note note-warning"><p>共享成员时的注意：<br>使用 require() 方法导入模块时，导入的结果，永远以 module exports 所指向的对象为准</p></div>
+
+<pre class="highlight"><span class="line"><span class="comment">// m1.js</span></span><br><span class="line"><span class="keyword">const</span> userName = <span class="string">&#x27;zs&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">userName</span> = userName</span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">sayHello</span> = <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;hello&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">userName</span>: <span class="string">&#x27;ls&#x27;</span>,</span><br><span class="line">  <span class="attr">sayHi</span>: <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;hello&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// test.js</span></span><br><span class="line"><span class="keyword">const</span> m1 = <span class="built_in">require</span>(<span class="string">&#x27;./m1&#x27;</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(m1) <span class="comment">// &#123; userName: &#x27;ls&#x27;, sayHi: [Function: sayHi] &#125;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="comment">// m1.js</span></span><br><span class="line"><span class="keyword">const</span> userName = <span class="string">&#x27;zs&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">userName</span>: <span class="string">&#x27;ls&#x27;</span>,</span><br><span class="line">  <span class="attr">sayHi</span>: <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;hello&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">userName</span> = userName</span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">sayHello</span> = <span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;hello&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// test.js</span></span><br><span class="line"><span class="keyword">const</span> m1 = <span class="built_in">require</span>(<span class="string">&#x27;./m1&#x27;</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(m1) <span class="comment">// &#123;</span></span><br><span class="line">                <span class="comment">//   userName: &#x27;zs&#x27;,</span></span><br><span class="line">                <span class="comment">//   sayHi: [Function: sayHi],</span></span><br><span class="line">                <span class="comment">//   sayHello: [Function (anonymous)]</span></span><br><span class="line">                <span class="comment">// &#125;</span></span><br></pre>
+
+<h4 id="4-3-2-exports-对象"><a href="#4-3-2-exports-对象" class="headerlink" title="4.3.2 exports 对象"></a>4.3.2 exports 对象</h4><ul>
+<li>由于 module.exports 单词写起来比较复杂，为了简化向外共享成员的代码， Node.js 提供了 exports 对象。</li>
+<li>默认情况下，exports 和 module exports 指向同一个对象，最终共享的结果，还是以 module.exports 指向的对象为准。</li>
+</ul>
+<h4 id="4-3-3-exports-和-module-exports-的使用误区"><a href="#4-3-3-exports-和-module-exports-的使用误区" class="headerlink" title="4.3.3 exports 和 module exports 的使用误区"></a>4.3.3 exports 和 module exports 的使用误区</h4><p>时刻谨记， require() 模块时，得到的永远都是 module.exports 指向的对象：</p>
+<pre class="highlight"><span class="line"><span class="built_in">exports</span>.<span class="property">userName</span> = <span class="string">&#x27;zs&#x27;</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">userName</span>: <span class="string">&#x27;ls&#x27;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">23</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// &#123; userName: &#x27;ls&#x27;, age: 23 &#125;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">userName</span> = <span class="string">&#x27;zs&#x27;</span></span><br><span class="line"><span class="built_in">exports</span> = &#123;</span><br><span class="line">  <span class="attr">userName</span>: <span class="string">&#x27;ls&#x27;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">23</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// &#123; userName: &#x27;zs&#x27; &#125;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="built_in">exports</span>.<span class="property">userName</span> = <span class="string">&#x27;zs&#x27;</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">age</span> = <span class="number">23</span></span><br><span class="line"><span class="comment">// &#123; userName: &#x27;zs&#x27;, age: 23 &#125;</span></span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="built_in">exports</span> = &#123;</span><br><span class="line">  <span class="attr">userName</span>: <span class="string">&#x27;zs&#x27;</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = <span class="built_in">exports</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">age</span> = <span class="number">23</span></span><br><span class="line"><span class="comment">// &#123; userName: &#x27;zs&#x27;, age: 23 &#125;</span></span><br></pre>
+
+<h3 id="4-4-node-中的模块化规范"><a href="#4-4-node-中的模块化规范" class="headerlink" title="4.4 node 中的模块化规范"></a>4.4 node 中的模块化规范</h3><p>Node.js 遵循了 CommonJS 模块化规范， CommonJS 规定了<code>模块的特性</code>和<code>各模块间如何相互依赖</code>。</p>
+<div class="post-note note-primary"><p>CommonJS 规定：</p><ol><li>每个模块内部， <code>module 变量</code>代表当前模块</li><li>module 变量是一个对象，它的 export 属性（即 <code>module.exports</code>）是对外的接口</li><li>加载某个模块，其实是加载该模块 module.exports 属性。 require() 方法用来加载模块</li></ol></div>
+
+<h2 id="5-es6-module"><a href="#5-es6-module" class="headerlink" title="5 es6 module"></a>5 es6 module</h2><p>ES6 在语言标准的层面上，实现了模块功能，旨在替代 AMD 、 CommonJs 成为浏览器和服务器通用的模块解决方案。</p>
+<div class="post-note note-primary"><p>ES6 Module 规定：</p><ol><li>每个 js 文件都是一个独立的模块</li><li>按需导入： import ，命令用于输入其他模块提供的功能</li><li>按需导出 ： export ，命令用于规定模块的对外接口</li></ol></div>
+
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2022/12/14/node-modularization/">
+            https://yanadh.github.io/2022/12/14/node-modularization/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2022/12/18/node-npm/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Node.js 入门 —— npm 与包 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/12/12/node-http-module/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Node.js 入门 —— http 模块 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">2 模块化的基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">2.1模块化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%A8%A1%E5%9D%97%E5%8C%96%E8%A7%84%E8%8C%83"><span class="toc-text">2.2 模块化规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">3 node 中的模块化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-node-%E4%B8%AD%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">3.1 node 中模块化的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9D%97"><span class="toc-text">3.2 加载模块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">4 node 中的模块作用域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">4.1 什么是模块作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-text">4.2 模块作用域的好处</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%90%91%E5%A4%96%E5%85%B1%E4%BA%AB%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%AD%E7%9A%84%E6%88%90%E5%91%98"><span class="toc-text">4.3 向外共享模块作用域中的成员</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-1-module-exports-%E5%AF%B9%E8%B1%A1"><span class="toc-text">4.3.1 module.exports 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-2-exports-%E5%AF%B9%E8%B1%A1"><span class="toc-text">4.3.2 exports 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-3-exports-%E5%92%8C-module-exports-%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AF%AF%E5%8C%BA"><span class="toc-text">4.3.3 exports 和 module exports 的使用误区</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E8%A7%84%E8%8C%83"><span class="toc-text">4.4 node 中的模块化规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-es6-module"><span class="toc-text">5 es6 module</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>27</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>12</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">2 模块化的基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">2.1模块化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%A8%A1%E5%9D%97%E5%8C%96%E8%A7%84%E8%8C%83"><span class="toc-text">2.2 模块化规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">3 node 中的模块化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-node-%E4%B8%AD%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">3.1 node 中模块化的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9D%97"><span class="toc-text">3.2 加载模块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">4 node 中的模块作用域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">4.1 什么是模块作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-text">4.2 模块作用域的好处</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%90%91%E5%A4%96%E5%85%B1%E4%BA%AB%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%AD%E7%9A%84%E6%88%90%E5%91%98"><span class="toc-text">4.3 向外共享模块作用域中的成员</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-1-module-exports-%E5%AF%B9%E8%B1%A1"><span class="toc-text">4.3.1 module.exports 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-2-exports-%E5%AF%B9%E8%B1%A1"><span class="toc-text">4.3.2 exports 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-3-exports-%E5%92%8C-module-exports-%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AF%AF%E5%8C%BA"><span class="toc-text">4.3.3 exports 和 module exports 的使用误区</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E8%A7%84%E8%8C%83"><span class="toc-text">4.4 node 中的模块化规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-es6-module"><span class="toc-text">5 es6 module</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">2 模块化的基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">2.1模块化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%A8%A1%E5%9D%97%E5%8C%96%E8%A7%84%E8%8C%83"><span class="toc-text">2.2 模块化规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">3 node 中的模块化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-node-%E4%B8%AD%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">3.1 node 中模块化的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9D%97"><span class="toc-text">3.2 加载模块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">4 node 中的模块作用域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-text">4.1 什么是模块作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-text">4.2 模块作用域的好处</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%90%91%E5%A4%96%E5%85%B1%E4%BA%AB%E6%A8%A1%E5%9D%97%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%AD%E7%9A%84%E6%88%90%E5%91%98"><span class="toc-text">4.3 向外共享模块作用域中的成员</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-1-module-exports-%E5%AF%B9%E8%B1%A1"><span class="toc-text">4.3.1 module.exports 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-2-exports-%E5%AF%B9%E8%B1%A1"><span class="toc-text">4.3.2 exports 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-3-exports-%E5%92%8C-module-exports-%E7%9A%84%E4%BD%BF%E7%94%A8%E8%AF%AF%E5%8C%BA"><span class="toc-text">4.3.3 exports 和 module exports 的使用误区</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-node-%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E8%A7%84%E8%8C%83"><span class="toc-text">4.4 node 中的模块化规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-es6-module"><span class="toc-text">5 es6 module</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-11</div>
+        <a href="/2023/01/11/git-worktree/"><div class="recent-posts-item-content">git worktree 依赖隔离、多分支开发图文详解</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-05</div>
+        <a href="/2023/01/05/node-identity-authentication/"><div class="recent-posts-item-content">Node.js 入门 —— 前后端的身份认证</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-05</div>
+        <a href="/2023/01/05/node-database/"><div class="recent-posts-item-content">Node.js 入门 —— 数据库</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-03</div>
+        <a href="/2023/01/03/node-interface/"><div class="recent-posts-item-content">Node.js 入门 —— 使用 Express 编写接口</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>

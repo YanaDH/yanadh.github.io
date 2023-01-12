@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>Node.js 入门 —— 使用 Express 编写接口</title>
+   
+  <meta
+    property="og:title"
+    content="Node.js 入门 —— 使用 Express 编写接口"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2023/01/03/node-interface/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2023-01-03" />
+  <meta
+    property="og:article:modified_time"
+    content="2023-01-05"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+   
+  <meta property="og:article:tag" content="Node" />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Node.js 入门 —— 使用 Express 编写接口
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-01-03T07:38:38.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-01-03</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>1.3k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Node/" 
+            class="post-meta-link">
+            Node
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E5%88%9B%E5%BB%BA%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8">2 创建基本的服务器</a></li>
+<li><a href="#3-%E7%BC%96%E5%86%99%E6%8E%A5%E5%8F%A3">3 编写接口</a></li>
+<li><a href="#4-cors-%E8%B5%84%E6%BA%90%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%AB">4 cors 资源跨域共享</a></li>
+<li><a href="#5-jsonp-%E6%8E%A5%E5%8F%A3">5 jsonp 接口</a></li>
+</ul>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>本文内容来自<a target="_blank" rel="noopener" href="https://www.bilibili.com/">bilibili</a> <a target="_blank" rel="noopener" href="https://space.bilibili.com/37974444">黑马程序员</a></p>
+<h2 id="2-创建基本的服务器"><a href="#2-创建基本的服务器" class="headerlink" title="2 创建基本的服务器"></a>2 创建基本的服务器</h2><pre class="highlight"><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> router = <span class="built_in">require</span>(<span class="string">&#x27;./apiRouter&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>()</span><br><span class="line">app.<span class="title function_">use</span>(express.<span class="title function_">json</span>())</span><br><span class="line">app.<span class="title function_">use</span>(express.<span class="title function_">urlencoded</span>(&#123; <span class="attr">extended</span>: <span class="literal">false</span> &#125;))</span><br><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/api&#x27;</span>, router)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">80</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;http://127.0.0.1&#x27;</span>);</span><br><span class="line">&#125;)</span><br></pre>
+
+<h2 id="3-编写接口"><a href="#3-编写接口" class="headerlink" title="3 编写接口"></a>3 编写接口</h2><p>apiRouter.js</p>
+<pre class="highlight"><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> router = express.<span class="title class_">Router</span>()</span><br><span class="line"><span class="comment">// GET 请求</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/get&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> query = req.<span class="property">query</span></span><br><span class="line">  res.<span class="title function_">send</span>(&#123;</span><br><span class="line">    <span class="attr">status</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">message</span>: <span class="string">&#x27;GET 请求成功&#x27;</span>,</span><br><span class="line">    <span class="attr">data</span>: query</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// POST 请求</span></span><br><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/post&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> body = req.<span class="property">body</span></span><br><span class="line">  res.<span class="title function_">send</span>(&#123;</span><br><span class="line">    <span class="attr">status</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">message</span>: <span class="string">&#x27;POST 请求成功&#x27;</span>,</span><br><span class="line">    <span class="attr">data</span>: body</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = router</span><br></pre>
+
+<h2 id="4-cors-资源跨域共享"><a href="#4-cors-资源跨域共享" class="headerlink" title="4 cors 资源跨域共享"></a>4 cors 资源跨域共享</h2><h3 id="4-1-接口的跨域问题"><a href="#4-1-接口的跨域问题" class="headerlink" title="4.1. 接口的跨域问题"></a>4.1. 接口的跨域问题</h3><p>解決接口跨域问题的方案主要有两种：</p>
+<ol>
+<li>CORS （主流的解决方案，推荐使用）</li>
+<li>JSONP（有缺陷的解决方案：只支持 GET 请求）</li>
+</ol>
+<h3 id="4-2-使用-cors-中间件解决跨域问题"><a href="#4-2-使用-cors-中间件解决跨域问题" class="headerlink" title="4.2 使用 cors 中间件解决跨域问题"></a>4.2 使用 cors 中间件解决跨域问题</h3><p>cors 是 Express 的一个第三方中间件。通过安装和配置 cors 中间件，可以很方便地解决跨域问题。<br>使用步骤分为如下3步：</p>
+<ol>
+<li>运行 npm install cors 安装中间件</li>
+<li>使用 const cors &#x3D; require(‘cors’) 导入中间件</li>
+<li>在路由之前调用 app.use(cors()） 配置中间件</li>
+</ol>
+<h3 id="4-3-什么是-CORS"><a href="#4-3-什么是-CORS" class="headerlink" title="4.3 什么是 CORS"></a>4.3 什么是 CORS</h3><p>CORS (Cross-Origin Resource Sharing，跨域资源共享）由一系列 HTTP 响应头组成，这些 HTTP 响应头决定浏览器是否阻止前端 JS 代码跨域获资源。<br>浏览器的同源安全策略默认会阻止网页”跨域”获取资源，但如果接口服务器配置了 CORS 相关的 HTTP 响应头，就可以解除浏览器端的跨域访问限制。</p>
+<h3 id="4-4-CORS-响应头"><a href="#4-4-CORS-响应头" class="headerlink" title="4.4 CORS 响应头"></a>4.4 CORS 响应头</h3><ol>
+<li>Access-Control-Allow-Origin: 允许访问该资源的URL<pre class="highlight"><span class="line">res.<span class="title function_">setHeader</span>(<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>, <span class="string">&#x27;http://www.baidu.com&#x27;</span>)</span><br><span class="line">res.<span class="title function_">setHeader</span>(<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>, <span class="string">&#x27;*&#x27;</span>)</span><br></pre></li>
+<li>Access-Control-Allow-Headers: 允许发送额外响应头</li>
+</ol>
+<ul>
+<li>默认情况下，CORS 仅支持客户端向服务器发送如下的9个请求头：<br>Accept, Accept-Language, Content-Language, DPR, Downlink, Save-Data, Viewport-Width, Width, Content-Type（值仅限于 text&#x2F;plain、multipart&#x2F;form-data、application&#x2F;x-www-form-urlencoded 三者之一）</li>
+<li>如果客户端向服务器发送了额外的请求头信息，则需要在服务器端，通过 Access-Control-Allow-Headers 对额外的请求头进行声明，否则这次请求会失败<pre class="highlight"><span class="line">res.<span class="title function_">setHeader</span>(<span class="string">&#x27;Access-Control-Allow-Headers&#x27;</span>, <span class="string">&#x27;Request-Id&#x27;</span>)</span><br></pre></li>
+</ul>
+<ol start="3">
+<li>Access-Control-Allow-Methods: 允许的 HTTP 方法</li>
+</ol>
+<ul>
+<li>默认情况下，CORS 仅支持客户端发起 GET POST. HEAD 请求</li>
+<li>如果客户端希望通过 PUT、 DELETE 等方式请求服务器的资源，则需要在服务器端，通过 Access-Control-Allow-Methods 来指明实际请求所允许使用的 HTTP 方法<pre class="highlight"><span class="line"><span class="comment">// 只许 POST、GET、DELETE、HEAD 请求方法</span></span><br><span class="line">res.<span class="title function_">setHeader</span>(<span class="string">&#x27;Access-Control-Allow-Methods&#x27;</span>, <span class="string">&#x27;POST, GET, DELETE, HEAD&#x27;</span>)</span><br><span class="line"><span class="comment">// 允许所有的 HTTP 请求方法</span></span><br><span class="line">res.<span class="property">setHeader</span> (<span class="string">&#x27;Access-Control-Allow-Methods&#x27;</span>, <span class="string">&#x27;*&#x27;</span>）</span><br></pre></li>
+</ul>
+<h3 id="4-5-简单请求"><a href="#4-5-简单请求" class="headerlink" title="4.5 简单请求"></a>4.5 简单请求</h3><p>同时满足以下两大条件的请求，就属于简单请求：</p>
+<ol>
+<li>请求方式： GET 、 POST 、 HEAD 三者之一</li>
+<li>HTTP 头部信息不超过以下几种字段：无自定义头部字段、Accept、Accept-Language、Content-language、DPR、Downlink、Save-Data、 Viewport-Width、 Width、Content-Type （只有三个值application&#x2F;x-www-form-urlencoded, multipart&#x2F;form-data, text&#x2F;plain)</li>
+</ol>
+<h3 id="4-6-预检请求"><a href="#4-6-预检请求" class="headerlink" title="4.6 预检请求"></a>4.6 预检请求</h3><p>只要符合以下任何一个条件的请求，都需要进行预检请求：</p>
+<ol>
+<li>请求方式为 GET 、 POST 、 HEAD 之外的请求 Method 类型</li>
+<li>请求头中包含自定义头部字段</li>
+<li>向服务器发送了 application&#x2F;json 格式的数据<br>在浏览器与服务器正式通信之前，浏览器会先发送 OPTION 请求进行预检，以获知服务器是否允许该实际请求，所以这一次的 OPTION 请求称为“预检请求”。服务器成功响应预检请求后，才会发送真正的请求，并且携带真实数据</li>
+</ol>
+<h2 id="5-jsonp-接口"><a href="#5-jsonp-接口" class="headerlink" title="5 jsonp 接口"></a>5 jsonp 接口</h2><h3 id="5-1-JSONP-的概念与特点"><a href="#5-1-JSONP-的概念与特点" class="headerlink" title="5.1 JSONP 的概念与特点"></a>5.1 JSONP 的概念与特点</h3><p>概念：浏览器端通过<code>&lt;script＞</code>标签的 src 属性，请求服务器上的数据，同时服务器返回一个函数的调用。这种请求数据的方式叫做 JSONP<br>特点：</p>
+<ol>
+<li>JSONP 不属于真正的 Ajax 请求，因为它没有便用 XMLHttpRequest 这个对象</li>
+<li>JSONP 仅支持 GET 请求，不支持 POST、PUT、DELETE 等请求</li>
+</ol>
+<h3 id="5-2-创建-JSONP-接口"><a href="#5-2-创建-JSONP-接口" class="headerlink" title="5.2 创建 JSONP 接口"></a>5.2 创建 JSONP 接口</h3><p>如果项目中己经配置了 CORS 跨域资源共享，为了防止冲突．必须在配首 CORS 中间件之前声明 ISONP 的接口。否则<br>JSONP 接四会被处理成开启了 CORS 的接口</p>
+<pre class="highlight"><span class="line"><span class="comment">// 优先创建 JSONP 接口【这个接口不会被处理成 CORS 接口】</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/api/jsonp&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;&#125;)</span><br><span class="line"><span class="comment">// 再配置 CORS 中间件【后续的所有接口，都会坡处理成 CORS 接口】</span></span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">&#x27;cors&#x27;</span>)</span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>())</span><br><span class="line"><span class="comment">// 这是一个开启了 CORS 的按口</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/api/get&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;&#125;)</span><br></pre>
+
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2023/01/03/node-interface/">
+            https://yanadh.github.io/2023/01/03/node-interface/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/01/05/node-database/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Node.js 入门 —— 数据库 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/12/28/node-middleware/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Node.js 入门 —— 中间件 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">2 创建基本的服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BC%96%E5%86%99%E6%8E%A5%E5%8F%A3"><span class="toc-text">3 编写接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-cors-%E8%B5%84%E6%BA%90%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%AB"><span class="toc-text">4 cors 资源跨域共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-text">4.1. 接口的跨域问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E4%BD%BF%E7%94%A8-cors-%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-text">4.2 使用 cors 中间件解决跨域问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E4%BB%80%E4%B9%88%E6%98%AF-CORS"><span class="toc-text">4.3 什么是 CORS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-CORS-%E5%93%8D%E5%BA%94%E5%A4%B4"><span class="toc-text">4.4 CORS 响应头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82"><span class="toc-text">4.5 简单请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-%E9%A2%84%E6%A3%80%E8%AF%B7%E6%B1%82"><span class="toc-text">4.6 预检请求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-jsonp-%E6%8E%A5%E5%8F%A3"><span class="toc-text">5 jsonp 接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-JSONP-%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E7%89%B9%E7%82%B9"><span class="toc-text">5.1 JSONP 的概念与特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%88%9B%E5%BB%BA-JSONP-%E6%8E%A5%E5%8F%A3"><span class="toc-text">5.2 创建 JSONP 接口</span></a></li></ol></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>27</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>12</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">2 创建基本的服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BC%96%E5%86%99%E6%8E%A5%E5%8F%A3"><span class="toc-text">3 编写接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-cors-%E8%B5%84%E6%BA%90%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%AB"><span class="toc-text">4 cors 资源跨域共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-text">4.1. 接口的跨域问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E4%BD%BF%E7%94%A8-cors-%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-text">4.2 使用 cors 中间件解决跨域问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E4%BB%80%E4%B9%88%E6%98%AF-CORS"><span class="toc-text">4.3 什么是 CORS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-CORS-%E5%93%8D%E5%BA%94%E5%A4%B4"><span class="toc-text">4.4 CORS 响应头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82"><span class="toc-text">4.5 简单请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-%E9%A2%84%E6%A3%80%E8%AF%B7%E6%B1%82"><span class="toc-text">4.6 预检请求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-jsonp-%E6%8E%A5%E5%8F%A3"><span class="toc-text">5 jsonp 接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-JSONP-%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E7%89%B9%E7%82%B9"><span class="toc-text">5.1 JSONP 的概念与特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%88%9B%E5%BB%BA-JSONP-%E6%8E%A5%E5%8F%A3"><span class="toc-text">5.2 创建 JSONP 接口</span></a></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">27</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">2 创建基本的服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BC%96%E5%86%99%E6%8E%A5%E5%8F%A3"><span class="toc-text">3 编写接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-cors-%E8%B5%84%E6%BA%90%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%AB"><span class="toc-text">4 cors 资源跨域共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-text">4.1. 接口的跨域问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E4%BD%BF%E7%94%A8-cors-%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-text">4.2 使用 cors 中间件解决跨域问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E4%BB%80%E4%B9%88%E6%98%AF-CORS"><span class="toc-text">4.3 什么是 CORS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-CORS-%E5%93%8D%E5%BA%94%E5%A4%B4"><span class="toc-text">4.4 CORS 响应头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82"><span class="toc-text">4.5 简单请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-%E9%A2%84%E6%A3%80%E8%AF%B7%E6%B1%82"><span class="toc-text">4.6 预检请求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-jsonp-%E6%8E%A5%E5%8F%A3"><span class="toc-text">5 jsonp 接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-JSONP-%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E7%89%B9%E7%82%B9"><span class="toc-text">5.1 JSONP 的概念与特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%88%9B%E5%BB%BA-JSONP-%E6%8E%A5%E5%8F%A3"><span class="toc-text">5.2 创建 JSONP 接口</span></a></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-11</div>
+        <a href="/2023/01/11/git-worktree/"><div class="recent-posts-item-content">git worktree 依赖隔离、多分支开发图文详解</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-05</div>
+        <a href="/2023/01/05/node-identity-authentication/"><div class="recent-posts-item-content">Node.js 入门 —— 前后端的身份认证</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-05</div>
+        <a href="/2023/01/05/node-database/"><div class="recent-posts-item-content">Node.js 入门 —— 数据库</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-01-03</div>
+        <a href="/2023/01/03/node-interface/"><div class="recent-posts-item-content">Node.js 入门 —— 使用 Express 编写接口</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>
