@@ -31,7 +31,7 @@
   <meta property="og:article:published_time" content="2023-01-11" />
   <meta
     property="og:article:modified_time"
-    content="2023-01-12"
+    content="2023-01-17"
   />
   <meta
     property="og:article:author"
@@ -249,7 +249,7 @@
     
     
       <span class="dot"></span>
-      <span>1.1k 字</span>
+      <span>991 字</span>
     
   </div>
   
@@ -295,20 +295,20 @@
 <pre class="highlight"><span class="line">git worktree add <span class="built_in">test</span></span><br></pre>
 <ul>
 <li>在当前目录下新增一个 test 文件夹</li>
-<li>test 文件夹的内容为当前分支关联远程分支的克隆文件</li>
+<li>test 文件夹的内容为当前分支的克隆文件</li>
 <li>默认新增一个 test 分支</li>
 </ul>
 <pre class="highlight"><span class="line">git worktree add ../test</span><br></pre>
 <ul>
 <li>在上一层级目录下新增一个 test 文件夹</li>
-<li>test 文件夹的内容为当前分支关联远程分支的克隆文件</li>
+<li>test 文件夹的内容为当前分支的克隆文件</li>
 <li>默认新增一个 test 分支</li>
 </ul>
 <div class="post-note note-info"><p>git worktree add 路径名 -b 新分支名</p></div>
 <pre class="highlight"><span class="line">git worktree add <span class="built_in">test</span> -b dev</span><br></pre>
 <ul>
 <li>在当前目录下新增一个 test 文件夹</li>
-<li>test 文件夹的内容为当前分支关联远程分支的克隆文件</li>
+<li>test 文件夹的内容为当前分支的克隆文件</li>
 <li>新增一个 dev 分支</li>
 </ul>
 <div class="post-note note-info"><p>git worktree add 路径名 -b 新分支名 远程分支名</p></div>
@@ -324,12 +324,8 @@
 <h3 id="2-4-清洁-worktree"><a href="#2-4-清洁-worktree" class="headerlink" title="2.4 清洁 worktree"></a>2.4 清洁 worktree</h3><pre class="highlight"><span class="line">git worktree prune</span><br></pre>
 
 <h2 id="3-图文详解"><a href="#3-图文详解" class="headerlink" title="3 图文详解"></a>3 图文详解</h2><ul>
-<li>远程仓库上有两个分支， master 分支的 package.json 记录的安装包为 eslint</li>
-<li>若在该分支对应的本地分支执行 git worktree ，则 clone 为该分支的内容<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011102.png" class="lozad post-image"src="/../images/20230111/2023011102.png"></li>
-<li>dev 分支的 package.json 记录的安装包为 eslint 和 dayjs</li>
-<li>若在该分支对应的本地分支执行 git worktree ，则 clone 为该分支的内容<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011103.png" class="lozad post-image"src="/../images/20230111/2023011103.png"></li>
 <li>vscode 打开 commitTest 文件夹，此时本地分支为 master 分支，在该分支上安装了一个 moment 包<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011104.png" class="lozad post-image"src="/../images/20230111/2023011104.png"></li>
-<li>新增一个名为 test 的 worktree<br>新生成的 test 文件夹下自动 clone 与远程 master 分支一样的内容（只有eslint，没有上一步在本地 master 分支上安装的 moment）<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011105.png" class="lozad post-image"src="/../images/20230111/2023011105.png"></li>
+<li>新增一个名为 test 的 worktree<br>新生成的 test 文件夹下自动 clone 与本地 master 分支一样的内容（有eslint，但没有上一步在本地 master 分支上安装的 moment，只会 clone 已经 commit 的内容）<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011105.png" class="lozad post-image"src="/../images/20230111/2023011105.png"></li>
 <li>为了方便比较， 重新打开一个 vscode ，打开文件夹为 test 文件夹<br>安装 axios 包，并新增一个 txt 文件，此时， test 文件夹下的 node_modules 有 axios ，但没有 moment<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011106.png" class="lozad post-image"src="/../images/20230111/2023011106.png"></li>
 <li>commitTest 文件夹下的 node_modules 只有 moment ， 没有 axios ， 依赖已隔离<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011107.png" class="lozad post-image"src="/../images/20230111/2023011107.png"></li>
 <li>可正常执行 git add 、 git commit 、 git push 等操作<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011108.png" class="lozad post-image"src="/../images/20230111/2023011108.png"></li>
@@ -343,14 +339,14 @@
 </ol>
 <ul>
 <li>执行 git worktree add 路径名，默认生成与路径名同名的新分支</li>
-<li>若本地没有同名分支，则 clone 内容为当前分支关联远程分支的克隆文件</li>
+<li>若本地没有同名分支，则 clone 内容为当前分支的克隆文件</li>
 <li>若本地有同名分支，则 clone 内容为同名分支的克隆文件</li>
 </ul>
 <p>在 master 分支上执行以下命令，新增一个名为 clone 本地分支</p>
 <pre class="highlight"><span class="line">git worktree add <span class="built_in">clone</span></span><br><span class="line">git worktree remove <span class="built_in">clone</span></span><br><span class="line">git checkout dev</span><br></pre>
 <p>在 dev 分支上执行以下命令， copy 与 clone 文件夹下的内容不同</p>
 <pre class="highlight"><span class="line">git worktree add copy</span><br><span class="line">git worktree add <span class="built_in">clone</span></span><br></pre>
-<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011121.png" class="lozad post-image"src="/../images/20230111/2023011121.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011122.png" class="lozad post-image"src="/../images/20230111/2023011122.png"></p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011111.png" class="lozad post-image"src="/../images/20230111/2023011111.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230111/2023011112.png" class="lozad post-image"src="/../images/20230111/2023011112.png"></p>
 
   </div>
   
@@ -567,9 +563,9 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Node/" 
-        title="Node">
-        <div class="tags-list-item">Node</div>
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
       </a>
     
       <a 
@@ -579,51 +575,21 @@
       </a>
     
       <a 
-        href="/tags/Element-Plus/" 
-        title="Element Plus">
-        <div class="tags-list-item">Element Plus</div>
-      </a>
-    
-      <a 
         href="/tags/Hexo/" 
         title="Hexo">
         <div class="tags-list-item">Hexo</div>
       </a>
     
       <a 
-        href="/tags/Git/" 
-        title="Git">
-        <div class="tags-list-item">Git</div>
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
       </a>
     
       <a 
-        href="/tags/Vue-Router4/" 
-        title="Vue Router4">
-        <div class="tags-list-item">Vue Router4</div>
-      </a>
-    
-      <a 
-        href="/tags/Cli/" 
-        title="Cli">
-        <div class="tags-list-item">Cli</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
-        title="微前端">
-        <div class="tags-list-item">微前端</div>
-      </a>
-    
-      <a 
-        href="/tags/qiankun/" 
-        title="qiankun">
-        <div class="tags-list-item">qiankun</div>
-      </a>
-    
-      <a 
-        href="/tags/JS/" 
-        title="JS">
-        <div class="tags-list-item">JS</div>
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
       </a>
     
       <a 
@@ -633,9 +599,39 @@
       </a>
     
       <a 
-        href="/tags/GitHub/" 
-        title="GitHub">
-        <div class="tags-list-item">GitHub</div>
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
       </a>
     
   </div>
