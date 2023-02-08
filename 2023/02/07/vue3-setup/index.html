@@ -249,7 +249,7 @@
     
     
       <span class="dot"></span>
-      <span>1.2k 字</span>
+      <span>1.3k 字</span>
     
   </div>
   
@@ -283,9 +283,10 @@
 <li><a href="#4-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85">4 依赖安装</a></li>
 <li><a href="#5-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5">5 自动导入</a></li>
 <li><a href="#6-%E8%B7%AF%E7%94%B1%E6%8B%A6%E6%88%AA">6 路由拦截</a></li>
-<li><a href="#7-axios-%E5%B0%81%E8%A3%85">7 axios 封装</a></li>
-<li><a href="#8-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE">8 启动及生产打包配置</a></li>
-<li><a href="#9-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA">9 极速搭建</a></li>
+<li><a href="#7-%E6%96%B0%E5%A2%9E%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">7 新增环境变量配置文件</a></li>
+<li><a href="#8-axios-%E5%B0%81%E8%A3%85">8 axios 封装</a></li>
+<li><a href="#9-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE">9 启动及生产打包配置</a></li>
+<li><a href="#10-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA">10 极速搭建</a></li>
 </ul>
 <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>本文使用 Vue3 + Vite + Element Plus + Vue Router + Pinia + Typescript 搭建项目</p>
 <h2 id="2-项目初始化"><a href="#2-项目初始化" class="headerlink" title="2 项目初始化"></a>2 项目初始化</h2><pre class="highlight"><span class="line">npm init vue@latest</span><br></pre>
@@ -299,10 +300,13 @@
 <li>将 .prettierrc.json 修改文件类型为 .prettierrc.js ，并将文件内容替换为：<pre class="highlight"><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">singleQuote</span>: <span class="literal">true</span>, <span class="comment">// 使用单引号</span></span><br><span class="line">  <span class="attr">semi</span>: <span class="literal">false</span>, <span class="comment">// 行尾不需要有分号</span></span><br><span class="line">  <span class="attr">trailingComma</span>: <span class="string">&#x27;none&#x27;</span>, <span class="comment">// 行尾不需要有逗号</span></span><br><span class="line">  <span class="attr">endOfLine</span>: <span class="string">&#x27;auto&#x27;</span>, <span class="comment">// 换行符使用 lf</span></span><br><span class="line">  <span class="attr">printWidth</span>: <span class="number">100</span> <span class="comment">// 一行最多 100 字符</span></span><br><span class="line">&#125;</span><br></pre></li>
 <li>.eslintrc.cjs 添加 rules ，解决 eslint 和 prettier 冲突<pre class="highlight"><span class="line"><span class="attr">rules</span>: &#123;</span><br><span class="line">  <span class="string">&#x27;prettier/prettier&#x27;</span>: [</span><br><span class="line">    <span class="string">&#x27;warn&#x27;</span>,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">singleQuote</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">trailingComma</span>: <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></li>
 </ul>
-<h2 id="4-依赖安装"><a href="#4-依赖安装" class="headerlink" title="4 依赖安装"></a>4 依赖安装</h2><h3 id="4-1-功能相关依赖"><a href="#4-1-功能相关依赖" class="headerlink" title="4.1 功能相关依赖"></a>4.1 功能相关依赖</h3><pre class="highlight"><span class="line">pnpm i element-plus axios</span><br></pre>
-
-<h3 id="4-1-自动导入相关依赖"><a href="#4-1-自动导入相关依赖" class="headerlink" title="4.1 自动导入相关依赖"></a>4.1 自动导入相关依赖</h3><pre class="highlight"><span class="line">pnpm i unplugin-auto-import unplugin-vue-components unplugin-icons -D</span><br></pre>
-
+<h2 id="4-依赖安装"><a href="#4-依赖安装" class="headerlink" title="4 依赖安装"></a>4 依赖安装</h2><ul>
+<li><p>功能相关依赖</p>
+<pre class="highlight"><span class="line">pnpm i element-plus axios</span><br></pre>
+</li>
+<li><p>自动导入相关依赖</p>
+<pre class="highlight"><span class="line">pnpm i unplugin-auto-import unplugin-vue-components unplugin-icons -D</span><br></pre></li>
+</ul>
 <h2 id="5-自动导入"><a href="#5-自动导入" class="headerlink" title="5 自动导入"></a>5 自动导入</h2><ul>
 <li>自动导入 vue 、 vue-router 、 element plus 组件及 API ，后续开发不需要再手动导入 ref 、 useRouter 等</li>
 <li>Element Plus 自动导入详见 <a href="./element-plus-auto-import.md">Vue3 + Element Plus 按需引入 - 自动导入</a></li>
@@ -315,15 +319,22 @@
 <h2 id="6-路由拦截"><a href="#6-路由拦截" class="headerlink" title="6 路由拦截"></a>6 路由拦截</h2><p>router&#x2F;index.ts 文件添加以下内容：</p>
 <pre class="highlight"><span class="line"><span class="comment">// 路由拦截</span></span><br><span class="line">router.<span class="title function_">beforeEach</span>(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">token</span>: <span class="built_in">string</span> | <span class="literal">null</span> = <span class="title function_">getUser</span>(<span class="string">&#x27;token&#x27;</span>)</span><br><span class="line">  <span class="comment">// 已经登录过请求 login 界面会直接回到首页</span></span><br><span class="line">  <span class="keyword">if</span> (token) &#123;</span><br><span class="line">    to.<span class="property">path</span> === <span class="string">&#x27;/login&#x27;</span> ? <span class="title function_">next</span>(<span class="string">&#x27;/&#x27;</span>) : <span class="title function_">next</span>()</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 请求需要权限的界面，会转到 login 界面</span></span><br><span class="line">  <span class="keyword">if</span> (to.<span class="property">meta</span>.<span class="property">requireAuth</span>) &#123;</span><br><span class="line">    <span class="title function_">next</span>(&#123;</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;/login&#x27;</span>,</span><br><span class="line">      <span class="attr">replace</span>: <span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">next</span>()</span><br><span class="line">&#125;)</span><br></pre>
 
-<h2 id="7-axios-封装"><a href="#7-axios-封装" class="headerlink" title="7 axios 封装"></a>7 axios 封装</h2><p>新增 utils&#x2F;http&#x2F;index.ts 文件</p>
+<h2 id="7-新增环境变量配置文件"><a href="#7-新增环境变量配置文件" class="headerlink" title="7 新增环境变量配置文件"></a>7 新增环境变量配置文件</h2><ul>
+<li><p>根目录下新增 .env.development 文件</p>
+<pre class="highlight"><span class="line"># 开发环境</span><br><span class="line"></span><br><span class="line"># 配置文件路径</span><br><span class="line"><span class="variable constant_">VITE_PUBLIC_PATH</span> = /</span><br><span class="line"></span><br><span class="line"># 接口代理</span><br><span class="line"><span class="variable constant_">VITE_PROXY_DOMAIN</span> = /api</span><br><span class="line"></span><br><span class="line"># 后端地址</span><br><span class="line"><span class="variable constant_">VITE_PROXY_DOMAIN_REAL</span> = <span class="attr">http</span>:<span class="comment">//192.168.60.66:8000</span></span><br></pre>
+</li>
+<li><p>根目录下新增 .env.production 文件</p>
+<pre class="highlight"><span class="line"># 生产环境</span><br><span class="line"></span><br><span class="line"># 项目打包路径</span><br><span class="line"><span class="variable constant_">VITE_PUBLIC_PATH</span> = ./</span><br><span class="line"></span><br><span class="line"># 后端地址</span><br><span class="line"><span class="variable constant_">VITE_PROXY_DOMAIN_REAL</span> = /api</span><br></pre></li>
+</ul>
+<h2 id="8-axios-封装"><a href="#8-axios-封装" class="headerlink" title="8 axios 封装"></a>8 axios 封装</h2><p>新增 utils&#x2F;http&#x2F;index.ts 文件</p>
 <pre class="highlight"><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">&#x27;axios&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123; <span class="title class_">AxiosError</span>, <span class="title class_">AxiosResponse</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;axios&#x27;</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">&#x27;@/router&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">ElMessage</span>, <span class="title class_">ElMessageBox</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;element-plus&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Msgs</span> &#123;</span><br><span class="line">  <span class="string">&#x27;操作成功&#x27;</span> = <span class="number">200</span>,</span><br><span class="line">  <span class="string">&#x27;无权操作&#x27;</span> = <span class="number">401</span>,</span><br><span class="line">  <span class="string">&#x27;系统内部错误&#x27;</span> = <span class="number">500</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 避免多个接口401弹出多个弹框</span></span><br><span class="line"><span class="keyword">let</span> isRefreshing = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123; <span class="variable constant_">DEV</span>, <span class="variable constant_">VITE_PROXY_DOMAIN</span>, <span class="variable constant_">VITE_PROXY_DOMAIN_REAL</span> &#125; = <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span></span><br><span class="line"><span class="comment">// 创建http实例</span></span><br><span class="line"><span class="keyword">const</span> instance = axios.<span class="title function_">create</span>(&#123;</span><br><span class="line">  <span class="attr">baseURL</span>: <span class="variable constant_">DEV</span> ? <span class="variable constant_">VITE_PROXY_DOMAIN</span> : <span class="variable constant_">VITE_PROXY_DOMAIN_REAL</span>,</span><br><span class="line">  <span class="attr">timeout</span>: <span class="number">2000</span>,</span><br><span class="line">  <span class="attr">headers</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json;charset=UTF-8&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加请求拦截器</span></span><br><span class="line">instance.<span class="property">interceptors</span>.<span class="property">request</span>.<span class="title function_">use</span>(<span class="function">(<span class="params">config</span>) =&gt;</span> &#123;</span><br><span class="line">  config.<span class="property">headers</span> = config.<span class="property">headers</span> || &#123;&#125;</span><br><span class="line">  <span class="comment">// const token = getToken()</span></span><br><span class="line">  <span class="comment">// if (token) &#123;</span></span><br><span class="line">  <span class="comment">//   config.headers[&#x27;User-Token&#x27;] = token</span></span><br><span class="line">  <span class="comment">// &#125;</span></span><br><span class="line">  <span class="keyword">return</span> config</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加响应拦截器</span></span><br><span class="line">instance.<span class="property">interceptors</span>.<span class="property">response</span>.<span class="title function_">use</span>(</span><br><span class="line">  <span class="function">(<span class="params">res: AxiosResponse</span>) =&gt;</span> res,</span><br><span class="line">  <span class="function">(<span class="params">err: AxiosError</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; response &#125; = err</span><br><span class="line">    <span class="keyword">if</span> (!response) <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">reject</span>(err)</span><br><span class="line">    <span class="keyword">const</span> errCodes = [<span class="number">401</span>, <span class="number">403</span>, <span class="number">500</span>]</span><br><span class="line">    <span class="keyword">const</span> code = response.<span class="property">status</span></span><br><span class="line">    <span class="keyword">if</span> (errCodes.<span class="title function_">includes</span>(response.<span class="property">status</span>)) &#123;</span><br><span class="line">      <span class="comment">// removeUserInfo()</span></span><br><span class="line">      <span class="title class_">ElMessageBox</span>(&#123;</span><br><span class="line">        <span class="attr">message</span>: <span class="title class_">Msgs</span>[code],</span><br><span class="line">        <span class="attr">title</span>: <span class="string">&#x27;提示&#x27;</span></span><br><span class="line">      &#125;)</span><br><span class="line">        .<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">          router.<span class="title function_">push</span>(<span class="string">&#x27;Login&#x27;</span>)</span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_">finally</span>(<span class="function">() =&gt;</span> (isRefreshing = <span class="literal">false</span>))</span><br><span class="line">      <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">reject</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title class_">ElMessage</span>(<span class="title class_">Msgs</span>[code] || <span class="string">&#x27;请求失败&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">reject</span>(err)</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> http = &#123;</span><br><span class="line">  <span class="attr">get</span>: <span class="function">(<span class="params">url = <span class="string">&#x27;&#x27;</span>, params = &#123;&#125;</span>) =&gt;</span> instance.<span class="title function_">get</span>(url, &#123; params &#125;),</span><br><span class="line">  <span class="attr">post</span>: <span class="function">(<span class="params">url = <span class="string">&#x27;&#x27;</span>, data = &#123;&#125;, config = &#123;&#125;</span>) =&gt;</span> instance.<span class="title function_">post</span>(url, data, config),</span><br><span class="line">  <span class="attr">put</span>: <span class="function">(<span class="params">url = <span class="string">&#x27;&#x27;</span>, data = &#123;&#125;</span>) =&gt;</span> instance.<span class="title function_">put</span>(url, data),</span><br><span class="line">  <span class="attr">delete</span>: <span class="function">(<span class="params">url = <span class="string">&#x27;&#x27;</span>, data = &#123;&#125;</span>) =&gt;</span> instance.<span class="title function_">delete</span>(url, data),</span><br><span class="line">  <span class="attr">patch</span>: <span class="function">(<span class="params">url = <span class="string">&#x27;&#x27;</span>, data = &#123;&#125;</span>) =&gt;</span> instance.<span class="title function_">patch</span>(url, data)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> http</span><br></pre>
 <p>使用：</p>
 <pre class="highlight"><span class="line"><span class="keyword">import</span> http <span class="keyword">from</span> <span class="string">&#x27;@/utils/http&#x27;</span></span><br><span class="line"></span><br><span class="line">http.<span class="title function_">get</span>(<span class="string">&#x27;user&#x27;</span>).<span class="title function_">then</span>(<span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(res)</span><br><span class="line">&#125;)</span><br></pre>
 
-<h2 id="8-启动及生产打包配置"><a href="#8-启动及生产打包配置" class="headerlink" title="8 启动及生产打包配置"></a>8 启动及生产打包配置</h2><p>vite.config.ts</p>
+<h2 id="9-启动及生产打包配置"><a href="#9-启动及生产打包配置" class="headerlink" title="9 启动及生产打包配置"></a>9 启动及生产打包配置</h2><p>修改 vite.config.ts 文件</p>
 <pre class="highlight"><span class="line"><span class="keyword">import</span> &#123; fileURLToPath, <span class="variable constant_">URL</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;node:url&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; loadEnv, <span class="title class_">ConfigEnv</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&#x27;@vitejs/plugin-vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">AutoImport</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-auto-import/vite&#x27;</span> <span class="comment">// 自动导入</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Components</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/vite&#x27;</span> <span class="comment">// 组件注册</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">ElementPlusResolver</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/resolvers&#x27;</span> <span class="comment">// elementPlus</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Icons</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-icons/vite&#x27;</span> <span class="comment">// icon相关</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">IconsResolver</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-icons/resolver&#x27;</span> <span class="comment">// icon相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (&#123; mode &#125;: <span class="title class_">ConfigEnv</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; <span class="variable constant_">VITE_PUBLIC_PATH</span>, <span class="variable constant_">VITE_PROXY_DOMAIN</span>, <span class="variable constant_">VITE_PROXY_DOMAIN_REAL</span> &#125; = <span class="title function_">loadEnv</span>(</span><br><span class="line">    mode,</span><br><span class="line">    process.<span class="title function_">cwd</span>()</span><br><span class="line">  )</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">base</span>: <span class="variable constant_">VITE_PUBLIC_PATH</span>, <span class="comment">//打包路径</span></span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">      <span class="title function_">vue</span>(),</span><br><span class="line">      <span class="title class_">AutoImport</span>(&#123;</span><br><span class="line">        <span class="attr">imports</span>: [<span class="string">&#x27;vue&#x27;</span>, <span class="string">&#x27;vue-router&#x27;</span>],</span><br><span class="line">        <span class="attr">dts</span>: <span class="title function_">fileURLToPath</span>(<span class="keyword">new</span> <span class="title function_">URL</span>(<span class="string">&#x27;./types/auto-imports.d.ts&#x27;</span>, <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">url</span>)),</span><br><span class="line">        <span class="attr">resolvers</span>: [</span><br><span class="line">          <span class="title class_">ElementPlusResolver</span>(),</span><br><span class="line">          <span class="comment">// 自动导入图标组件</span></span><br><span class="line">          <span class="title class_">IconsResolver</span>(&#123;</span><br><span class="line">            <span class="attr">prefix</span>: <span class="string">&#x27;Icon&#x27;</span></span><br><span class="line">          &#125;)</span><br><span class="line">        ]</span><br><span class="line">      &#125;),</span><br><span class="line">      <span class="title class_">Components</span>(&#123;</span><br><span class="line">        <span class="attr">dirs</span>: [<span class="string">&#x27;src/views&#x27;</span>, <span class="string">&#x27;src/layout&#x27;</span>, <span class="string">&#x27;src/components&#x27;</span>],</span><br><span class="line">        <span class="attr">dts</span>: <span class="title function_">fileURLToPath</span>(<span class="keyword">new</span> <span class="title function_">URL</span>(<span class="string">&#x27;./types/components.d.ts&#x27;</span>, <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">url</span>)),</span><br><span class="line">        <span class="attr">resolvers</span>: [</span><br><span class="line">          <span class="title class_">ElementPlusResolver</span>(),</span><br><span class="line">          <span class="title class_">IconsResolver</span>(&#123;</span><br><span class="line">            <span class="attr">enabledCollections</span>: [<span class="string">&#x27;ep&#x27;</span>] <span class="comment">// 重点</span></span><br><span class="line">          &#125;)</span><br><span class="line">        ]</span><br><span class="line">      &#125;),</span><br><span class="line">      <span class="title class_">Icons</span>(&#123;</span><br><span class="line">        <span class="attr">autoInstall</span>: <span class="literal">true</span></span><br><span class="line">      &#125;)</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">resolve</span>: &#123;</span><br><span class="line">      <span class="attr">alias</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;@&#x27;</span>: <span class="title function_">fileURLToPath</span>(<span class="keyword">new</span> <span class="title function_">URL</span>(<span class="string">&#x27;./src&#x27;</span>, <span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">url</span>))</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 启动服务配置</span></span><br><span class="line">    <span class="attr">server</span>: &#123;</span><br><span class="line">      <span class="attr">host</span>: <span class="string">&#x27;0.0.0.0&#x27;</span>,</span><br><span class="line">      <span class="attr">port</span>: <span class="number">8000</span>,</span><br><span class="line">      <span class="attr">open</span>: <span class="literal">false</span>,</span><br><span class="line">      <span class="attr">https</span>: <span class="literal">false</span>,</span><br><span class="line">      <span class="attr">proxy</span>: &#123;</span><br><span class="line">        [<span class="variable constant_">VITE_PROXY_DOMAIN</span>]: &#123;</span><br><span class="line">          <span class="attr">target</span>: <span class="variable constant_">VITE_PROXY_DOMAIN_REAL</span>,</span><br><span class="line">          <span class="attr">changeOrigin</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">rewrite</span>: <span class="function">(<span class="params">path: <span class="built_in">string</span></span>) =&gt;</span> path.<span class="title function_">replace</span>(<span class="regexp">/^\/api/</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 生产环境打包配置</span></span><br><span class="line">    <span class="attr">build</span>: &#123;</span><br><span class="line">      <span class="attr">minify</span>: <span class="string">&#x27;terser&#x27;</span>,</span><br><span class="line">      <span class="attr">terserOptions</span>: &#123;</span><br><span class="line">        <span class="attr">compress</span>: &#123;</span><br><span class="line">          <span class="attr">drop_console</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">drop_debugger</span>: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">rollupOptions</span>: &#123;</span><br><span class="line">        <span class="attr">output</span>: &#123;</span><br><span class="line">          <span class="attr">chunkFileNames</span>: <span class="string">&#x27;js/[name]-[hash].js&#x27;</span>,</span><br><span class="line">          <span class="attr">entryFileNames</span>: <span class="string">&#x27;js/[name]-[hash].js&#x27;</span>,</span><br><span class="line">          <span class="title function_">manualChunks</span>(<span class="params">id: <span class="built_in">string</span> | <span class="built_in">string</span>[]</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (id.<span class="title function_">includes</span>(<span class="string">&#x27;node_modules&#x27;</span>)) &#123;</span><br><span class="line">              <span class="keyword">const</span> arr = id.<span class="title function_">toString</span>().<span class="title function_">split</span>(<span class="string">&#x27;node_modules/&#x27;</span>)</span><br><span class="line">              <span class="keyword">return</span> arr[arr.<span class="property">length</span> - <span class="number">1</span>].<span class="title function_">split</span>(<span class="string">&#x27;/&#x27;</span>)[<span class="number">0</span>].<span class="title function_">toString</span>()</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre>
 
-<h2 id="9-极速搭建"><a href="#9-极速搭建" class="headerlink" title="9 极速搭建"></a>9 极速搭建</h2><p>使用 yana-cli 脚手架，该脚手架提供了 vue3 模板，已搭建好以上所有内容</p>
+<h2 id="10-极速搭建"><a href="#10-极速搭建" class="headerlink" title="10 极速搭建"></a>10 极速搭建</h2><p>使用 yana-cli 脚手架，该脚手架提供了 vue3 模板，已搭建好以上所有内容</p>
 <pre class="highlight"><span class="line">npm i yana-cli</span><br><span class="line">yana-cli create</span><br></pre>
 
   </div>
@@ -446,7 +457,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">2 项目初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E5%A4%84%E7%90%86"><span class="toc-text">3 代码风格处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="toc-text">4 依赖安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%8A%9F%E8%83%BD%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1 功能相关依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1 自动导入相关依赖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5"><span class="toc-text">5 自动导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B7%AF%E7%94%B1%E6%8B%A6%E6%88%AA"><span class="toc-text">6 路由拦截</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-axios-%E5%B0%81%E8%A3%85"><span class="toc-text">7 axios 封装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE"><span class="toc-text">8 启动及生产打包配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA"><span class="toc-text">9 极速搭建</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">2 项目初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E5%A4%84%E7%90%86"><span class="toc-text">3 代码风格处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="toc-text">4 依赖安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5"><span class="toc-text">5 自动导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B7%AF%E7%94%B1%E6%8B%A6%E6%88%AA"><span class="toc-text">6 路由拦截</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%96%B0%E5%A2%9E%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">7 新增环境变量配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-axios-%E5%B0%81%E8%A3%85"><span class="toc-text">8 axios 封装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE"><span class="toc-text">9 启动及生产打包配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA"><span class="toc-text">10 极速搭建</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -504,7 +515,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">2 项目初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E5%A4%84%E7%90%86"><span class="toc-text">3 代码风格处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="toc-text">4 依赖安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%8A%9F%E8%83%BD%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1 功能相关依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1 自动导入相关依赖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5"><span class="toc-text">5 自动导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B7%AF%E7%94%B1%E6%8B%A6%E6%88%AA"><span class="toc-text">6 路由拦截</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-axios-%E5%B0%81%E8%A3%85"><span class="toc-text">7 axios 封装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE"><span class="toc-text">8 启动及生产打包配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA"><span class="toc-text">9 极速搭建</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">2 项目初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E5%A4%84%E7%90%86"><span class="toc-text">3 代码风格处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="toc-text">4 依赖安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5"><span class="toc-text">5 自动导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B7%AF%E7%94%B1%E6%8B%A6%E6%88%AA"><span class="toc-text">6 路由拦截</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%96%B0%E5%A2%9E%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">7 新增环境变量配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-axios-%E5%B0%81%E8%A3%85"><span class="toc-text">8 axios 封装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE"><span class="toc-text">9 启动及生产打包配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA"><span class="toc-text">10 极速搭建</span></a></li></ol>
       </div>
     </article>
   
@@ -541,9 +552,9 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Element-Plus/" 
-        title="Element Plus">
-        <div class="tags-list-item">Element Plus</div>
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
       </a>
     
       <a 
@@ -553,51 +564,21 @@
       </a>
     
       <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
         href="/tags/Hexo/" 
         title="Hexo">
         <div class="tags-list-item">Hexo</div>
       </a>
     
       <a 
-        href="/tags/GitHub/" 
-        title="GitHub">
-        <div class="tags-list-item">GitHub</div>
-      </a>
-    
-      <a 
-        href="/tags/Node/" 
-        title="Node">
-        <div class="tags-list-item">Node</div>
-      </a>
-    
-      <a 
-        href="/tags/Pinia/" 
-        title="Pinia">
-        <div class="tags-list-item">Pinia</div>
-      </a>
-    
-      <a 
-        href="/tags/JS/" 
-        title="JS">
-        <div class="tags-list-item">JS</div>
-      </a>
-    
-      <a 
-        href="/tags/qiankun/" 
-        title="qiankun">
-        <div class="tags-list-item">qiankun</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
-        title="微前端">
-        <div class="tags-list-item">微前端</div>
-      </a>
-    
-      <a 
-        href="/tags/Cli/" 
-        title="Cli">
-        <div class="tags-list-item">Cli</div>
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
       </a>
     
       <a 
@@ -607,9 +588,39 @@
       </a>
     
       <a 
-        href="/tags/Git/" 
-        title="Git">
-        <div class="tags-list-item">Git</div>
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
       </a>
     
   </div>
@@ -630,7 +641,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">2 项目初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E5%A4%84%E7%90%86"><span class="toc-text">3 代码风格处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="toc-text">4 依赖安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%8A%9F%E8%83%BD%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1 功能相关依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1 自动导入相关依赖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5"><span class="toc-text">5 自动导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B7%AF%E7%94%B1%E6%8B%A6%E6%88%AA"><span class="toc-text">6 路由拦截</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-axios-%E5%B0%81%E8%A3%85"><span class="toc-text">7 axios 封装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE"><span class="toc-text">8 启动及生产打包配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA"><span class="toc-text">9 极速搭建</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">2 项目初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E5%A4%84%E7%90%86"><span class="toc-text">3 代码风格处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="toc-text">4 依赖安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%85%A5"><span class="toc-text">5 自动导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B7%AF%E7%94%B1%E6%8B%A6%E6%88%AA"><span class="toc-text">6 路由拦截</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%96%B0%E5%A2%9E%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">7 新增环境变量配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-axios-%E5%B0%81%E8%A3%85"><span class="toc-text">8 axios 封装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%90%AF%E5%8A%A8%E5%8F%8A%E7%94%9F%E4%BA%A7%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE"><span class="toc-text">9 启动及生产打包配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E6%9E%81%E9%80%9F%E6%90%AD%E5%BB%BA"><span class="toc-text">10 极速搭建</span></a></li></ol>
     </article>
   
   
