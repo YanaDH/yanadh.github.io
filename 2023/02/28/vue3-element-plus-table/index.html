@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>Vue3 + Element Plus 封装公共表格组件（带源码）</title>
+   
+  <meta
+    property="og:title"
+    content="Vue3 + Element Plus 封装公共表格组件（带源码）"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2023/02/28/vue3-element-plus-table/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2023-02-28" />
+  <meta
+    property="og:article:modified_time"
+    content="2023-05-06"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+   
+  <meta property="og:article:tag" content="Element Plus" />
+  
+  <meta property="og:article:tag" content="Vue3" />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Vue3 + Element Plus 封装公共表格组件（带源码）
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-02-28T05:43:42.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-02-28</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3.8k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Element-Plus/" 
+            class="post-meta-link">
+            Element Plus
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/Vue3/" 
+            class="post-meta-link">
+            Vue3
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E5%8A%9F%E8%83%BD">2 功能</a></li>
+<li><a href="#3-%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4">3 实现步骤</a></li>
+<li><a href="#4-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">4 使用方法</a></li>
+<li><a href="#5-%E6%BA%90%E7%A0%81">5 源码</a></li>
+</ul>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>由于项目中有很多菜单都是列表数据的展示，为避免太多重复代码，故将 Element Plus 的 Table 表格进行封装，实现通过配置展示列表数据</p>
+<h2 id="2-功能"><a href="#2-功能" class="headerlink" title="2 功能"></a>2 功能</h2><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230228/2023022801.png" class="lozad post-image"src="/../images/20230228/2023022801.png"></p>
+<ol>
+<li>支持自动获取表格数据</li>
+<li>支持数据列配置及插槽</li>
+<li>支持操作列配置及插槽</li>
+<li>支持多选框配置</li>
+<li>支持表尾配置及插槽</li>
+<li>支持分页显示</li>
+</ol>
+<h2 id="3-实现步骤"><a href="#3-实现步骤" class="headerlink" title="3 实现步骤"></a>3 实现步骤</h2><h3 id="3-1-复制基本表格"><a href="#3-1-复制基本表格" class="headerlink" title="3.1 复制基本表格"></a>3.1 复制基本表格</h3><blockquote>
+<p>到 <a target="_blank" rel="noopener" href="https://element-plus.gitee.io/zh-CN/component/table.html#%E5%9B%BA%E5%AE%9A%E5%88%97">Element Plus</a>官网复制一份最简单的 Table 代码，并删除多余代码</p>
+</blockquote>
+<pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;el-table :data=&quot;tableData&quot;&gt;</span><br><span class="line">    &lt;el-table-column prop=&quot;date&quot; label=&quot;Date&quot; /&gt;</span><br><span class="line">    &lt;el-table-column prop=&quot;name&quot; label=&quot;Name&quot; /&gt;</span><br><span class="line">    &lt;el-table-column prop=&quot;state&quot; label=&quot;State&quot; /&gt;</span><br><span class="line">    &lt;el-table-column prop=&quot;city&quot; label=&quot;City&quot; /&gt;</span><br><span class="line">    &lt;el-table-column prop=&quot;address&quot; label=&quot;Address&quot; /&gt;</span><br><span class="line">    &lt;el-table-column prop=&quot;zip&quot; label=&quot;Zip&quot; /&gt;</span><br><span class="line">    &lt;el-table-column fixed=&quot;right&quot; label=&quot;Operations&quot;&gt;</span><br><span class="line">      &lt;template #default&gt;</span><br><span class="line">        &lt;el-button link type=&quot;primary&quot; size=&quot;small&quot; @click=&quot;handleClick&quot;&gt;Detail&lt;/el-button&gt;</span><br><span class="line">      &lt;/template&gt;</span><br><span class="line">    &lt;/el-table-column&gt;</span><br><span class="line">  &lt;/el-table&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script lang=&quot;ts&quot; setup&gt;</span><br><span class="line">const tableData = [</span><br><span class="line">  &#123;</span><br><span class="line">    date: &#x27;2016-05-03&#x27;,</span><br><span class="line">    name: &#x27;Tom&#x27;,</span><br><span class="line">    state: &#x27;California&#x27;,</span><br><span class="line">    city: &#x27;Los Angeles&#x27;,</span><br><span class="line">    address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">    zip: &#x27;CA 90036&#x27;,</span><br><span class="line">    tag: &#x27;Home&#x27;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    date: &#x27;2016-05-02&#x27;,</span><br><span class="line">    name: &#x27;Tom&#x27;,</span><br><span class="line">    state: &#x27;California&#x27;,</span><br><span class="line">    city: &#x27;Los Angeles&#x27;,</span><br><span class="line">    address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">    zip: &#x27;CA 90036&#x27;,</span><br><span class="line">    tag: &#x27;Office&#x27;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    date: &#x27;2016-05-04&#x27;,</span><br><span class="line">    name: &#x27;Tom&#x27;,</span><br><span class="line">    state: &#x27;California&#x27;,</span><br><span class="line">    city: &#x27;Los Angeles&#x27;,</span><br><span class="line">    address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">    zip: &#x27;CA 90036&#x27;,</span><br><span class="line">    tag: &#x27;Home&#x27;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    date: &#x27;2016-05-01&#x27;,</span><br><span class="line">    name: &#x27;Tom&#x27;,</span><br><span class="line">    state: &#x27;California&#x27;,</span><br><span class="line">    city: &#x27;Los Angeles&#x27;,</span><br><span class="line">    address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">    zip: &#x27;CA 90036&#x27;,</span><br><span class="line">    tag: &#x27;Office&#x27;</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">const handleClick = () =&gt; &#123;</span><br><span class="line">  console.log(&#x27;click&#x27;)</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre>
+
+<h3 id="3-2-支持自动获取表格数据"><a href="#3-2-支持自动获取表格数据" class="headerlink" title="3.2 支持自动获取表格数据"></a>3.2 支持自动获取表格数据</h3><blockquote>
+<p>tableData 数据改为从 props.api 接口获取</p>
+</blockquote>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230228/2023022802.png" class="lozad post-image"src="/../images/20230228/2023022802.png"></p>
+<h3 id="3-3-支持数据列配置及插槽"><a href="#3-3-支持数据列配置及插槽" class="headerlink" title="3.3 支持数据列配置及插槽"></a>3.3 支持数据列配置及插槽</h3><h4 id="3-3-1-自动生成列"><a href="#3-3-1-自动生成列" class="headerlink" title="3.3.1 自动生成列"></a>3.3.1 自动生成列</h4><blockquote>
+<p>数据列（除多选框与操作列外）通过 props.columns 自动生成</p>
+</blockquote>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230228/2023022803.png" class="lozad post-image"src="/../images/20230228/2023022803.png"></p>
+<pre class="highlight"><span class="line">&lt;el-table-column</span><br><span class="line">  v-for=&quot;item in props.columns&quot;</span><br><span class="line">  :key=&quot;item.prop&quot;</span><br><span class="line">  :prop=&quot;item.prop&quot;</span><br><span class="line">  :label=&quot;item.label&quot;</span><br><span class="line">  :sortable=&quot;item.sortable ? &#x27;custom&#x27; : false&quot;</span><br><span class="line">  :width=&quot;item.width&quot;</span><br><span class="line">&gt;</span><br><span class="line">&lt;/el-table-column&gt;</span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">interface</span> <span class="title class_">TableConfigInterface</span> &#123;</span><br><span class="line">  <span class="attr">api</span>: <span class="built_in">string</span> <span class="comment">// 表格数据获取接口</span></span><br><span class="line">  <span class="attr">columns</span>: &#123;</span><br><span class="line">    <span class="comment">// 显示列</span></span><br><span class="line">    <span class="attr">prop</span>: <span class="built_in">string</span> <span class="comment">// 键名</span></span><br><span class="line">    label?: <span class="built_in">string</span> <span class="comment">// 表头显示名称</span></span><br><span class="line">    formatter?: <span class="function">(<span class="params">row: <span class="built_in">unknown</span></span>) =&gt;</span> <span class="built_in">string</span> <span class="comment">// 自定义单元格格式化方法，参数为当前行数据</span></span><br><span class="line">    tooltip?: <span class="built_in">string</span> <span class="comment">// 表头 tooltip</span></span><br><span class="line">    sortable?: <span class="built_in">boolean</span> <span class="comment">// 是否可以排序</span></span><br><span class="line">    width?: <span class="built_in">number</span> | <span class="built_in">string</span> <span class="comment">// 宽度</span></span><br><span class="line">    style?: <span class="built_in">string</span> <span class="comment">// 单元格样式</span></span><br><span class="line">    labelStyle?: <span class="built_in">string</span> <span class="comment">// 表头样式</span></span><br><span class="line">  &#125;[]</span><br><span class="line">&#125;</span><br></pre>
+
+<h4 id="3-2-2-支持表头自定义及插槽"><a href="#3-2-2-支持表头自定义及插槽" class="headerlink" title="3.2.2 支持表头自定义及插槽"></a>3.2.2 支持表头自定义及插槽</h4><blockquote>
+<ul>
+<li>el-table-column 使用 <code>&lt;template #header&gt;</code> 自定义表头</li>
+<li><code>&lt;slot :name=&quot;item.prop + &#39;Header&#39;&quot;&gt;</code> 支持插槽</li>
+<li>labelStyle 支持样式自定义</li>
+<li>支持 tooltip</li>
+</ul>
+</blockquote>
+<pre class="highlight"><span class="line">&lt;el-table-column</span><br><span class="line">  v-for=&quot;item in props.columns&quot;</span><br><span class="line">  :key=&quot;item.prop&quot;</span><br><span class="line">  :prop=&quot;item.prop&quot;</span><br><span class="line">  :label=&quot;item.label&quot;</span><br><span class="line">  :sortable=&quot;item.sortable ? &#x27;custom&#x27; : false&quot;</span><br><span class="line">  :width=&quot;item.width&quot;</span><br><span class="line">&gt;</span><br><span class="line">  &lt;template #header&gt;</span><br><span class="line">    &lt;slot :name=&quot;item.prop + &#x27;Header&#x27;&quot;&gt;</span><br><span class="line">      &lt;div class=&quot;inline-flex&quot; :style=&quot;item.labelStyle&quot;&gt;</span><br><span class="line">        &lt;span&gt;&#123;&#123; item.label &#125;&#125;&lt;/span&gt;</span><br><span class="line">        &lt;el-tooltip</span><br><span class="line">          popper-class=&quot;table-tooltip&quot;</span><br><span class="line">          effect=&quot;dark&quot;</span><br><span class="line">          placement=&quot;top-start&quot;</span><br><span class="line">          :content=&quot;item.tooltip&quot;</span><br><span class="line">          v-if=&quot;item.tooltip&quot;</span><br><span class="line">        &gt;</span><br><span class="line">          &lt;el-icon&gt;&lt;i-ep-Warning /&gt;&lt;/el-icon&gt;</span><br><span class="line">        &lt;/el-tooltip&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    &lt;/slot&gt;</span><br><span class="line">  &lt;/template&gt;</span><br><span class="line">&lt;/el-table-column&gt;</span><br></pre>
+
+<h4 id="3-2-3-支持单元格自定义及插槽"><a href="#3-2-3-支持单元格自定义及插槽" class="headerlink" title="3.2.3 支持单元格自定义及插槽"></a>3.2.3 支持单元格自定义及插槽</h4><blockquote>
+<ul>
+<li>el-table-column 使用 <code>&lt;template #default=&quot;scope&quot;&gt;</code> 自定义单元格</li>
+<li><code>&lt;slot :name=&quot;item.prop&quot; :row=&quot;scope.row&quot;&gt;</code> 支持插槽</li>
+<li>style 属性支持自定义样式</li>
+<li>formatter 方法支持自定义显示内容</li>
+</ul>
+</blockquote>
+<pre class="highlight"><span class="line">&lt;el-table-column</span><br><span class="line">  v-for=&quot;item in props.columns&quot;</span><br><span class="line">  :key=&quot;item.prop&quot;</span><br><span class="line">  :prop=&quot;item.prop&quot;</span><br><span class="line">  :label=&quot;item.label&quot;</span><br><span class="line">  :sortable=&quot;item.sortable ? &#x27;custom&#x27; : false&quot;</span><br><span class="line">  :width=&quot;item.width&quot;</span><br><span class="line">&gt;</span><br><span class="line">  &lt;template #header&gt;</span><br><span class="line">    &lt;slot :name=&quot;item.prop + &#x27;Header&#x27;&quot;&gt;</span><br><span class="line">      &lt;div class=&quot;inline-flex&quot; :style=&quot;item.labelStyle&quot;&gt;</span><br><span class="line">        &lt;span&gt;&#123;&#123; item.label &#125;&#125;&lt;/span&gt;</span><br><span class="line">        &lt;el-tooltip</span><br><span class="line">          popper-class=&quot;table-tooltip&quot;</span><br><span class="line">          effect=&quot;dark&quot;</span><br><span class="line">          placement=&quot;top-start&quot;</span><br><span class="line">          :content=&quot;item.tooltip&quot;</span><br><span class="line">          v-if=&quot;item.tooltip&quot;</span><br><span class="line">        &gt;</span><br><span class="line">          &lt;el-icon&gt;&lt;i-ep-Warning /&gt;&lt;/el-icon&gt;</span><br><span class="line">        &lt;/el-tooltip&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    &lt;/slot&gt;</span><br><span class="line">  &lt;/template&gt;</span><br><span class="line">  &lt;template #default=&quot;scope&quot;&gt;</span><br><span class="line">    &lt;slot :name=&quot;item.prop&quot; :row=&quot;scope.row&quot;&gt;</span><br><span class="line">      &lt;div :style=&quot;item.style&quot;&gt;</span><br><span class="line">        &lt;span v-if=&quot;item.formatter&quot;&gt;&#123;&#123; item.formatter(scope.row) &#125;&#125;&lt;/span&gt;</span><br><span class="line">        &lt;span v-else&gt;&#123;&#123; scope.row[item.prop] &#125;&#125;&lt;/span&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    &lt;/slot&gt;</span><br><span class="line">  &lt;/template&gt;</span><br><span class="line">&lt;/el-table-column&gt;</span><br></pre>
+
+<h3 id="3-3-支持操作列配置及插槽"><a href="#3-3-支持操作列配置及插槽" class="headerlink" title="3.3 支持操作列配置及插槽"></a>3.3 支持操作列配置及插槽</h3><blockquote>
+<ul>
+<li>el-table-column 使用 <code>&lt;template #default=&quot;scope&quot;&gt;</code> 自定义操作列</li>
+<li><code>&lt;slot :name=&quot;item.prop&quot; :row=&quot;scope.row&quot;&gt;</code> 支持插槽</li>
+<li>visible 方法支持自定义按钮显示逻辑</li>
+</ul>
+</blockquote>
+<pre class="highlight"><span class="line">&lt;el-table-column</span><br><span class="line">  fixed=&quot;right&quot;</span><br><span class="line">  label=&quot;操作&quot;</span><br><span class="line">  :width=&quot;props.operation?.width&quot;</span><br><span class="line">  v-if=&quot;props.operation?.columns&quot;</span><br><span class="line">&gt;</span><br><span class="line">  &lt;template #default=&quot;scope&quot;&gt;</span><br><span class="line">    &lt;slot name=&quot;operations&quot; :row=&quot;scope.row&quot;&gt;</span><br><span class="line">      &lt;span v-for=&quot;item in props.operation?.columns&quot; :key=&quot;item.text || item.icon&quot;&gt;</span><br><span class="line">        &lt;el-button</span><br><span class="line">          v-if=&quot;setVisible(scope.row, item.visible)&quot;</span><br><span class="line">          :type=&quot;item.type&quot;</span><br><span class="line">          :link=&quot;item.link&quot;</span><br><span class="line">          :plain=&quot;item.plain&quot;</span><br><span class="line">          @click=&quot;item.click(scope.row)&quot;</span><br><span class="line">          size=&quot;small&quot;</span><br><span class="line">          class=&quot;margin-right: 4px&quot;</span><br><span class="line">        &gt;</span><br><span class="line">          &lt;el-icon v-if=&quot;item.icon&quot; :class=&quot;item.icon&quot;&gt;&lt;/el-icon&gt;</span><br><span class="line">          &#123;&#123; item.text &#125;&#125;</span><br><span class="line">        &lt;/el-button&gt;</span><br><span class="line">      &lt;/span&gt;</span><br><span class="line">    &lt;/slot&gt;</span><br><span class="line">  &lt;/template&gt;</span><br><span class="line">&lt;/el-table-column&gt;</span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="comment">// 操作框逻辑</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">setVisible</span> = (<span class="params">row: <span class="built_in">unknown</span>, visible?: (row: <span class="built_in">unknown</span>) =&gt; <span class="built_in">boolean</span></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (!visible || <span class="title function_">visible</span>(row)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="3-4-支持多选框配置"><a href="#3-4-支持多选框配置" class="headerlink" title="3.4 支持多选框配置"></a>3.4 支持多选框配置</h3><blockquote>
+<p><code>&lt;el-table&gt;</code>增加 selection 列</p>
+</blockquote>
+<pre class="highlight"><span class="line">&lt;el-table-column fixed :selectable=&quot;setSelectable&quot; type=&quot;selection&quot; v-if=&quot;showSelectBox&quot; /&gt;</span><br></pre>
+
+<blockquote>
+<p>TableConfigInterface 增加 rowKey、selectable</p>
+</blockquote>
+<pre class="highlight"><span class="line"><span class="keyword">interface</span> <span class="title class_">TableConfigInterface</span> &#123;</span><br><span class="line">  <span class="comment">// ......</span></span><br><span class="line">  rowKey?: <span class="built_in">string</span> <span class="comment">// 行数据的 Key</span></span><br><span class="line">  selectable?: <span class="built_in">boolean</span> | (<span class="function">(<span class="params">row: <span class="built_in">unknown</span></span>) =&gt;</span> <span class="built_in">boolean</span>) <span class="comment">// 当前行多选框是否可以勾选，参数为当前行数据，默认为 false</span></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> props = <span class="title function_">withDefaults</span>(defineProps&lt;<span class="title class_">TableConfigInterface</span>&gt;(), &#123;</span><br><span class="line">  <span class="attr">rowKey</span>: <span class="string">&#x27;id&#x27;</span>,</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 多选框逻辑</span></span><br><span class="line"><span class="keyword">const</span> disabledList = reactive&lt;<span class="built_in">string</span>[]&gt;([]) <span class="comment">// 禁止勾选的数据</span></span><br><span class="line"><span class="keyword">const</span> showSelectBox = <span class="title function_">computed</span>(<span class="function">() =&gt;</span> props.<span class="property">selectable</span> &amp;&amp; disabledList.<span class="property">length</span> &lt; tableData.<span class="property">length</span>)</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">setSelectable</span> = (<span class="params">row: <span class="built_in">unknown</span></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> selectable =</span><br><span class="line">    <span class="keyword">typeof</span> props.<span class="property">selectable</span> === <span class="string">&#x27;boolean&#x27;</span> ? props.<span class="property">selectable</span> : props.<span class="property">selectable</span>?.(row)</span><br><span class="line">  <span class="keyword">if</span> (!selectable &amp;&amp; !disabledList.<span class="title function_">includes</span>(row?.[props.<span class="property">rowKey</span>])) &#123;</span><br><span class="line">    disabledList.<span class="title function_">push</span>(row?.[props.<span class="property">rowKey</span>])</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> selectable</span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="3-5-支持表尾配置及插槽"><a href="#3-5-支持表尾配置及插槽" class="headerlink" title="3.5 支持表尾配置及插槽"></a>3.5 支持表尾配置及插槽</h3><blockquote>
+<ul>
+<li><code>&lt;el-table&gt;</code>增加 @selection-change 及 ref 配置</li>
+<li><code>&lt;slot name=&quot;footer&quot;&gt;</code> 支持插槽</li>
+<li>visible 方法支持自定义按钮显示逻辑</li>
+</ul>
+</blockquote>
+<pre class="highlight"><span class="line">&lt;el-table</span><br><span class="line">  v-loading=&quot;loading&quot;</span><br><span class="line">  :data=&quot;tableData&quot;</span><br><span class="line">  @selection-change=&quot;handleSelectionChange&quot;</span><br><span class="line">  table-layout=&quot;auto&quot;</span><br><span class="line">  ref=&quot;tableRef&quot;</span><br><span class="line">&gt;</span><br><span class="line">  &lt;!-- ...... --&gt;</span><br><span class="line">&lt;/el-table&gt;</span><br><span class="line">&lt;div v-if=&quot;showSelectBox&quot; class=&quot;p-14&quot;&gt;</span><br><span class="line">  &lt;el-checkbox</span><br><span class="line">    v-model=&quot;isSelected&quot;</span><br><span class="line">    @click=&quot;tableRef?.toggleAllSelection()&quot;</span><br><span class="line">    :indeterminate=&quot;indeterminate&quot;</span><br><span class="line">    label=&quot;全选&quot;</span><br><span class="line">    style=&quot;vertical-align: middle; margin-right: 10px&quot;</span><br><span class="line">  /&gt;</span><br><span class="line">  &lt;slot name=&quot;footer&quot; :rows=&quot;selectionRows&quot;&gt;</span><br><span class="line">    &lt;span v-for=&quot;item in props.footer?.operations&quot; :key=&quot;item.text || item.icon&quot;&gt;</span><br><span class="line">      &lt;el-button</span><br><span class="line">        v-if=&quot;item.visible ? item.visible() : true&quot;</span><br><span class="line">        :type=&quot;item.type || &#x27;primary&#x27;&quot;</span><br><span class="line">        :link=&quot;item.link&quot;</span><br><span class="line">        :plain=&quot;item.plain&quot;</span><br><span class="line">        :disabled=&quot;!selectionRows.length&quot;</span><br><span class="line">        @click=&quot;item.click(selectionRows)&quot;</span><br><span class="line">        style=&quot;margin-left: 10px&quot;</span><br><span class="line">      &gt;</span><br><span class="line">        &lt;el-icon v-if=&quot;item.icon&quot; :class=&quot;item.icon&quot;&gt;&lt;/el-icon&gt;</span><br><span class="line">        &#123;&#123; item.text &#125;&#125;</span><br><span class="line">      &lt;/el-button&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">  &lt;/slot&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">const</span> tableRef = <span class="title function_">ref</span>()</span><br><span class="line"><span class="keyword">const</span> isSelected = <span class="title function_">ref</span>(<span class="literal">false</span>) <span class="comment">// 是否有选中数据</span></span><br><span class="line"><span class="keyword">const</span> selectionRows = ref&lt;<span class="built_in">unknown</span>[]&gt;([]) <span class="comment">// 当前选中的数据</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">handleSelectionChange</span> = (<span class="params">rows: <span class="built_in">unknown</span>[]</span>) =&gt; &#123;</span><br><span class="line">  selectionRows.<span class="property">value</span> = rows</span><br><span class="line">  isSelected.<span class="property">value</span> = rows.<span class="property">length</span> &gt; <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> indeterminate = <span class="title function_">computed</span>(</span><br><span class="line">  <span class="function">() =&gt;</span></span><br><span class="line">    selectionRows.<span class="property">value</span>.<span class="property">length</span> &gt; <span class="number">0</span> &amp;&amp;</span><br><span class="line">    selectionRows.<span class="property">value</span>.<span class="property">length</span> &lt; tableData.<span class="property">length</span> - disabledList.<span class="property">length</span></span><br><span class="line">)</span><br></pre>
+
+<h3 id="3-6-支持分页显示"><a href="#3-6-支持分页显示" class="headerlink" title="3.6 支持分页显示"></a>3.6 支持分页显示</h3><blockquote>
+<p>最底部增加<code>&lt;el-pagination&gt;&lt;/el-pagination&gt;</code></p>
+</blockquote>
+<pre class="highlight"><span class="line">&lt;el-pagination</span><br><span class="line">  background</span><br><span class="line">  :total=&quot;tableData.length&quot;</span><br><span class="line">  :layout=&quot;props.layout&quot;</span><br><span class="line">  v-model:current-page=&quot;pagination.currentPage&quot;</span><br><span class="line">  v-model:page-size=&quot;pagination.pageSize&quot;</span><br><span class="line">  @current-change=&quot;getTableData&quot;</span><br><span class="line">  @size-change=&quot;getTableData&quot;</span><br><span class="line">  class=&quot;p-y-20&quot;</span><br><span class="line">&gt;</span><br><span class="line">&lt;/el-pagination&gt;</span><br></pre>
+
+<pre class="highlight"><span class="line"><span class="keyword">interface</span> <span class="title class_">TableConfigInterface</span> &#123;</span><br><span class="line">  <span class="comment">// ......</span></span><br><span class="line">  layout?: <span class="built_in">string</span> <span class="comment">// 组件布局</span></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> pagination = <span class="title function_">ref</span>(&#123;</span><br><span class="line">  <span class="attr">currentPage</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">pageSize</span>: <span class="number">10</span></span><br><span class="line">&#125;)</span><br></pre>
+
+<h2 id="4-使用方法"><a href="#4-使用方法" class="headerlink" title="4 使用方法"></a>4 使用方法</h2><pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;TableComponent v-bind=&quot;tableConfig&quot;&gt;</span><br><span class="line">    &lt;template #nameHeader&gt;</span><br><span class="line">      &lt;div&gt;姓名&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">    &lt;template #name&gt;</span><br><span class="line">      &lt;div&gt;Yana&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/TableComponent&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">const tableConfig: TableConfigInterface = &#123;</span><br><span class="line">  api: &#x27;getTableData&#x27;,</span><br><span class="line">  columns: [</span><br><span class="line">    &#123;</span><br><span class="line">      prop: &#x27;date&#x27;,</span><br><span class="line">      label: &#x27;Date&#x27;,</span><br><span class="line">      tooltip: &#x27;This is Date&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      prop: &#x27;name&#x27;,</span><br><span class="line">      label: &#x27;Name&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      prop: &#x27;state&#x27;,</span><br><span class="line">      label: &#x27;State&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      prop: &#x27;city&#x27;,</span><br><span class="line">      label: &#x27;City&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      prop: &#x27;address&#x27;,</span><br><span class="line">      label: &#x27;Address&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      prop: &#x27;zip&#x27;,</span><br><span class="line">      label: &#x27;Zip&#x27;,</span><br><span class="line">      style: &#x27;color: red&#x27;,</span><br><span class="line">      labelStyle: &#x27;color: red&#x27;,</span><br><span class="line">      sortable: true</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  operation: &#123;</span><br><span class="line">    columns: [</span><br><span class="line">      &#123;</span><br><span class="line">        text: &#x27;编辑&#x27;,</span><br><span class="line">        click: () =&gt; &#123;&#125;,</span><br><span class="line">        visible: (row) =&gt; row.date === &#x27;2016-05-07&#x27;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  rowKey: &#x27;date&#x27;,</span><br><span class="line">  selectable: (row) =&gt; row.date === &#x27;2016-05-07&#x27;,</span><br><span class="line">  footer: &#123;</span><br><span class="line">    operations: [</span><br><span class="line">      &#123;</span><br><span class="line">        text: &#x27;删除&#x27;,</span><br><span class="line">        click: () =&gt; &#123;&#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre>
+
+<h2 id="5-源码"><a href="#5-源码" class="headerlink" title="5 源码"></a>5 源码</h2><pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div v-loading=&quot;loading&quot; class=&quot;table-wrapper&quot;&gt;</span><br><span class="line">    &lt;el-table</span><br><span class="line">      :data=&quot;tableData&quot;</span><br><span class="line">      :max-height=&quot;props.maxHeight&quot;</span><br><span class="line">      :default-sort=&quot;props.defaultSort&quot;</span><br><span class="line">      @selection-change=&quot;handleSelectionChange&quot;</span><br><span class="line">      @sort-change=&quot;handleSortChange&quot;</span><br><span class="line">      @row-click=&quot;goDetail&quot;</span><br><span class="line">      :row-style=&quot;&#123; cursor: &#x27;pointer&#x27; &#125;&quot;</span><br><span class="line">      table-layout=&quot;auto&quot;</span><br><span class="line">      ref=&quot;tableRef&quot;</span><br><span class="line">    &gt;</span><br><span class="line">      &lt;el-table-column fixed :selectable=&quot;setSelectable&quot; type=&quot;selection&quot; v-if=&quot;showSelectBox&quot; /&gt;</span><br><span class="line">      &lt;el-table-column</span><br><span class="line">        v-for=&quot;item in props.columns&quot;</span><br><span class="line">        :key=&quot;item.prop&quot;</span><br><span class="line">        :prop=&quot;item.prop&quot;</span><br><span class="line">        :label=&quot;item.label&quot;</span><br><span class="line">        :sortable=&quot;item.sortable ? &#x27;custom&#x27; : false&quot;</span><br><span class="line">        :width=&quot;item.width&quot;</span><br><span class="line">      &gt;</span><br><span class="line">        &lt;template #header&gt;</span><br><span class="line">          &lt;slot name=&quot;header&quot;&gt;</span><br><span class="line">            &lt;div class=&quot;inline-flex&quot; :style=&quot;item.labelStyle&quot;&gt;</span><br><span class="line">              &lt;span&gt;&#123;&#123; item.label &#125;&#125;&lt;/span&gt;</span><br><span class="line">              &lt;el-tooltip</span><br><span class="line">                popper-class=&quot;table-tooltip&quot;</span><br><span class="line">                effect=&quot;dark&quot;</span><br><span class="line">                placement=&quot;top-start&quot;</span><br><span class="line">                :content=&quot;item.tooltip&quot;</span><br><span class="line">                v-if=&quot;item.tooltip&quot;</span><br><span class="line">              &gt;</span><br><span class="line">                &lt;el-icon&gt;&lt;i-ep-Warning /&gt;&lt;/el-icon&gt;</span><br><span class="line">              &lt;/el-tooltip&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">          &lt;/slot&gt;</span><br><span class="line">        &lt;/template&gt;</span><br><span class="line">        &lt;template #default=&quot;scope&quot;&gt;</span><br><span class="line">          &lt;slot :name=&quot;item.prop&quot; :row=&quot;scope.row&quot;&gt;</span><br><span class="line">            &lt;div :style=&quot;item.style&quot;&gt;</span><br><span class="line">              &lt;span v-if=&quot;item.formatter&quot;&gt;&#123;&#123; item.formatter(scope.row) &#125;&#125;&lt;/span&gt;</span><br><span class="line">              &lt;span v-else&gt;&#123;&#123; scope.row[item.prop] &#125;&#125;&lt;/span&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">          &lt;/slot&gt;</span><br><span class="line">        &lt;/template&gt;</span><br><span class="line">      &lt;/el-table-column&gt;</span><br><span class="line">      &lt;el-table-column</span><br><span class="line">        fixed=&quot;right&quot;</span><br><span class="line">        label=&quot;操作&quot;</span><br><span class="line">        :width=&quot;props.operation?.width&quot;</span><br><span class="line">        v-if=&quot;props.operation?.columns&quot;</span><br><span class="line">      &gt;</span><br><span class="line">        &lt;template #default=&quot;scope&quot;&gt;</span><br><span class="line">          &lt;slot name=&quot;operations&quot; :row=&quot;scope.row&quot;&gt;</span><br><span class="line">            &lt;span v-for=&quot;item in props.operation?.columns&quot; :key=&quot;item.text || item.icon&quot;&gt;</span><br><span class="line">              &lt;el-button</span><br><span class="line">                v-if=&quot;setVisible(scope.row, item.visible)&quot;</span><br><span class="line">                :type=&quot;item.type&quot;</span><br><span class="line">                :link=&quot;item.link&quot;</span><br><span class="line">                :plain=&quot;item.plain&quot;</span><br><span class="line">                @click=&quot;item.click(scope.row)&quot;</span><br><span class="line">                size=&quot;small&quot;</span><br><span class="line">                style=&quot;margin-right: 4px&quot;</span><br><span class="line">              &gt;</span><br><span class="line">                &lt;el-icon v-if=&quot;item.icon&quot; :class=&quot;item.icon&quot;&gt;&lt;/el-icon&gt;</span><br><span class="line">                &#123;&#123; item.text &#125;&#125;</span><br><span class="line">              &lt;/el-button&gt;</span><br><span class="line">            &lt;/span&gt;</span><br><span class="line">          &lt;/slot&gt;</span><br><span class="line">        &lt;/template&gt;</span><br><span class="line">      &lt;/el-table-column&gt;</span><br><span class="line">    &lt;/el-table&gt;</span><br><span class="line">    &lt;div v-if=&quot;showSelectBox&quot; class=&quot;p-14&quot;&gt;</span><br><span class="line">      &lt;el-checkbox</span><br><span class="line">        v-model=&quot;isSelected&quot;</span><br><span class="line">        @click=&quot;tableRef?.toggleAllSelection()&quot;</span><br><span class="line">        :indeterminate=&quot;indeterminate&quot;</span><br><span class="line">        label=&quot;全选&quot;</span><br><span class="line">        style=&quot;vertical-align: middle; margin-right: 10px&quot;</span><br><span class="line">      /&gt;</span><br><span class="line">      &lt;slot name=&quot;footer&quot; :rows=&quot;selectionRows&quot;&gt;</span><br><span class="line">        &lt;span v-for=&quot;item in props.footer?.operations&quot; :key=&quot;item.text || item.icon&quot;&gt;</span><br><span class="line">          &lt;el-button</span><br><span class="line">            v-if=&quot;item.visible ? item.visible() : true&quot;</span><br><span class="line">            :type=&quot;item.type || &#x27;primary&#x27;&quot;</span><br><span class="line">            :link=&quot;item.link&quot;</span><br><span class="line">            :plain=&quot;item.plain&quot;</span><br><span class="line">            :disabled=&quot;!selectionRows.length&quot;</span><br><span class="line">            @click=&quot;item.click(selectionRows)&quot;</span><br><span class="line">            style=&quot;margin-left: 10px&quot;</span><br><span class="line">          &gt;</span><br><span class="line">            &lt;el-icon v-if=&quot;item.icon&quot; :class=&quot;item.icon&quot;&gt;&lt;/el-icon&gt;</span><br><span class="line">            &#123;&#123; item.text &#125;&#125;</span><br><span class="line">          &lt;/el-button&gt;</span><br><span class="line">        &lt;/span&gt;</span><br><span class="line">      &lt;/slot&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;el-pagination</span><br><span class="line">    background</span><br><span class="line">    :total=&quot;tableData.length&quot;</span><br><span class="line">    :layout=&quot;props.layout&quot;</span><br><span class="line">    v-model:current-page=&quot;pagination.currentPage&quot;</span><br><span class="line">    v-model:page-size=&quot;pagination.pageSize&quot;</span><br><span class="line">    @current-change=&quot;getTableData&quot;</span><br><span class="line">    @size-change=&quot;getTableData&quot;</span><br><span class="line">    class=&quot;p-y-20&quot;</span><br><span class="line">  /&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script lang=&quot;ts&quot; setup&gt;</span><br><span class="line">interface OperationInterface &#123;</span><br><span class="line">  click: (row: unknown) =&gt; void // 按钮点击方法，参数为当前行数据</span><br><span class="line">  text?: string // 按钮显示文字</span><br><span class="line">  icon?: string // 按钮 icon</span><br><span class="line">  visible?: (row?: unknown) =&gt; boolean // 设置按钮是否可见，参数为当前行数据，默认为 true</span><br><span class="line">  type?: string // 按钮类型[&#x27;primary&#x27;| &#x27;success&#x27;| &#x27;warning&#x27;| &#x27;danger&#x27;| &#x27;info&#x27;]</span><br><span class="line">  link?: boolean // 是否为链接按钮</span><br><span class="line">  plain?: boolean // 是否为朴素按钮</span><br><span class="line">&#125;</span><br><span class="line">interface TableConfigInterface &#123;</span><br><span class="line">  api: string // 表格数据获取接口</span><br><span class="line">  rowKey?: string // 行数据的 Key</span><br><span class="line">  columns: &#123;</span><br><span class="line">    // 显示列</span><br><span class="line">    prop: string // 键名</span><br><span class="line">    label?: string // 表头显示名称</span><br><span class="line">    formatter?: (row: unknown) =&gt; string // 自定义单元格格式化方法，参数为当前行数据</span><br><span class="line">    tooltip?: string // 表头 tooltip</span><br><span class="line">    sortable?: boolean // 是否可以排序</span><br><span class="line">    width?: number | string // 宽度</span><br><span class="line">    style?: string // 单元格样式</span><br><span class="line">    labelStyle?: string // 表头样式</span><br><span class="line">  &#125;[]</span><br><span class="line">  selectable?: boolean | ((row: unknown) =&gt; boolean) // 当前行多选框是否可以勾选，参数为当前行数据，默认为 false</span><br><span class="line">  operation?: &#123;</span><br><span class="line">    // 操作列</span><br><span class="line">    columns: OperationInterface[]</span><br><span class="line">    width?: number | string // 宽度</span><br><span class="line">  &#125;</span><br><span class="line">  footer?: &#123;</span><br><span class="line">    // 操作列</span><br><span class="line">    operations: OperationInterface[]</span><br><span class="line">  &#125;</span><br><span class="line">  defaultSort?: &#123;</span><br><span class="line">    // 默认排序</span><br><span class="line">    prop: string // 默认排序的列</span><br><span class="line">    order?: string // [&#x27;ascending&#x27;| &#x27;descending&#x27;], 没有指定 order, 则默认顺序是 ascending</span><br><span class="line">  &#125;</span><br><span class="line">  maxHeight?: number | string // 表格最大高度</span><br><span class="line">  layout?: string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const props = withDefaults(defineProps&lt;TableConfigInterface&gt;(), &#123;</span><br><span class="line">  rowKey: &#x27;id&#x27;,</span><br><span class="line">  layout: &#x27;prev, pager, next, total&#x27;</span><br><span class="line">&#125;)</span><br><span class="line">const pagination = ref(&#123;</span><br><span class="line">  currentPage: 1,</span><br><span class="line">  pageSize: 10</span><br><span class="line">&#125;)</span><br><span class="line">const tableRef = ref()</span><br><span class="line">let tableData = reactive&lt;unknown[]&gt;([])</span><br><span class="line"></span><br><span class="line">// 多选框逻辑</span><br><span class="line">const isSelected = ref(false) // 是否有选中数据</span><br><span class="line">const selectionRows = ref&lt;unknown[]&gt;([]) // 当前选中的数据</span><br><span class="line">const handleSelectionChange = (rows: unknown[]) =&gt; &#123;</span><br><span class="line">  selectionRows.value = rows</span><br><span class="line">  isSelected.value = rows.length &gt; 0</span><br><span class="line">&#125;</span><br><span class="line">const disabledList = reactive&lt;string[]&gt;([]) // 禁止勾选的数据</span><br><span class="line">const setSelectable = (row: unknown) =&gt; &#123;</span><br><span class="line">  const selectable =</span><br><span class="line">    typeof props.selectable === &#x27;boolean&#x27; ? props.selectable : props.selectable?.(row)</span><br><span class="line">  if (!selectable &amp;&amp; !disabledList.includes(row?.[props.rowKey])) &#123;</span><br><span class="line">    disabledList.push(row?.[props.rowKey])</span><br><span class="line">  &#125;</span><br><span class="line">  return selectable</span><br><span class="line">&#125;</span><br><span class="line">const indeterminate = computed(</span><br><span class="line">  () =&gt;</span><br><span class="line">    selectionRows.value.length &gt; 0 &amp;&amp;</span><br><span class="line">    selectionRows.value.length &lt; tableData.length - disabledList.length</span><br><span class="line">)</span><br><span class="line">const showSelectBox = computed(() =&gt; props.selectable &amp;&amp; disabledList.length &lt; tableData.length)</span><br><span class="line"></span><br><span class="line">// 操作框逻辑</span><br><span class="line">const showOperation = ref(false)</span><br><span class="line">const setVisible = (row: unknown, visible?: (row: unknown) =&gt; boolean) =&gt; &#123;</span><br><span class="line">  if (!visible || visible(row)) &#123;</span><br><span class="line">    showOperation.value = true</span><br><span class="line">    return true</span><br><span class="line">  &#125;</span><br><span class="line">  return false</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 排序</span><br><span class="line">const handleSortChange = (data: &#123; prop: string; order: string | null &#125;) =&gt; &#123;</span><br><span class="line">  const &#123; prop, order &#125; = data</span><br><span class="line">  console.log(prop, order)</span><br><span class="line">  // getTableData</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 跳转详情页</span><br><span class="line">const goDetail = (row: unknown) =&gt; &#123;</span><br><span class="line">  console.log(row)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 发送接口</span><br><span class="line">const loading = ref(true)</span><br><span class="line">const getTableData = () =&gt; &#123;</span><br><span class="line">  loading.value = true</span><br><span class="line">  showOperation.value = false</span><br><span class="line">  tableData = [</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-02&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-03&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-04&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-05&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-06&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-07&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-08&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-09&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-10&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      date: &#x27;2016-05-11&#x27;,</span><br><span class="line">      name: &#x27;Tom&#x27;,</span><br><span class="line">      state: &#x27;California&#x27;,</span><br><span class="line">      city: &#x27;Los Angeles&#x27;,</span><br><span class="line">      address: &#x27;No. 189, Grove St, Los Angeles&#x27;,</span><br><span class="line">      zip: &#x27;CA 90036&#x27;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">  loading.value = false</span><br><span class="line">&#125;</span><br><span class="line">getTableData()</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style lang=&quot;scss&quot; scoped&gt;</span><br><span class="line">.table-wrapper &#123;</span><br><span class="line">  border-top: 1px solid #eaeaea;</span><br><span class="line">  border-left: 1px solid #eaeaea;</span><br><span class="line">  border-right: 1px solid #eaeaea;</span><br><span class="line">&#125;</span><br><span class="line">.inline-flex &#123;</span><br><span class="line">  display: inline-flex;</span><br><span class="line">  align-items: center;</span><br><span class="line">&#125;</span><br><span class="line">.p-14 &#123;</span><br><span class="line">  border-bottom: 1px solid #eaeaea;</span><br><span class="line">  padding: 14px;</span><br><span class="line">&#125;</span><br><span class="line">.p-y-20 &#123;</span><br><span class="line">  padding-top: 20px;</span><br><span class="line">  padding-bottom: 20px;</span><br><span class="line">  justify-content: center;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br><span class="line">&lt;style lang=&quot;scss&quot;&gt;</span><br><span class="line">.table-tooltip &#123;</span><br><span class="line">  max-width: 220px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre>
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2023/02/28/vue3-element-plus-table/">
+            https://yanadh.github.io/2023/02/28/vue3-element-plus-table/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/03/09/electron-quick-start/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Electron 快速入门 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/02/07/vue3-setup/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Vue3 + Vite + Element Plus 项目搭建（全） </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD"><span class="toc-text">2 功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text">3 实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%A4%8D%E5%88%B6%E5%9F%BA%E6%9C%AC%E8%A1%A8%E6%A0%BC"><span class="toc-text">3.1 复制基本表格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%94%AF%E6%8C%81%E8%87%AA%E5%8A%A8%E8%8E%B7%E5%8F%96%E8%A1%A8%E6%A0%BC%E6%95%B0%E6%8D%AE"><span class="toc-text">3.2 支持自动获取表格数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%94%AF%E6%8C%81%E6%95%B0%E6%8D%AE%E5%88%97%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.3 支持数据列配置及插槽</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E5%88%97"><span class="toc-text">3.3.1 自动生成列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-%E6%94%AF%E6%8C%81%E8%A1%A8%E5%A4%B4%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.2.2 支持表头自定义及插槽</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-%E6%94%AF%E6%8C%81%E5%8D%95%E5%85%83%E6%A0%BC%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.2.3 支持单元格自定义及插槽</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%94%AF%E6%8C%81%E6%93%8D%E4%BD%9C%E5%88%97%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.3 支持操作列配置及插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E6%94%AF%E6%8C%81%E5%A4%9A%E9%80%89%E6%A1%86%E9%85%8D%E7%BD%AE"><span class="toc-text">3.4 支持多选框配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E6%94%AF%E6%8C%81%E8%A1%A8%E5%B0%BE%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.5 支持表尾配置及插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-%E6%94%AF%E6%8C%81%E5%88%86%E9%A1%B5%E6%98%BE%E7%A4%BA"><span class="toc-text">3.6 支持分页显示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">4 使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%BA%90%E7%A0%81"><span class="toc-text">5 源码</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>31</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>14</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD"><span class="toc-text">2 功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text">3 实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%A4%8D%E5%88%B6%E5%9F%BA%E6%9C%AC%E8%A1%A8%E6%A0%BC"><span class="toc-text">3.1 复制基本表格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%94%AF%E6%8C%81%E8%87%AA%E5%8A%A8%E8%8E%B7%E5%8F%96%E8%A1%A8%E6%A0%BC%E6%95%B0%E6%8D%AE"><span class="toc-text">3.2 支持自动获取表格数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%94%AF%E6%8C%81%E6%95%B0%E6%8D%AE%E5%88%97%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.3 支持数据列配置及插槽</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E5%88%97"><span class="toc-text">3.3.1 自动生成列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-%E6%94%AF%E6%8C%81%E8%A1%A8%E5%A4%B4%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.2.2 支持表头自定义及插槽</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-%E6%94%AF%E6%8C%81%E5%8D%95%E5%85%83%E6%A0%BC%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.2.3 支持单元格自定义及插槽</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%94%AF%E6%8C%81%E6%93%8D%E4%BD%9C%E5%88%97%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.3 支持操作列配置及插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E6%94%AF%E6%8C%81%E5%A4%9A%E9%80%89%E6%A1%86%E9%85%8D%E7%BD%AE"><span class="toc-text">3.4 支持多选框配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E6%94%AF%E6%8C%81%E8%A1%A8%E5%B0%BE%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.5 支持表尾配置及插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-%E6%94%AF%E6%8C%81%E5%88%86%E9%A1%B5%E6%98%BE%E7%A4%BA"><span class="toc-text">3.6 支持分页显示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">4 使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%BA%90%E7%A0%81"><span class="toc-text">5 源码</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">31</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Vite/" 
+        title="Vite">
+        <div class="tags-list-item">Vite</div>
+      </a>
+    
+      <a 
+        href="/tags/Electron/" 
+        title="Electron">
+        <div class="tags-list-item">Electron</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD"><span class="toc-text">2 功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text">3 实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%A4%8D%E5%88%B6%E5%9F%BA%E6%9C%AC%E8%A1%A8%E6%A0%BC"><span class="toc-text">3.1 复制基本表格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%94%AF%E6%8C%81%E8%87%AA%E5%8A%A8%E8%8E%B7%E5%8F%96%E8%A1%A8%E6%A0%BC%E6%95%B0%E6%8D%AE"><span class="toc-text">3.2 支持自动获取表格数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%94%AF%E6%8C%81%E6%95%B0%E6%8D%AE%E5%88%97%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.3 支持数据列配置及插槽</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E5%88%97"><span class="toc-text">3.3.1 自动生成列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-%E6%94%AF%E6%8C%81%E8%A1%A8%E5%A4%B4%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.2.2 支持表头自定义及插槽</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-%E6%94%AF%E6%8C%81%E5%8D%95%E5%85%83%E6%A0%BC%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.2.3 支持单元格自定义及插槽</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%94%AF%E6%8C%81%E6%93%8D%E4%BD%9C%E5%88%97%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.3 支持操作列配置及插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E6%94%AF%E6%8C%81%E5%A4%9A%E9%80%89%E6%A1%86%E9%85%8D%E7%BD%AE"><span class="toc-text">3.4 支持多选框配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E6%94%AF%E6%8C%81%E8%A1%A8%E5%B0%BE%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%8F%92%E6%A7%BD"><span class="toc-text">3.5 支持表尾配置及插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-%E6%94%AF%E6%8C%81%E5%88%86%E9%A1%B5%E6%98%BE%E7%A4%BA"><span class="toc-text">3.6 支持分页显示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">4 使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%BA%90%E7%A0%81"><span class="toc-text">5 源码</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-17</div>
+        <a href="/2023/03/17/vite-rollup-plugin-esbuild/"><div class="recent-posts-item-content">Vue3 + Vite 页面白屏问题（开发环境+生产环境）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-09</div>
+        <a href="/2023/03/09/electron-quick-start/"><div class="recent-posts-item-content">Electron 快速入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-28</div>
+        <a href="/2023/02/28/vue3-element-plus-table/"><div class="recent-posts-item-content">Vue3 + Element Plus 封装公共表格组件（带源码）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-07</div>
+        <a href="/2023/02/07/vue3-setup/"><div class="recent-posts-item-content">Vue3 + Vite + Element Plus 项目搭建（全）</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>

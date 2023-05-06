@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>Electron 快速入门</title>
+   
+  <meta
+    property="og:title"
+    content="Electron 快速入门"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2023/03/09/electron-quick-start/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2023-03-09" />
+  <meta
+    property="og:article:modified_time"
+    content="2023-03-09"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+   
+  <meta property="og:article:tag" content="Electron" />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Electron 快速入门
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2023-03-09T08:31:24.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2023-03-09</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>633 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Electron/" 
+            class="post-meta-link">
+            Electron
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-electron-%E6%98%AF%E4%BB%80%E4%B9%88">1 Electron 是什么</a></li>
+<li><a href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F">2 创建应用程序</a></li>
+<li><a href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F">3 打包应用程序</a></li>
+</ul>
+<h2 id="1-Electron-是什么"><a href="#1-Electron-是什么" class="headerlink" title="1 Electron 是什么"></a>1 Electron 是什么</h2><p>Electron是一个使用 JavaScript、HTML 和 CSS 构建桌面应用程序的框架。 Electron 将 Chromium 和 Node.js 嵌入到了一个二进制文件中，因此它允许你仅需一个代码仓库，就可以撰写支持 Windows、macOS 和 Linux 的跨平台应用。</p>
+<h2 id="2-创建应用程序"><a href="#2-创建应用程序" class="headerlink" title="2 创建应用程序"></a>2 创建应用程序</h2><ul>
+<li><p>初始化 package.json</p>
+<pre class="highlight"><span class="line">npm init</span><br></pre>
+</li>
+<li><p>修改 package.json</p>
+<pre class="highlight"><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;main&quot;</span><span class="punctuation">:</span> <span class="string">&quot;main.js&quot;</span><span class="punctuation">,</span> <span class="comment">// 入口文件为 main.js</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A minimal Electron application&quot;</span><span class="punctuation">,</span> <span class="comment">// description 为 &quot;&quot; 会导致后续打包报错</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electron .&quot;</span><span class="punctuation">,</span> <span class="comment">// 启动 electron</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre>
+</li>
+<li><p>安装 electron 包</p>
+<pre class="highlight"><span class="line">npm install --save-dev electron</span><br></pre>
+<p>若安装失败，设置一下 electron 下载镜像</p>
+<pre class="highlight"><span class="line">npm config <span class="built_in">set</span> electron_mirror <span class="string">&quot;https://npmmirror.com/mirrors/electron/&quot;</span></span><br></pre>
+</li>
+<li><p>在根目录下新增 main.js 文件</p>
+<pre class="highlight"><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> &#123; app, <span class="title class_">BrowserWindow</span> &#125; = <span class="built_in">require</span>(<span class="string">&#x27;electron&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">createWindow</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> win = <span class="keyword">new</span> <span class="title class_">BrowserWindow</span>(&#123;</span><br><span class="line">    <span class="attr">width</span>: <span class="number">800</span>,</span><br><span class="line">    <span class="attr">height</span>: <span class="number">600</span>,</span><br><span class="line">    <span class="attr">webPreferences</span>: &#123;</span><br><span class="line">      <span class="attr">preload</span>: path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;preload.js&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  win.<span class="title function_">loadFile</span>(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">whenReady</span>().<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">createWindow</span>()</span><br><span class="line">  app.<span class="title function_">on</span>(<span class="string">&#x27;activate&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// macOS 应用在没有打开任何窗口的情况下也继续运行</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">BrowserWindow</span>.<span class="title function_">getAllWindows</span>().<span class="property">length</span> === <span class="number">0</span>) <span class="title function_">createWindow</span>()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">on</span>(<span class="string">&#x27;window-all-closed&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 除 macOS 外，应用关闭所有窗口则完全退出一个应用程序</span></span><br><span class="line">  <span class="keyword">if</span> (process.<span class="property">platform</span> !== <span class="string">&#x27;darwin&#x27;</span>) app.<span class="title function_">quit</span>()</span><br><span class="line">&#125;)</span><br></pre>
+</li>
+<li><p>在根目录下新建 index.html</p>
+<pre class="highlight"><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span></span></span><br><span class="line"><span class="tag">      <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Security-Policy&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">content</span>=<span class="string">&quot;default-src &#x27;self&#x27;; script-src &#x27;self&#x27;&quot;</span></span></span><br><span class="line"><span class="tag">    /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>你好!<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>你好!<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    我们正在使用 Node.js <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;node-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>, Chromium</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;chrome-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>, 和 Electron</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;electron-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>.</span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre>
+</li>
+<li><p>在根目录下新建 preload.js</p>
+<pre class="highlight"><span class="line"><span class="comment">// 通过预加载脚本从渲染器访问 Node.js</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;DOMContentLoaded&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">replaceText</span> = (<span class="params">selector, text</span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(selector)</span><br><span class="line">    <span class="keyword">if</span> (element) element.<span class="property">innerText</span> = text</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> dependency <span class="keyword">of</span> [<span class="string">&#x27;chrome&#x27;</span>, <span class="string">&#x27;node&#x27;</span>, <span class="string">&#x27;electron&#x27;</span>]) &#123;</span><br><span class="line">    <span class="title function_">replaceText</span>(<span class="string">`<span class="subst">$&#123;dependency&#125;</span>-version`</span>, process.<span class="property">versions</span>[dependency])</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre>
+</li>
+<li><p>启动 electron</p>
+<pre class="highlight"><span class="line">npm dev</span><br></pre>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230309/2023030901.png" class="lozad post-image"src="/../images/20230309/2023030901.png"></p>
+</li>
+</ul>
+<h2 id="3-打包应用程序"><a href="#3-打包应用程序" class="headerlink" title="3 打包应用程序"></a>3 打包应用程序</h2><ul>
+<li>安装 Electron Forge<pre class="highlight"><span class="line">npm install --save-dev @electron-forge/cli</span><br></pre></li>
+<li>使用 Electron Forge 的”import”命令设置 Forge 的脚手架<pre class="highlight"><span class="line">npx electron-forge import</span><br></pre></li>
+<li>使用 Forge 的 make 命令来创建可分发的应用程序<pre class="highlight"><span class="line">npm run make</span><br></pre>
+以上三个命令执行完后，会创建一个 out 文件夹，文件夹下包含安装包<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230309/2023030902.png" class="lozad post-image"src="/../images/20230309/2023030902.png"></li>
+</ul>
+
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2023/03/09/electron-quick-start/">
+            https://yanadh.github.io/2023/03/09/electron-quick-start/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/03/17/vite-rollup-plugin-esbuild/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Vue3 + Vite 页面白屏问题（开发环境+生产环境） </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/02/28/vue3-element-plus-table/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Vue3 + Element Plus 封装公共表格组件（带源码） </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>31</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>14</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">31</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Vite/" 
+        title="Vite">
+        <div class="tags-list-item">Vite</div>
+      </a>
+    
+      <a 
+        href="/tags/Electron/" 
+        title="Electron">
+        <div class="tags-list-item">Electron</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-17</div>
+        <a href="/2023/03/17/vite-rollup-plugin-esbuild/"><div class="recent-posts-item-content">Vue3 + Vite 页面白屏问题（开发环境+生产环境）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-09</div>
+        <a href="/2023/03/09/electron-quick-start/"><div class="recent-posts-item-content">Electron 快速入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-28</div>
+        <a href="/2023/02/28/vue3-element-plus-table/"><div class="recent-posts-item-content">Vue3 + Element Plus 封装公共表格组件（带源码）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-07</div>
+        <a href="/2023/02/07/vue3-setup/"><div class="recent-posts-item-content">Vue3 + Vite + Element Plus 项目搭建（全）</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>

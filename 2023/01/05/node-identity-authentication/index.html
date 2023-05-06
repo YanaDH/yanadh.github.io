@@ -31,7 +31,7 @@
   <meta property="og:article:published_time" content="2023-01-05" />
   <meta
     property="og:article:modified_time"
-    content="2023-01-09"
+    content="2023-02-14"
   />
   <meta
     property="og:article:author"
@@ -249,7 +249,7 @@
     
     
       <span class="dot"></span>
-      <span>827 字</span>
+      <span>834 字</span>
     
   </div>
   
@@ -316,10 +316,9 @@
 </ol>
 <h4 id="3-3-2-Cookie-在身份认证中的作用"><a href="#3-3-2-Cookie-在身份认证中的作用" class="headerlink" title="3.3.2 Cookie 在身份认证中的作用"></a>3.3.2 Cookie 在身份认证中的作用</h4><ul>
 <li>客户端第一次请求服务器的时候，服务器通过响应头的形式，向客户端发送一个身份认证的 Cookie ，客户端会自动将 Cookie 保存在浏览器中。</li>
-<li>随后，当客户端刘览器每次请求服务器的时候，浏览器会自动将身份认证相关的 Cookie ，通过请求头的形式发送给服务器，服务器即可验明客户端的身份。</li>
+<li>随后，当客户端刘览器每次请求服务器的时候，浏览器会自动将身份认证相关的 Cookie ，通过请求头的形式发送给服务器，服务器即可验明客户端的身份。<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230105/2023010501.png" class="lozad post-image"src="/../images/20230105/2023010501.png"></li>
 </ul>
-<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230105/2023010501.png" class="lozad post-image"src="/../images/20230105/2023010501.png"></p>
-
+<h3 id="3-4-JWT-认证机制"><a href="#3-4-JWT-认证机制" class="headerlink" title="3.4 JWT 认证机制"></a>3.4 JWT 认证机制</h3>
   </div>
   
     <div class="reward-container">
@@ -454,7 +453,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2 Web 开发模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E7%9A%84%E4%BC%A0%E7%BB%9F-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.1 基于服务端渲染的传统 Web 开发模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B0%E5%9E%8B-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.2 基于前后端分离的新型 Web 开发模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3 身份认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.1 什么是身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.2 不同模式下的身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Session-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.3 Session 认证机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E4%BB%80%E4%B9%88%E6%98%AF-Cookie"><span class="toc-text">3.3.1 什么是 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-Cookie-%E5%9C%A8%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3.3.2 Cookie 在身份认证中的作用</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2 Web 开发模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E7%9A%84%E4%BC%A0%E7%BB%9F-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.1 基于服务端渲染的传统 Web 开发模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B0%E5%9E%8B-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.2 基于前后端分离的新型 Web 开发模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3 身份认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.1 什么是身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.2 不同模式下的身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Session-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.3 Session 认证机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E4%BB%80%E4%B9%88%E6%98%AF-Cookie"><span class="toc-text">3.3.1 什么是 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-Cookie-%E5%9C%A8%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3.3.2 Cookie 在身份认证中的作用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-JWT-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.4 JWT 认证机制</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -473,7 +472,7 @@
   <a 
     class="author-posts-count" 
     href="/archives">
-    <span>28</span>
+    <span>31</span>
     <span>文章</span>
   </a>
   <a 
@@ -485,7 +484,7 @@
   <a 
     class="author-tags-count" 
     href="/tags">
-    <span>12</span>
+    <span>14</span>
     <span>标签</span>
   </a>
 </div>
@@ -512,7 +511,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2 Web 开发模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E7%9A%84%E4%BC%A0%E7%BB%9F-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.1 基于服务端渲染的传统 Web 开发模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B0%E5%9E%8B-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.2 基于前后端分离的新型 Web 开发模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3 身份认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.1 什么是身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.2 不同模式下的身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Session-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.3 Session 认证机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E4%BB%80%E4%B9%88%E6%98%AF-Cookie"><span class="toc-text">3.3.1 什么是 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-Cookie-%E5%9C%A8%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3.3.2 Cookie 在身份认证中的作用</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2 Web 开发模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E7%9A%84%E4%BC%A0%E7%BB%9F-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.1 基于服务端渲染的传统 Web 开发模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B0%E5%9E%8B-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.2 基于前后端分离的新型 Web 开发模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3 身份认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.1 什么是身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.2 不同模式下的身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Session-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.3 Session 认证机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E4%BB%80%E4%B9%88%E6%98%AF-Cookie"><span class="toc-text">3.3.1 什么是 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-Cookie-%E5%9C%A8%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3.3.2 Cookie 在身份认证中的作用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-JWT-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.4 JWT 认证机制</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -530,7 +529,7 @@
       <a href="/categories/%E6%8A%80%E6%9C%AF/">
         <div class="categories-list-item">
           技术
-          <span class="categories-list-item-badge">28</span>
+          <span class="categories-list-item-badge">31</span>
         </div>
       </a>
     
@@ -549,15 +548,15 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Node/" 
-        title="Node">
-        <div class="tags-list-item">Node</div>
-      </a>
-    
-      <a 
         href="/tags/Vue3/" 
         title="Vue3">
         <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
       </a>
     
       <a 
@@ -570,6 +569,18 @@
         href="/tags/Hexo/" 
         title="Hexo">
         <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/Vite/" 
+        title="Vite">
+        <div class="tags-list-item">Vite</div>
+      </a>
+    
+      <a 
+        href="/tags/Electron/" 
+        title="Electron">
+        <div class="tags-list-item">Electron</div>
       </a>
     
       <a 
@@ -638,7 +649,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2 Web 开发模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E7%9A%84%E4%BC%A0%E7%BB%9F-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.1 基于服务端渲染的传统 Web 开发模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B0%E5%9E%8B-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.2 基于前后端分离的新型 Web 开发模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3 身份认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.1 什么是身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.2 不同模式下的身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Session-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.3 Session 认证机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E4%BB%80%E4%B9%88%E6%98%AF-Cookie"><span class="toc-text">3.3.1 什么是 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-Cookie-%E5%9C%A8%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3.3.2 Cookie 在身份认证中的作用</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2 Web 开发模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E7%9A%84%E4%BC%A0%E7%BB%9F-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.1 基于服务端渲染的传统 Web 开发模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B0%E5%9E%8B-Web-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">2.2 基于前后端分离的新型 Web 开发模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3 身份认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.1 什么是身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">3.2 不同模式下的身份认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Session-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.3 Session 认证机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-%E4%BB%80%E4%B9%88%E6%98%AF-Cookie"><span class="toc-text">3.3.1 什么是 Cookie</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-Cookie-%E5%9C%A8%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">3.3.2 Cookie 在身份认证中的作用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-JWT-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">3.4 JWT 认证机制</span></a></li></ol></li></ol>
     </article>
   
   
@@ -653,23 +664,23 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-17</div>
+        <a href="/2023/03/17/vite-rollup-plugin-esbuild/"><div class="recent-posts-item-content">Vue3 + Vite 页面白屏问题（开发环境+生产环境）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-09</div>
+        <a href="/2023/03/09/electron-quick-start/"><div class="recent-posts-item-content">Electron 快速入门</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-02-28</div>
+        <a href="/2023/02/28/vue3-element-plus-table/"><div class="recent-posts-item-content">Vue3 + Element Plus 封装公共表格组件（带源码）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2023-02-07</div>
         <a href="/2023/02/07/vue3-setup/"><div class="recent-posts-item-content">Vue3 + Vite + Element Plus 项目搭建（全）</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-01-11</div>
-        <a href="/2023/01/11/git-worktree/"><div class="recent-posts-item-content">git worktree 依赖隔离、多分支开发图文详解</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-01-05</div>
-        <a href="/2023/01/05/node-identity-authentication/"><div class="recent-posts-item-content">Node.js 入门 —— 前后端的身份认证</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2023-01-05</div>
-        <a href="/2023/01/05/node-database/"><div class="recent-posts-item-content">Node.js 入门 —— 数据库</div></a>
       </div>
     
   </div>
