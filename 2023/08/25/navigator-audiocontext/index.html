@@ -13,14 +13,14 @@
     content="Yana&#39;s Blog"
   />
   <link rel="icon" href="/images/favicon.ico" />
-  <title>Vue3 + Vite 页面白屏问题（开发环境+生产环境）</title>
+  <title>Vue3 实现实时音量检测</title>
    
   <meta
     property="og:title"
-    content="Vue3 + Vite 页面白屏问题（开发环境+生产环境）"
+    content="Vue3 实现实时音量检测"
   />
    
-  <meta property="og:url" content="https://yanadh.github.io/2023/03/17/vite-rollup-plugin-esbuild/index.html" />
+  <meta property="og:url" content="https://yanadh.github.io/2023/08/25/navigator-audiocontext/index.html" />
    
   <meta
     property="og:img"
@@ -28,10 +28,10 @@
   />
     
   <meta property="og:type" content="article" />
-  <meta property="og:article:published_time" content="2023-03-17" />
+  <meta property="og:article:published_time" content="2023-08-25" />
   <meta
     property="og:article:modified_time"
-    content="2023-03-24"
+    content="2023-08-25"
   />
   <meta
     property="og:article:author"
@@ -40,7 +40,7 @@
    
   <meta property="og:article:tag" content="Vue3" />
   
-  <meta property="og:article:tag" content="Vite" />
+  <meta property="og:article:tag" content="JS" />
        <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
   <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
@@ -228,16 +228,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Vue3 + Vite 页面白屏问题（开发环境+生产环境）
+      Vue3 实现实时音量检测
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-03-17T09:00:31.000Z">
+    <time datetime="2023-08-25T09:11:53.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-03-17</span>
+      <span>2023-08-25</span>
     </time>
     
       <span class="dot"></span>
@@ -251,7 +251,7 @@
     
     
       <span class="dot"></span>
-      <span>534 字</span>
+      <span>592 字</span>
     
   </div>
   
@@ -275,9 +275,9 @@
             <span class="dot"></span>
           
           <a 
-            href="/tags/Vite/" 
+            href="/tags/JS/" 
             class="post-meta-link">
-            Vite
+            JS
           </a>
         
       </div>
@@ -289,60 +289,16 @@
     class="post-content">
     <ul>
 <li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
-<li><a href="#2-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5">2 问题排查</a></li>
-<li><a href="#3-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">3 解决方案</a></li>
+<li><a href="#2-%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0">2 功能实现</a></li>
 </ul>
-<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>在一次开发过程中，使用 Vue3 + Vite 做了几个简单页面，支持 PC 端和手机端， PC 端测试一切安好，手机端访问本地 IP 进行预览，苹果手机功能正常，但安卓手机直接白屏</p>
-<h2 id="2-问题排查"><a href="#2-问题排查" class="headerlink" title="2 问题排查"></a>2 问题排查</h2><div class="post-note note-info"><p>白屏原因猜测</p></div>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>本文基于 Vue3 + TypeScript 实现实时音量检测，其他语言可修改相应写法<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230825/2023082501.png" class="lozad post-image"src="/../images/20230825/2023082501.png"></p>
+<h2 id="2-功能实现"><a href="#2-功能实现" class="headerlink" title="2 功能实现"></a>2 功能实现</h2><h3 id="2-1-新建-vumeter-js"><a href="#2-1-新建-vumeter-js" class="headerlink" title="2.1 新建 vumeter.js"></a>2.1 新建 vumeter.js</h3><p>在 public&#x2F;static 目录下新建 vumeter.js</p>
+<pre class="highlight"><span class="line"><span class="keyword">const</span> <span class="variable constant_">SMOOTHING_FACTOR</span> = <span class="number">0.8</span>;</span><br><span class="line"><span class="title function_">registerProcessor</span>(</span><br><span class="line">  <span class="string">&#x27;vumeter&#x27;</span>,</span><br><span class="line">  <span class="keyword">class</span> <span class="title class_">extends</span> <span class="title class_">AudioWorkletProcessor</span> &#123;</span><br><span class="line">    _volume;</span><br><span class="line">    _updateIntervalInMS;</span><br><span class="line">    _nextUpdateFrame;</span><br><span class="line">    _currentTime;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">super</span>();</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">_volume</span> = <span class="number">0</span>;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">_updateIntervalInMS</span> = <span class="number">25</span>;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">_nextUpdateFrame</span> = <span class="variable language_">this</span>.<span class="property">_updateIntervalInMS</span>;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">_currentTime</span> = <span class="number">0</span>;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">port</span>.<span class="property">onmessage</span> = <span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (event.<span class="property">data</span>.<span class="property">updateIntervalInMS</span>) &#123;</span><br><span class="line">          <span class="variable language_">this</span>.<span class="property">_updateIntervalInMS</span> = event.<span class="property">data</span>.<span class="property">updateIntervalInMS</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">get</span> <span class="title function_">intervalInFrames</span>() &#123;</span><br><span class="line">      <span class="keyword">return</span> (<span class="variable language_">this</span>.<span class="property">_updateIntervalInMS</span> / <span class="number">1000</span>) * sampleRate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">process</span>(<span class="params">inputs</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> input = inputs[<span class="number">0</span>];</span><br><span class="line">      <span class="keyword">if</span> (input.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> samples = input[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">let</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">let</span> rms = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; samples.<span class="property">length</span>; i += <span class="number">1</span>) &#123;</span><br><span class="line">          sum += samples[i] * samples[i];</span><br><span class="line">        &#125;</span><br><span class="line">        rms = <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(sum / samples.<span class="property">length</span>);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">_volume</span> = <span class="title class_">Math</span>.<span class="title function_">max</span>(rms, <span class="variable language_">this</span>.<span class="property">_volume</span> * <span class="variable constant_">SMOOTHING_FACTOR</span>);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">_nextUpdateFrame</span> -= samples.<span class="property">length</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">0</span> &gt; <span class="variable language_">this</span>.<span class="property">_nextUpdateFrame</span>) &#123;</span><br><span class="line">          <span class="variable language_">this</span>.<span class="property">_nextUpdateFrame</span> += <span class="variable language_">this</span>.<span class="property">intervalInFrames</span>;</span><br><span class="line">          <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">_currentTime</span> || <span class="number">0.125</span> &lt; currentTime - <span class="variable language_">this</span>.<span class="property">_currentTime</span>) &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">_currentTime</span> = currentTime;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">port</span>.<span class="title function_">postMessage</span>(&#123; <span class="attr">volume</span>: <span class="variable language_">this</span>.<span class="property">_volume</span> &#125;);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">);</span><br></pre>
 
-<p>苹果手机访问正常，只有安卓手机才有白屏现象，可能是有些代码安卓不兼容，或者当前安卓自带的浏览器版本过低，大概率是兼容性问题</p>
-<div class="post-note note-info"><p>想办法让白屏浏览器能够查看控制台是否报错</p></div>
-<ol>
-<li>安装 vconsole<pre class="highlight"><span class="line">npm i -D vconsole</span><br></pre></li>
-<li>修改 main.ts<pre class="highlight"><span class="line"><span class="keyword">import</span> <span class="title class_">Vconsole</span> <span class="keyword">from</span> <span class="string">&#x27;vconsole&#x27;</span></span><br><span class="line"><span class="comment">//开发环境增加调试面板</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">import</span>.<span class="property">meta</span>.<span class="property">env</span>.<span class="property">DEV</span>) &#123;</span><br><span class="line">  <span class="keyword">new</span> <span class="title class_">Vconsole</span>()</span><br><span class="line">&#125;</span><br></pre></li>
-<li>成功看到错误信息 SyntaxError: Unexpected token ‘.<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230317/2023031701.jpg" class="lozad post-image"src="/../images/20230317/2023031701.jpg"></li>
-</ol>
-<div class="post-note note-info"><p>错误原因排查</p></div>
-<ol>
-<li>SyntaxError: Unexpected token ‘. 应该是 js 语法报错</li>
-<li>尝试访问没有任何 js 代码的页面能够正常显示</li>
-<li>访问其他页面，均无法正常显示</li>
-<li>分析无法访问页面的 js 代码，发现只要注释掉调用接口的部分代码，页面则能正常显示</li>
-<li>查看调用接口部分的 http 封装，发现代码中有使用<code>?.</code>可选链运算符，该运算符是 ES2020（ES11） 的新特性</li>
-<li>取消<code>?.</code>的使用，页面可以正常显示</li>
-</ol>
-<div class="post-note note-info"><p>浏览器兼容性查看</p></div>
+<h3 id="2-2-新建-useVolume-ts"><a href="#2-2-新建-useVolume-ts" class="headerlink" title="2.2 新建 useVolume.ts"></a>2.2 新建 useVolume.ts</h3><p>在 src&#x2F;hooks 目录下新建 vumeter.js</p>
+<pre class="highlight"><span class="line"><span class="keyword">const</span> volume = <span class="title function_">ref</span>(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">let</span> <span class="attr">audioContext</span>: <span class="title class_">AudioContext</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">node</span>: <span class="title class_">AudioWorkletNode</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">stream</span>: <span class="title class_">MediaStream</span> | <span class="literal">null</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">source</span>: <span class="title class_">MediaStreamAudioSourceNode</span> | <span class="literal">null</span> = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">getStaticPath</span> = (<span class="params">path: <span class="built_in">string</span></span>) =&gt; <span class="string">`<span class="subst">$&#123;<span class="keyword">import</span>.meta.env.VITE_PUBLIC_PATH&#125;</span>static/<span class="subst">$&#123;path&#125;</span>`</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">init</span> = <span class="keyword">async</span> (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  audioContext = <span class="keyword">new</span> <span class="title class_">AudioContext</span>()</span><br><span class="line">  <span class="keyword">await</span> audioContext.<span class="property">audioWorklet</span>.<span class="title function_">addModule</span>(<span class="title function_">getStaticPath</span>(<span class="string">&#x27;vumeter.js&#x27;</span>))</span><br><span class="line">  node = <span class="keyword">new</span> <span class="title class_">AudioWorkletNode</span>(audioContext, <span class="string">&#x27;vumeter&#x27;</span>)</span><br><span class="line">  node.<span class="property">port</span>.<span class="property">onmessage</span> = <span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (event.<span class="property">data</span>.<span class="property">volume</span>) &#123;</span><br><span class="line">      volume.<span class="property">value</span> = <span class="title class_">Math</span>.<span class="title function_">round</span>(event.<span class="property">data</span>.<span class="property">volume</span> * <span class="number">200</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">disconnectAudioContext</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  stream?.<span class="title function_">getTracks</span>().<span class="title function_">forEach</span>(<span class="function">(<span class="params">track</span>) =&gt;</span> track.<span class="title function_">stop</span>()) <span class="comment">// 取消麦克风占用</span></span><br><span class="line">  source?.<span class="title function_">disconnect</span>() <span class="comment">// 取消 onmessage 监听</span></span><br><span class="line">  stream = <span class="literal">null</span></span><br><span class="line">  source = <span class="literal">null</span></span><br><span class="line">  volume.<span class="property">value</span> = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">connectAudioContext</span> = <span class="keyword">async</span> (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (!audioContext) <span class="keyword">await</span> <span class="title function_">init</span>()</span><br><span class="line">  navigator.<span class="property">mediaDevices</span>.<span class="title function_">getUserMedia</span>(&#123; <span class="attr">audio</span>: <span class="literal">true</span>, <span class="attr">video</span>: <span class="literal">false</span> &#125;).<span class="title function_">then</span>(<span class="keyword">async</span> (mediaStream) =&gt; &#123;</span><br><span class="line">    stream = mediaStream</span><br><span class="line">    source = audioContext.<span class="title function_">createMediaStreamSource</span>(stream)</span><br><span class="line">    source.<span class="title function_">connect</span>(node)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    volume,</span><br><span class="line">    connectAudioContext,</span><br><span class="line">    disconnectAudioContext</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre>
 
-<ul>
-<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Optional_chaining">可选链运算符</a>浏览器兼容性</li>
-</ul>
-<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230317/2023031702.png" class="lozad post-image"src="/../images/20230317/2023031702.png"></p>
-<ul>
-<li>白屏浏览器版本<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230317/2023031703.png" class="lozad post-image"src="/../images/20230317/2023031703.png"></li>
-</ul>
-<h2 id="3-解决方案"><a href="#3-解决方案" class="headerlink" title="3 解决方案"></a>3 解决方案</h2><p>需要让 vite 兼容低版本浏览器</p>
-<ul>
-<li>开发环境</li>
-</ul>
-<ol>
-<li>安装 rollup-plugin-esbuild<pre class="highlight"><span class="line">npm i -D rollup-plugin-esbuild</span><br></pre></li>
-<li>修改 vite.config.ts<pre class="highlight"><span class="line"><span class="keyword">import</span> esbuild <span class="keyword">from</span> <span class="string">&#x27;rollup-plugin-esbuild&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">plugins</span>:[</span><br><span class="line">  <span class="title function_">esbuild</span>(&#123;</span><br><span class="line">    <span class="attr">target</span>: <span class="string">&#x27;chrome64&#x27;</span>,</span><br><span class="line">    <span class="attr">loaders</span>: &#123;</span><br><span class="line">      <span class="string">&#x27;.vue&#x27;</span>: <span class="string">&#x27;js&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;.ts&#x27;</span>: <span class="string">&#x27;js&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">]</span><br></pre></li>
-</ol>
-<ul>
-<li>生产环境</li>
-</ul>
-<div class="post-note note-info"><p>方案1：安装 legacy (打包后会多生成一份 .legacy.js 的文件)</p></div>
-
-<ol>
-<li>安装 @vitejs&#x2F;plugin-legacy<pre class="highlight"><span class="line">npm i -D @vitejs/plugin-legacy</span><br></pre></li>
-<li>修改 vite.config.ts<pre class="highlight"><span class="line"><span class="keyword">import</span> legacy <span class="keyword">from</span> <span class="string">&#x27;@vitejs/plugin-legacy&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">plugins</span>:[</span><br><span class="line">  <span class="title function_">legacy</span>()</span><br><span class="line">]</span><br></pre></li>
-</ol>
-<div class="post-note note-info"><p>方案2：修改 build.target (推荐)</p></div>
-
-<p>修改 vite.config.ts</p>
-<pre class="highlight"><span class="line"><span class="attr">build</span>: &#123;</span><br><span class="line">  <span class="attr">minify</span>: <span class="string">&#x27;terser&#x27;</span>,</span><br><span class="line">  <span class="attr">target</span>: [<span class="string">&#x27;edge90&#x27;</span>, <span class="string">&#x27;chrome90&#x27;</span>, <span class="string">&#x27;firefox90&#x27;</span>, <span class="string">&#x27;safari15&#x27;</span>], <span class="comment">// 适配低版本浏览器</span></span><br><span class="line">&#125;</span><br></pre>
-
-
+<h3 id="2-3-新增音量检测展示容器"><a href="#2-3-新增音量检测展示容器" class="headerlink" title="2.3 新增音量检测展示容器"></a>2.3 新增音量检测展示容器</h3><pre class="highlight"><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class=&quot;volume&quot;&gt;</span><br><span class="line">    &lt;div&gt;当前麦克风&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;输入音量大小如下&lt;/div&gt;</span><br><span class="line">    &lt;el-icon&gt;&lt;i-ep-Microphone /&gt;&lt;/el-icon&gt;</span><br><span class="line">    &lt;span</span><br><span class="line">      v-for=&quot;i in 20&quot;</span><br><span class="line">      :key=&quot;i&quot;</span><br><span class="line">      class=&quot;volume-span&quot;</span><br><span class="line">      :style=&quot;`$&#123;Math.ceil(volume / 5) &gt;= i ? &#x27;background: #2559e5&#x27; : &#x27;&#x27;&#125;`&quot;</span><br><span class="line">    &gt;&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">import useVolume from &#x27;@/hooks/useVolume&#x27;</span><br><span class="line">const &#123; volume, connectAudioContext, disconnectAudioContext &#125; = useVolume()</span><br><span class="line"></span><br><span class="line">// 开始音量检测</span><br><span class="line">connectAudioContext()</span><br><span class="line"></span><br><span class="line">// 暂停音量检测</span><br><span class="line">// disconnectAudioContext()</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style lang=&quot;scss&quot; scoped&gt;</span><br><span class="line">.volume &#123;</span><br><span class="line">  border-top: 1px solid #dcdfe6;</span><br><span class="line">  border-bottom: 1px solid #dcdfe6;</span><br><span class="line">  padding: 16px 0;</span><br><span class="line">  text-align: center;</span><br><span class="line">  font-size: 12px;</span><br><span class="line">  :nth-child(2) &#123;</span><br><span class="line">    margin-bottom: 6px;</span><br><span class="line">  &#125;</span><br><span class="line">  div &#123;</span><br><span class="line">    color: #909399;</span><br><span class="line">  &#125;</span><br><span class="line">  .volume-span &#123;</span><br><span class="line">    display: inline-block;</span><br><span class="line">    margin-left: 1px;</span><br><span class="line">    width: 3px;</span><br><span class="line">    height: 8px;</span><br><span class="line">    background: #c6e2ff;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre>
 
   </div>
   
@@ -391,8 +347,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://yanadh.github.io/2023/03/17/vite-rollup-plugin-esbuild/">
-            https://yanadh.github.io/2023/03/17/vite-rollup-plugin-esbuild/
+            href="https://yanadh.github.io/2023/08/25/navigator-audiocontext/">
+            https://yanadh.github.io/2023/08/25/navigator-audiocontext/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -402,29 +358,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/08/25/navigator-audiocontext/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">上一篇</div>
-          
-            <div class="nav-title">Vue3 实现实时音量检测 </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/03/09/electron-quick-start/" 
+        href="/2023/03/17/vite-rollup-plugin-esbuild/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">Electron 快速入门 </div>
+            <div class="nav-title">Vue3 + Vite 页面白屏问题（开发环境+生产环境） </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -478,7 +420,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="toc-text">2 问题排查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">3 解决方案</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="toc-text">2 功能实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%96%B0%E5%BB%BA-vumeter-js"><span class="toc-text">2.1 新建 vumeter.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%96%B0%E5%BB%BA-useVolume-ts"><span class="toc-text">2.2 新建 useVolume.ts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%96%B0%E5%A2%9E%E9%9F%B3%E9%87%8F%E6%A3%80%E6%B5%8B%E5%B1%95%E7%A4%BA%E5%AE%B9%E5%99%A8"><span class="toc-text">2.3 新增音量检测展示容器</span></a></li></ol></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -536,7 +478,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="toc-text">2 问题排查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">3 解决方案</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="toc-text">2 功能实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%96%B0%E5%BB%BA-vumeter-js"><span class="toc-text">2.1 新建 vumeter.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%96%B0%E5%BB%BA-useVolume-ts"><span class="toc-text">2.2 新建 useVolume.ts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%96%B0%E5%A2%9E%E9%9F%B3%E9%87%8F%E6%A3%80%E6%B5%8B%E5%B1%95%E7%A4%BA%E5%AE%B9%E5%99%A8"><span class="toc-text">2.3 新增音量检测展示容器</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -674,7 +616,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="toc-text">2 问题排查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">3 解决方案</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="toc-text">2 功能实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%96%B0%E5%BB%BA-vumeter-js"><span class="toc-text">2.1 新建 vumeter.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%96%B0%E5%BB%BA-useVolume-ts"><span class="toc-text">2.2 新建 useVolume.ts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%96%B0%E5%A2%9E%E9%9F%B3%E9%87%8F%E6%A3%80%E6%B5%8B%E5%B1%95%E7%A4%BA%E5%AE%B9%E5%99%A8"><span class="toc-text">2.3 新增音量检测展示容器</span></a></li></ol></li></ol>
     </article>
   
   
