@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>标签</title>
+   
+  <meta
+    property="og:title"
+    content="标签"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/tags/uni-app/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">   
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+<div class="card card-content tag-page-card">
+  <div class="tags-page-title">标签&nbsp-&nbspuni-app</div>
+</div>
+<div class="archive-timeline">
+  
+  
+    
+      <div class="archive-timeline-tag"><span>2023</span></div>
+      
+    
+    <div class="archive-timeline-item">
+      <div class="archive-timeline-post">
+        <div class="card card-content">
+          <div class="archive-timeline-post-date">2023-09-06</div>
+          <div class="archive-timeline-post-content">
+            <a 
+              href="/2023/09/06/uniapp-mumu/" 
+              class="archive-timeline-post-item">
+              uni-app 运行到MuMu模拟器
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>33</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>15</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">33</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/uni-app/" 
+        title="uni-app">
+        <div class="tags-list-item">uni-app</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Vite/" 
+        title="Vite">
+        <div class="tags-list-item">Vite</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
+      </a>
+    
+      <a 
+        href="/tags/Electron/" 
+        title="Electron">
+        <div class="tags-list-item">Electron</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+    <article class="card card-content widescreen-archive archive-widget">
+      <div class="archive-card">
+  <div class="archive-card-header">
+    <i 
+      class="iconfont icon-wodebaobiao" 
+      style="padding-right: 2px;">
+    </i>归档
+  </div>
+  <div class="archive-card-list">
+    
+    
+    
+      
+        
+        
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <a 
+            href="/archives/2023" 
+            class="archive-card-list-item">
+            2023
+            <span class="archive-card-list-item-badge">10</span>
+          </a>
+        
+        
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+      <a 
+        href="/archives/2022" 
+        class="archive-card-list-item">
+        2022
+        <span class="archive-card-list-item-badge">23</span>
+      </a>
+    
+  </div>
+</div>
+    </article>
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-06</div>
+        <a href="/2023/09/06/uniapp-mumu/"><div class="recent-posts-item-content">uni-app 运行到MuMu模拟器</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-25</div>
+        <a href="/2023/08/25/navigator-audiocontext/"><div class="recent-posts-item-content">Vue3 实现麦克风实时音量检测</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-17</div>
+        <a href="/2023/03/17/vite-rollup-plugin-esbuild/"><div class="recent-posts-item-content">Vue3 + Vite 页面白屏问题（开发环境+生产环境）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-03-09</div>
+        <a href="/2023/03/09/electron-quick-start/"><div class="recent-posts-item-content">Electron 快速入门</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+    <article class="card card-content">
+      <div class="archive-card">
+  <div class="archive-card-header">
+    <i 
+      class="iconfont icon-wodebaobiao" 
+      style="padding-right: 2px;">
+    </i>归档
+  </div>
+  <div class="archive-card-list">
+    
+    
+    
+      
+        
+        
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <a 
+            href="/archives/2023" 
+            class="archive-card-list-item">
+            2023
+            <span class="archive-card-list-item-badge">10</span>
+          </a>
+        
+        
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+      <a 
+        href="/archives/2022" 
+        class="archive-card-list-item">
+        2022
+        <span class="archive-card-list-item-badge">23</span>
+      </a>
+    
+  </div>
+</div>
+    </article>
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+                - 
+                2023
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>
