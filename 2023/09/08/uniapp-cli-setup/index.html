@@ -13,14 +13,14 @@
     content="Yana&#39;s Blog"
   />
   <link rel="icon" href="/images/favicon.ico" />
-  <title>Electron 快速入门</title>
+  <title>vue-cli 方式创建 uni-app 项目（支持快捷键）</title>
    
   <meta
     property="og:title"
-    content="Electron 快速入门"
+    content="vue-cli 方式创建 uni-app 项目（支持快捷键）"
   />
    
-  <meta property="og:url" content="https://yanadh.github.io/2023/03/09/electron-quick-start/index.html" />
+  <meta property="og:url" content="https://yanadh.github.io/2023/09/08/uniapp-cli-setup/index.html" />
    
   <meta
     property="og:img"
@@ -28,17 +28,17 @@
   />
     
   <meta property="og:type" content="article" />
-  <meta property="og:article:published_time" content="2023-03-09" />
+  <meta property="og:article:published_time" content="2023-09-08" />
   <meta
     property="og:article:modified_time"
-    content="2023-03-09"
+    content="2023-09-19"
   />
   <meta
     property="og:article:author"
     content="duhuan"
   />
    
-  <meta property="og:article:tag" content="Electron" />
+  <meta property="og:article:tag" content="uni-app" />
        <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
   <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
@@ -226,16 +226,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Electron 快速入门
+      vue-cli 方式创建 uni-app 项目（支持快捷键）
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-03-09T08:31:24.000Z">
+    <time datetime="2023-09-08T08:59:36.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-03-09</span>
+      <span>2023-09-08</span>
     </time>
     
       <span class="dot"></span>
@@ -249,7 +249,7 @@
     
     
       <span class="dot"></span>
-      <span>633 字</span>
+      <span>535 字</span>
     
   </div>
   
@@ -264,9 +264,9 @@
         
           
           <a 
-            href="/tags/Electron/" 
+            href="/tags/uni-app/" 
             class="post-meta-link">
-            Electron
+            uni-app
           </a>
         
       </div>
@@ -277,42 +277,69 @@
     id="section" 
     class="post-content">
     <ul>
-<li><a href="#1-electron-%E6%98%AF%E4%BB%80%E4%B9%88">1 Electron 是什么</a></li>
-<li><a href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F">2 创建应用程序</a></li>
-<li><a href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F">3 打包应用程序</a></li>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E5%88%9B%E5%BB%BA-uni-app">2 创建 uni-app</a></li>
+<li><a href="#3-%E5%88%A0%E9%99%A4%E5%A4%9A%E4%BD%99%E4%BE%9D%E8%B5%96">3 删除多余依赖</a></li>
+<li><a href="#4-%E6%94%AF%E6%8C%81%E5%BF%AB%E6%8D%B7%E9%94%AE">4 支持快捷键</a></li>
+<li><a href="#5-%E5%AE%89%E8%A3%85-uni-ui-%E5%8F%8A-sass">5 安装 uni-ui 及 sass</a></li>
+<li><a href="#6-%E9%85%8D%E7%BD%AE-easycom">6 配置 easycom</a></li>
+<li><a href="#7-%E8%BF%90%E8%A1%8C">7 运行</a></li>
 </ul>
-<h2 id="1-Electron-是什么"><a href="#1-Electron-是什么" class="headerlink" title="1 Electron 是什么"></a>1 Electron 是什么</h2><p>Electron是一个使用 JavaScript、HTML 和 CSS 构建桌面应用程序的框架。 Electron 将 Chromium 和 Node.js 嵌入到了一个二进制文件中，因此它允许你仅需一个代码仓库，就可以撰写支持 Windows、macOS 和 Linux 的跨平台应用。</p>
-<h2 id="2-创建应用程序"><a href="#2-创建应用程序" class="headerlink" title="2 创建应用程序"></a>2 创建应用程序</h2><ul>
-<li><p>初始化 package.json</p>
-<pre class="highlight"><span class="line">npm init</span><br></pre>
-</li>
-<li><p>修改 package.json</p>
-<pre class="highlight"><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;main&quot;</span><span class="punctuation">:</span> <span class="string">&quot;main.js&quot;</span><span class="punctuation">,</span> <span class="comment">// 入口文件为 main.js</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A minimal Electron application&quot;</span><span class="punctuation">,</span> <span class="comment">// description 为 &quot;&quot; 会导致后续打包报错</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electron .&quot;</span><span class="punctuation">,</span> <span class="comment">// 启动 electron</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre>
-</li>
-<li><p>安装 electron 包</p>
-<pre class="highlight"><span class="line">npm install --save-dev electron</span><br></pre>
-<p>若安装失败，设置一下 electron 下载镜像</p>
-<pre class="highlight"><span class="line">npm config <span class="built_in">set</span> electron_mirror <span class="string">&quot;https://npmmirror.com/mirrors/electron/&quot;</span></span><br></pre>
-</li>
-<li><p>在根目录下新增 main.js 文件</p>
-<pre class="highlight"><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> &#123; app, <span class="title class_">BrowserWindow</span> &#125; = <span class="built_in">require</span>(<span class="string">&#x27;electron&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">createWindow</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> win = <span class="keyword">new</span> <span class="title class_">BrowserWindow</span>(&#123;</span><br><span class="line">    <span class="attr">width</span>: <span class="number">800</span>,</span><br><span class="line">    <span class="attr">height</span>: <span class="number">600</span>,</span><br><span class="line">    <span class="attr">webPreferences</span>: &#123;</span><br><span class="line">      <span class="attr">preload</span>: path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;preload.js&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  win.<span class="title function_">loadFile</span>(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">whenReady</span>().<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">createWindow</span>()</span><br><span class="line">  app.<span class="title function_">on</span>(<span class="string">&#x27;activate&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// macOS 应用在没有打开任何窗口的情况下也继续运行</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">BrowserWindow</span>.<span class="title function_">getAllWindows</span>().<span class="property">length</span> === <span class="number">0</span>) <span class="title function_">createWindow</span>()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">on</span>(<span class="string">&#x27;window-all-closed&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 除 macOS 外，应用关闭所有窗口则完全退出一个应用程序</span></span><br><span class="line">  <span class="keyword">if</span> (process.<span class="property">platform</span> !== <span class="string">&#x27;darwin&#x27;</span>) app.<span class="title function_">quit</span>()</span><br><span class="line">&#125;)</span><br></pre>
-</li>
-<li><p>在根目录下新建 index.html</p>
-<pre class="highlight"><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span></span></span><br><span class="line"><span class="tag">      <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Security-Policy&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">content</span>=<span class="string">&quot;default-src &#x27;self&#x27;; script-src &#x27;self&#x27;&quot;</span></span></span><br><span class="line"><span class="tag">    /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>你好!<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>你好!<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    我们正在使用 Node.js <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;node-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>, Chromium</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;chrome-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>, 和 Electron</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;electron-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>.</span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre>
-</li>
-<li><p>在根目录下新建 preload.js</p>
-<pre class="highlight"><span class="line"><span class="comment">// 通过预加载脚本从渲染器访问 Node.js</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;DOMContentLoaded&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">replaceText</span> = (<span class="params">selector, text</span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(selector)</span><br><span class="line">    <span class="keyword">if</span> (element) element.<span class="property">innerText</span> = text</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> dependency <span class="keyword">of</span> [<span class="string">&#x27;chrome&#x27;</span>, <span class="string">&#x27;node&#x27;</span>, <span class="string">&#x27;electron&#x27;</span>]) &#123;</span><br><span class="line">    <span class="title function_">replaceText</span>(<span class="string">`<span class="subst">$&#123;dependency&#125;</span>-version`</span>, process.<span class="property">versions</span>[dependency])</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre>
-</li>
-<li><p>启动 electron</p>
-<pre class="highlight"><span class="line">npm dev</span><br></pre>
-<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230309/2023030901.png" class="lozad post-image"src="/../images/20230309/2023030901.png"></p>
-</li>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>由于习惯了 VSCode 的使用，本着快速交付，不需要转换开发思维、不需要更改开发习惯的宗旨，故采用 vue-cli 的方式创建 uni-app 项目，并将所有配置过程记录下来，以帮助更多需要的小伙伴</p>
+<h2 id="2-创建-uni-app"><a href="#2-创建-uni-app" class="headerlink" title="2 创建 uni-app"></a>2 创建 uni-app</h2><ul>
+<li>全局安装 vue-cli</li>
 </ul>
-<h2 id="3-打包应用程序"><a href="#3-打包应用程序" class="headerlink" title="3 打包应用程序"></a>3 打包应用程序</h2><ul>
-<li>安装 Electron Forge<pre class="highlight"><span class="line">npm install --save-dev @electron-forge/cli</span><br></pre></li>
-<li>使用 Electron Forge 的”import”命令设置 Forge 的脚手架<pre class="highlight"><span class="line">npx electron-forge import</span><br></pre></li>
-<li>使用 Forge 的 make 命令来创建可分发的应用程序<pre class="highlight"><span class="line">npm run make</span><br></pre>
-以上三个命令执行完后，会创建一个 out 文件夹，文件夹下包含安装包<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230309/2023030902.png" class="lozad post-image"src="/../images/20230309/2023030902.png"></li>
+<pre class="highlight"><span class="line">npm install -g @vue/cli</span><br></pre>
+
+<ul>
+<li>创建 Vue3&#x2F;Vite 版 uni-app</li>
+</ul>
+<p>创建以 Vue3+Vite+TypeScript 开发的工程，如命令行创建失败，请直接访问 <a target="_blank" rel="noopener" href="https://gitee.com/dcloud/uni-preset-vue/repository/archive/vite-ts.zip">gitee</a> 下载模板</p>
+<pre class="highlight"><span class="line">npx degit dcloudio/uni-preset-vue<span class="comment">#vite-ts my-vue3-project</span></span><br></pre>
+
+<h2 id="3-删除多余依赖"><a href="#3-删除多余依赖" class="headerlink" title="3 删除多余依赖"></a>3 删除多余依赖</h2><blockquote>
+<p>根据自身情况，删除不需要的依赖和命令，比如下图只留下了<code>h5</code>和<code>mp-weixin</code>相关内容</p>
+</blockquote>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230908/2023090801.png" class="lozad post-image"src="/../images/20230908/2023090801.png"></p>
+<h2 id="4-支持快捷键"><a href="#4-支持快捷键" class="headerlink" title="4 支持快捷键"></a>4 支持快捷键</h2><ul>
+<li>快速创建 uniapp 视图与组件</li>
+</ul>
+<p>安装 uni-create-view 插件并修改设置，支持创建页面时自动添加页面信息到 pages.json 中</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230908/2023090802.png" class="lozad post-image"src="/../images/20230908/2023090802.png"><br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230908/2023090803.png" class="lozad post-image"src="/../images/20230908/2023090803.png"></p>
+<ul>
+<li>增强 uni-app 系列产品在 VSCode 内的体验</li>
+</ul>
+<p>安装 uni-helper 插件，支持<code>uni</code>代码快捷键及代码高亮</p>
+<blockquote>
+<ol>
+<li>校验 uni-app 中的 androidPrivacy.json、pages.json 和 manifest.json 格式，也可以直接在对应的文件中添加 $schema 来使用对应的 schema 文件</li>
+<li>提供 uni-app 基本能力代码片段</li>
+<li>uni-cloud-snippets - 提供 uni-cloud 基本能力代码片段</li>
+<li>提供 uni-ui 基本能力代码片段</li>
+<li>在 VSCode 中对条件编译的代码注释部分提供了语法高亮</li>
+</ol>
+</blockquote>
+<h2 id="5-安装-uni-ui-及-sass"><a href="#5-安装-uni-ui-及-sass" class="headerlink" title="5 安装 uni-ui 及 sass"></a>5 安装 uni-ui 及 sass</h2><pre class="highlight"><span class="line">npm i @dcloudio/uni-ui</span><br><span class="line">npm i sass -D</span><br></pre>
+
+<h2 id="6-配置-easycom"><a href="#6-配置-easycom" class="headerlink" title="6 配置 easycom"></a>6 配置 easycom</h2><p>修改 src&#x2F;pages.json ，添加 <a target="_blank" rel="noopener" href="https://uniapp.dcloud.net.cn/collocation/pages.html#easycom">easycom</a> 节点：</p>
+<pre class="highlight"><span class="line">// pages.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"><span class="code">	&quot;easycom&quot;: &#123;</span></span><br><span class="line"><span class="code">		&quot;autoscan&quot;: true,</span></span><br><span class="line"><span class="code">		&quot;custom&quot;: &#123;</span></span><br><span class="line"><span class="code">			// uni-ui 规则如下配置</span></span><br><span class="line"><span class="code">			&quot;^uni-(.*)&quot;: &quot;@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue&quot;</span></span><br><span class="line"><span class="code">		&#125;</span></span><br><span class="line"><span class="code">	&#125;,</span></span><br><span class="line"><span class="code">	</span></span><br><span class="line"><span class="code">	// 其他内容</span></span><br><span class="line"><span class="code">	pages:[</span></span><br><span class="line"><span class="code">		// ...</span></span><br><span class="line"><span class="code">	]</span></span><br><span class="line"><span class="code">&#125;</span></span><br></pre>
+
+<h2 id="7-运行"><a href="#7-运行" class="headerlink" title="7 运行"></a>7 运行</h2><ol>
+<li>运行到 h5</li>
+</ol>
+<pre class="highlight"><span class="line">npm dev:h5</span><br></pre>
+
+<ol start="2">
+<li>运行到 mp-weixin</li>
+</ol>
+<ul>
+<li><p>执行命令行</p>
+<pre class="highlight"><span class="line">npm dev:mp-weixin</span><br></pre>
+</li>
+<li><p>打开微信开发者工具，并导入运行命令行生成的文件夹<code>dist\dev\mp-weixin</code></p>
+</li>
+<li><p>代码更新后，微信开发者工具会热更新</p>
+</li>
 </ul>
 
   </div>
@@ -362,8 +389,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://yanadh.github.io/2023/03/09/electron-quick-start/">
-            https://yanadh.github.io/2023/03/09/electron-quick-start/
+            href="https://yanadh.github.io/2023/09/08/uniapp-cli-setup/">
+            https://yanadh.github.io/2023/09/08/uniapp-cli-setup/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -373,29 +400,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/03/17/vite-rollup-plugin-esbuild/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">上一篇</div>
-          
-            <div class="nav-title">Vue3 + Vite 页面白屏问题（开发环境+生产环境） </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/02/28/vue3-element-plus-table/" 
+        href="/2023/09/06/uniapp-mumu/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">Vue3 + Element Plus 封装公共表格组件（带源码） </div>
+            <div class="nav-title">uni-app 运行到MuMu模拟器 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -449,7 +462,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA-uni-app"><span class="toc-text">2 创建 uni-app</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%A0%E9%99%A4%E5%A4%9A%E4%BD%99%E4%BE%9D%E8%B5%96"><span class="toc-text">3 删除多余依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%94%AF%E6%8C%81%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-text">4 支持快捷键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%AE%89%E8%A3%85-uni-ui-%E5%8F%8A-sass"><span class="toc-text">5 安装 uni-ui 及 sass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E9%85%8D%E7%BD%AE-easycom"><span class="toc-text">6 配置 easycom</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%BF%90%E8%A1%8C"><span class="toc-text">7 运行</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -507,7 +520,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA-uni-app"><span class="toc-text">2 创建 uni-app</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%A0%E9%99%A4%E5%A4%9A%E4%BD%99%E4%BE%9D%E8%B5%96"><span class="toc-text">3 删除多余依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%94%AF%E6%8C%81%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-text">4 支持快捷键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%AE%89%E8%A3%85-uni-ui-%E5%8F%8A-sass"><span class="toc-text">5 安装 uni-ui 及 sass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E9%85%8D%E7%BD%AE-easycom"><span class="toc-text">6 配置 easycom</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%BF%90%E8%A1%8C"><span class="toc-text">7 运行</span></a></li></ol>
       </div>
     </article>
   
@@ -651,7 +664,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA-uni-app"><span class="toc-text">2 创建 uni-app</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%A0%E9%99%A4%E5%A4%9A%E4%BD%99%E4%BE%9D%E8%B5%96"><span class="toc-text">3 删除多余依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%94%AF%E6%8C%81%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-text">4 支持快捷键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%AE%89%E8%A3%85-uni-ui-%E5%8F%8A-sass"><span class="toc-text">5 安装 uni-ui 及 sass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E9%85%8D%E7%BD%AE-easycom"><span class="toc-text">6 配置 easycom</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%BF%90%E8%A1%8C"><span class="toc-text">7 运行</span></a></li></ol>
     </article>
   
   
