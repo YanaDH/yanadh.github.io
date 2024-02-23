@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="theme-color" content="#fff" id="theme-color" />
+  <meta
+    name="description"
+    content="Yana&#39;s Blog"
+  />
+  <link rel="icon" href="/images/favicon.ico" />
+  <title>Echarts —— 关系图+路径图+散点图（动态箭头）</title>
+   
+  <meta
+    property="og:title"
+    content="Echarts —— 关系图+路径图+散点图（动态箭头）"
+  />
+   
+  <meta property="og:url" content="https://yanadh.github.io/2024/02/23/echarts-graph-lines-scatter/index.html" />
+   
+  <meta
+    property="og:img"
+    content="/images/avatar.jpg"
+  />
+    
+  <meta property="og:type" content="article" />
+  <meta property="og:article:published_time" content="2024-02-23" />
+  <meta
+    property="og:article:modified_time"
+    content="2024-02-23"
+  />
+  <meta
+    property="og:article:author"
+    content="duhuan"
+  />
+   
+  <meta property="og:article:tag" content="Echarts" />
+       <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
+  <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script')
+      script.src = url
+      if (cb) script.onload = cb
+      script.async = true
+      document.body.appendChild(script)
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link')
+      sheet.ref = 'stylesheet'
+      sheet.href = href
+      sheet.dataset[data] = attr
+      document.head.appendChild(sheet)
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data)
+      var newlink = document.createElement('link')
+      newlink.setAttribute('rel', 'stylesheet')
+      newlink.setAttribute('href', cssFile)
+      newlink.dataset.prism = attr
+      document.head.replaceChild(newlink, oldlink)
+    }
+  </script>
+    
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark',
+    }
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff',
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function () {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function () {
+      var setting = localStorage.getItem('user-color-scheme')
+      if (reverseDarkList[setting]) {
+        setting = reverseDarkList[setting]
+      } else if (setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()]
+      } else {
+        return
+      }
+      localStorage.setItem('user-color-scheme', setting)
+      return setting
+    }
+    // apply current darkmode setting
+  </script>
+  
+  <script>
+    var setDarkmode = function (mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme')
+      if (setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else if (reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting)
+        document.getElementById('theme-color').content = themeColor[setting]
+        document.getElementById('theme-color').dataset.mode = setting
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme')
+        localStorage.removeItem('user-color-scheme')
+        document.getElementById('theme-color').content =
+          themeColor[getCssMediaQuery()]
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery()
+      }
+    }
+    setDarkmode()
+  </script>
+     <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script"> <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >   <link rel="preload" href="/js/lib/lozad.min.js" as="script">       <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="/images/favicon.ico" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">Yana's Blog</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <a 
+      class="navbar-menu-item darknavbar" 
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </a>
+    <a 
+      class="navbar-menu-item searchnavbar" 
+      id="search">
+      <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i>
+    </a>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <div class="left-holder"></div>
+            <main class="main-column">
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Echarts —— 关系图+路径图+散点图（动态箭头）
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2024-02-23T02:17:47.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2024-02-23</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF/" 
+          class="post-meta-link">
+          技术
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>2.7k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Echarts/" 
+            class="post-meta-link">
+            Echarts
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <ul>
+<li><a href="#1-%E6%95%88%E6%9E%9C%E9%A2%84%E8%A7%88">1 效果预览</a></li>
+<li><a href="#2-%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81">2 实现代码</a></li>
+</ul>
+<h2 id="1-效果预览"><a href="#1-效果预览" class="headerlink" title="1 效果预览"></a>1 效果预览</h2><p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20240223/2024022301.png" class="lozad post-image"src="/../images/20240223/2024022301.png"></p>
+<p>可将以下代码复制到 <a target="_blank" rel="noopener" href="https://echarts.apache.org/examples/zh/editor.html?c=line-simple&amp;lang=ts">https://echarts.apache.org/examples/zh/editor.html?c=line-simple&amp;lang=ts</a> ，在线预览效果</p>
+<h2 id="2-实现代码"><a href="#2-实现代码" class="headerlink" title="2 实现代码"></a>2 实现代码</h2><pre class="highlight"><span class="line"><span class="keyword">const</span> categories = [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;数据中心&#x27;</span>,</span><br><span class="line">    <span class="attr">symbol</span>:</span><br><span class="line">      <span class="string">&#x27;path://M936.33 732.203c-9.872-10.814-23.349-17.123-37.953-17.778-14.849-0.451-28.613 4.383-39.427 14.255-0.215 0.195-0.282 0.476-0.492 0.673l-144.256-83.448c0.625-2.939 1.994-5.635 2.133-8.697 0.676-14.624-4.383-28.634-14.255-39.448-20.379-22.284-55.096-23.841-77.401-3.523-22.305 20.4-23.882 55.096-3.502 77.421 7.932 8.707 18.534 13.533 29.878 15.799l17.069 160.864c-5.049 2.466-10.138 4.9-14.422 8.82-23.964 21.875-25.643 59.192-3.769 83.156 11.593 12.699 27.507 19.13 43.483 19.13 14.173 0 28.408-5.08 39.673-15.361 11.613-10.61 18.393-25.111 19.109-40.8 0.264-5.807-1.162-11.301-2.527-16.782l114.101-74.264c8.695 6.485 18.549 11.122 29.627 11.618 0.86 0.041 1.7 0.082 2.56 0.082 13.682 0 26.688-5.039 36.867-14.337 22.307-20.359 23.863-55.096 3.504-77.38z m-92.616 24.03c-2.588 10.576-2.855 21.552 0.968 31.893l-109.7 71.397c-9.88-10.018-22.696-16.007-36.719-17.202l-16.624-156.665a54.739 54.739 0 0 0 16.898-10.515c0.637-0.579 0.891-1.421 1.498-2.025l143.679 83.117z m-206.233-122.63c0.287-6.431 3.072-12.412 7.824-16.754a24.194 24.194 0 0 1 16.304-6.308c6.575 0 13.108 2.663 17.86 7.865 4.342 4.752 6.575 10.937 6.288 17.41-0.287 6.431-3.072 12.371-7.824 16.713h-0.021c-4.793 4.342-11.081 6.964-17.409 6.308-6.431-0.287-12.371-3.072-16.713-7.824-4.364-4.752-6.596-10.937-6.309-17.41z m74.963 287.851c-11.47 10.528-29.432 9.708-39.898-1.802-10.487-11.511-9.688-29.412 1.802-39.898 5.243-4.793 11.961-7.414 19.028-7.414 0.43 0 0.86 0.041 1.29 0.041 7.537 0.328 14.501 3.605 19.581 9.176 5.1 5.571 7.701 12.781 7.353 20.318-0.328 7.536-3.585 14.5-9.156 19.579z m199.738-134.483c-4.772 4.342-10.61 6.185-17.389 6.308-6.452-0.328-12.391-3.113-16.754-7.865-8.971-9.831-8.275-25.152 1.557-34.123a24.057 24.057 0 0 1 16.263-6.308c6.554 0 13.108 2.663 17.86 7.865 4.363 4.752 6.595 10.937 6.308 17.369-0.287 6.472-3.072 12.412-7.845 16.754z,M151.81 219.064v18.751c65.713 49.346 192.006 82.731 337.007 82.731s271.291-33.385 337.005-82.731v-18.751c-57.667 50.36-186.873 85.432-337.005 85.432-150.134 0-279.341-35.072-337.007-85.432zM488.817 63.779c-221.567 0-401.197 71.858-401.197 160.48V721.72h2.025c20.146 81.105 191.141 144.432 399.172 144.432 24.529 0 32.095-2.058 55.411-3.746l0.023-31.962c-23.252 1.598-30.838 3.61-55.434 3.61-203.85 0-369.102-57.477-369.102-128.382V608.14c61.194 57.349 203.387 97.532 369.102 97.532 20.51 0 40.664-0.614 60.344-1.802l1.249-32.051a1057.38 1057.38 0 0 1-61.594 1.779c-203.85 0-369.102-57.477-369.102-128.382v-97.555c61.194 57.349 203.387 97.555 369.102 97.555s307.908-40.206 369.079-97.555v175.217l32.095-0.545V224.259c0.001-88.622-179.609-160.48-401.173-160.48z m369.079 320.957c0 70.908-165.229 128.382-369.079 128.382s-369.102-57.474-369.102-128.382v-97.555c61.194 57.352 203.387 97.555 369.102 97.555s307.908-40.203 369.079-97.555v97.555z m-369.079-32.095c-203.85 0-369.102-57.477-369.102-128.382 0-70.908 165.252-128.385 369.102-128.385s369.079 57.477 369.079 128.385c0 70.905-165.229 128.382-369.079 128.382z&#x27;</span>,</span><br><span class="line">    <span class="attr">symbolSize</span>: <span class="number">60</span>,</span><br><span class="line">    <span class="attr">itemStyle</span>: &#123;</span><br><span class="line">      <span class="attr">color</span>: <span class="string">&#x27;#e66b69&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;网关&#x27;</span>,</span><br><span class="line">    <span class="attr">symbol</span>:</span><br><span class="line">      <span class="string">&#x27;path://M600.255321 133.164178c120.213708 0 219.218733 68.021482 232.313549 155.527628h21.531936c-6.225171-97.884819-117.4874-175.858037-253.843452-175.858037S352.637041 190.806986 346.411869 288.691806h21.529903c13.094816-87.506146 112.099841-155.527628 232.313549-155.527628z,M600.255321 436.760206c-120.213708 0-219.218733-68.021482-232.313549-155.527627H346.409836c6.225171 97.884819 117.4874 175.858037 253.843452 175.858036s247.620314-77.973217 253.843452-175.858036h-21.531936c-13.09075 87.504113-112.095775 155.527628-232.309483 155.527627z,M346.125211 741.541498c0 101.900075 113.7771 184.508626 254.13011 184.508625 140.350978 0 254.130111-82.60855 254.130111-184.508625v-444.199103c0-2.901149-0.103685-5.784001-0.286659-8.650589h-21.531936c0.971794 6.4854 1.486153 13.076519 1.486153 19.757091v421.988131c0 96.803242-104.675176 175.282686-233.799702 175.282686s-233.799702-78.479444-233.799701-175.282686V308.448897c0-6.680572 0.516392-13.269658 1.486152-19.757091h-21.529903a135.835594 135.835594 0 0 0-0.286658 8.650589v444.199103z&#x27;</span>,</span><br><span class="line">    <span class="attr">symbolSize</span>: <span class="number">60</span>,</span><br><span class="line">    <span class="attr">itemStyle</span>: &#123;</span><br><span class="line">      <span class="attr">color</span>: <span class="string">&#x27;#f9bb83&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;节点&#x27;</span>,</span><br><span class="line">    <span class="attr">symbol</span>:</span><br><span class="line">      <span class="string">&#x27;path://M1172.985723 682.049233l-97.748643-35.516964a32.583215 32.583215 0 0 0-21.830134 61.582735l25.7398 9.123221-488.744218 238.181638L115.670112 741.349163l47.245961-19.223356a32.583215 32.583215 0 0 0-22.808051-60.604819l-119.579777 47.896905a32.583215 32.583215 0 0 0 0 59.952875l557.820313 251.540496a32.583215 32.583215 0 0 0 27.695632 0l570.527227-278.584184a32.583215 32.583215 0 0 0-3.258721-59.952875z,M1185.041693 482.966252l-191.587622-68.749123a32.583215 32.583215 0 1 0-21.831133 61.254764l118.927833 43.010323-488.744218 237.855666-471.474695-213.744727 116.973-47.244961a32.583215 32.583215 0 1 0-24.111938-60.604819l-190.609705 75.593537a32.583215 32.583215 0 0 0-20.528246 29.650465 32.583215 32.583215 0 0 0 20.528246 30.30141l557.819313 251.866468a32.583215 32.583215 0 0 0 27.695632 0l570.201254-278.584184a32.583215 32.583215 0 0 0 18.24744-30.953354 32.583215 32.583215 0 0 0-21.505161-29.651465z,M32.583215 290.075742l557.819313 251.540496a32.583215 32.583215 0 0 0 27.695632 0l570.201254-278.584184a32.583215 32.583215 0 0 0-3.257721-59.952875L626.244463 2.042365a32.583215 32.583215 0 0 0-23.134022 0l-570.527226 228.080502a32.583215 32.583215 0 0 0-19.224357 30.627382 32.583215 32.583215 0 0 0 19.224357 29.325493zM615.817355 67.534767l474.733416 170.408432-488.744218 238.180638-471.474695-215.372588z&#x27;</span>,</span><br><span class="line">    <span class="attr">symbolSize</span>: <span class="number">40</span>,</span><br><span class="line">    <span class="attr">itemStyle</span>: &#123;</span><br><span class="line">      <span class="attr">color</span>: <span class="string">&#x27;#6bafed&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;子节点&#x27;</span>,</span><br><span class="line">    <span class="attr">symbol</span>:</span><br><span class="line">      <span class="string">&#x27;path://M960 42.666667H64c-12.8 0-21.333333 8.533333-21.333333 21.333333v896c0 12.8 8.533333 21.333333 21.333333 21.333333h896c12.8 0 21.333333-8.533333 21.333333-21.333333V64c0-12.8-8.533333-21.333333-21.333333-21.333333z m-21.333333 896H85.333333V682.666667h853.333334v256z m0-298.666667H85.333333V384h853.333334v256z m0-298.666667H85.333333V85.333333h853.333334v256zM298.666667 768h-42.666667v85.333333h42.666667v-85.333333z m-85.333334 0H170.666667v85.333333h42.666666v-85.333333z m661.333334 21.333333h-170.666667v42.666667h170.666667v-42.666667zM298.666667 469.333333h-42.666667v85.333334h42.666667v-85.333334z m-85.333334 0H170.666667v85.333334h42.666666v-85.333334z m661.333334 21.333334h-170.666667v42.666666h170.666667v-42.666666zM298.666667 170.666667h-42.666667v85.333333h42.666667V170.666667z m-85.333334 0H170.666667v85.333333h42.666666V170.666667z m661.333334 21.333333h-170.666667v42.666667h170.666667V192z&#x27;</span>,</span><br><span class="line">    <span class="attr">symbolSize</span>: <span class="number">30</span>,</span><br><span class="line">    <span class="attr">itemStyle</span>: &#123;</span><br><span class="line">      <span class="attr">color</span>: <span class="string">&#x27;#4fc5c8&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">];</span><br><span class="line"><span class="keyword">let</span> maximum = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">const</span> baseStep = <span class="number">100</span>; <span class="comment">// 节点间隔</span></span><br><span class="line"><span class="keyword">const</span> links = [];</span><br><span class="line"><span class="keyword">const</span> data = [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: categories[<span class="number">0</span>].<span class="property">name</span>,</span><br><span class="line">    <span class="attr">category</span>: categories[<span class="number">0</span>].<span class="property">name</span>,</span><br><span class="line">    <span class="attr">value</span>: [<span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">`<span class="subst">$&#123;categories[<span class="number">1</span>].name&#125;</span>-intranet`</span>,</span><br><span class="line">    <span class="attr">category</span>: categories[<span class="number">1</span>].<span class="property">name</span>,</span><br><span class="line">    <span class="attr">value</span>: [-<span class="number">200</span>, <span class="number">0</span>],</span><br><span class="line">    <span class="attr">label</span>: &#123;</span><br><span class="line">      <span class="attr">formatter</span>: categories[<span class="number">1</span>].<span class="property">name</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">`<span class="subst">$&#123;categories[<span class="number">1</span>].name&#125;</span>-outernet`</span>,</span><br><span class="line">    <span class="attr">category</span>: categories[<span class="number">1</span>].<span class="property">name</span>,</span><br><span class="line">    <span class="attr">value</span>: [<span class="number">200</span>, <span class="number">0</span>],</span><br><span class="line">    <span class="attr">label</span>: &#123;</span><br><span class="line">      <span class="attr">formatter</span>: categories[<span class="number">1</span>].<span class="property">name</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">];</span><br><span class="line"><span class="keyword">let</span> chatHeight = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> requestData = &#123;</span><br><span class="line">  <span class="attr">intranet</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">in</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点1-IN&#x27;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">out</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点1-OUT&#x27;</span>,</span><br><span class="line">        <span class="attr">child</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId1-1&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点1-1&#x27;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId1-2&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点1-2&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">in</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点2-IN&#x27;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">out</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点2-OUT&#x27;</span>,</span><br><span class="line">        <span class="attr">child</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId2-1&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点2-1&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">in</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点3-IN&#x27;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">out</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点3-OUT&#x27;</span>,</span><br><span class="line">        <span class="attr">child</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId3-1&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点3-1&#x27;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId3-2&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点3-2&#x27;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId3-3&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点3-3&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">outernet</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">in</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点4-IN&#x27;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">out</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点4-OUT&#x27;</span>,</span><br><span class="line">        <span class="attr">child</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId4-1&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点4-1&#x27;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId4-2&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点4-2&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">in</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点5-IN&#x27;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">out</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;节点5-OUT&#x27;</span>,</span><br><span class="line">        <span class="attr">child</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">childId</span>: <span class="string">&#x27;childId5-1&#x27;</span>,</span><br><span class="line">            <span class="attr">childName</span>: <span class="string">&#x27;节点5-1&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 动态计算节点位置，让节点均匀分布</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">getNodeHeights</span> = (<span class="params">totalNodes, step</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> heights = [];</span><br><span class="line">  <span class="comment">// 判断是奇数个节点还是偶数个节点</span></span><br><span class="line">  <span class="keyword">const</span> isEven = totalNodes % <span class="number">2</span> === <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; totalNodes; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> rate = i / <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// 偶数个节点向下取整，奇数个节点向上取整</span></span><br><span class="line">    <span class="keyword">const</span> value = isEven ? <span class="title class_">Math</span>.<span class="title function_">floor</span>(rate) : <span class="title class_">Math</span>.<span class="title function_">ceil</span>(rate);</span><br><span class="line">    <span class="keyword">const</span> height =</span><br><span class="line">      (value * step + (isEven ? step / <span class="number">2</span> : <span class="number">0</span>)) *</span><br><span class="line">      (<span class="title class_">Number</span>.<span class="title function_">isInteger</span>(rate) ? <span class="number">1</span> : -<span class="number">1</span>);</span><br><span class="line">    heights.<span class="title function_">push</span>(height);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> heights;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 动态计算图表高度，避免图标重叠</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">calculateMaximum</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; intranet, outernet &#125; = requestData;</span><br><span class="line">  <span class="keyword">let</span> intranetChildCount = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">let</span> outernetChildCount = <span class="number">0</span>;</span><br><span class="line">  intranet.<span class="title function_">forEach</span>(</span><br><span class="line">    <span class="function">(<span class="params">item</span>) =&gt;</span> (intranetChildCount += item.<span class="property">out</span>.<span class="property">child</span>?.<span class="property">length</span> || <span class="number">0</span>)</span><br><span class="line">  );</span><br><span class="line">  outernet.<span class="title function_">forEach</span>(</span><br><span class="line">    <span class="function">(<span class="params">item</span>) =&gt;</span> (outernetChildCount += item.<span class="property">out</span>.<span class="property">child</span>?.<span class="property">length</span> || <span class="number">0</span>)</span><br><span class="line">  );</span><br><span class="line">  maximum = <span class="title class_">Math</span>.<span class="title function_">max</span>(</span><br><span class="line">    intranet.<span class="property">length</span>,</span><br><span class="line">    outernet.<span class="property">length</span>,</span><br><span class="line">    intranetChildCount,</span><br><span class="line">    outernetChildCount</span><br><span class="line">  );</span><br><span class="line">  <span class="comment">// chatHeight = maximum * baseStep</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">setChildData</span> = (<span class="params">item, nodeOutXY, <span class="keyword">type</span></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (!item.<span class="property">out</span>.<span class="property">child</span>) <span class="keyword">return</span>;</span><br><span class="line">  <span class="keyword">const</span> childLength = item.<span class="property">out</span>.<span class="property">child</span>.<span class="property">length</span>;</span><br><span class="line">  <span class="keyword">const</span> childHeights = <span class="title function_">getNodeHeights</span>(childLength, baseStep / childLength);</span><br><span class="line">  item.<span class="property">out</span>.<span class="property">child</span>.<span class="title function_">forEach</span>(<span class="function">(<span class="params">child, childIndex</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> name = <span class="string">`<span class="subst">$&#123;child.childName&#125;</span>_<span class="subst">$&#123;item.out.name&#125;</span>`</span>;</span><br><span class="line">    <span class="keyword">const</span> childXY = [</span><br><span class="line">      (<span class="keyword">type</span> === <span class="string">&#x27;intranet&#x27;</span> ? -<span class="number">1</span> : <span class="number">1</span>) * (baseStep * <span class="number">4</span>),</span><br><span class="line">      nodeOutXY[<span class="number">1</span>] + childHeights[childIndex]</span><br><span class="line">    ];</span><br><span class="line">    data.<span class="title function_">push</span>(&#123;</span><br><span class="line">      <span class="comment">// ...child,</span></span><br><span class="line">      name,</span><br><span class="line">      <span class="attr">category</span>: categories[<span class="number">3</span>].<span class="property">name</span>,</span><br><span class="line">      <span class="attr">value</span>: childXY,</span><br><span class="line">      <span class="attr">label</span>: &#123;</span><br><span class="line">        <span class="attr">formatter</span>: child.<span class="property">childName</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    links.<span class="title function_">push</span>(</span><br><span class="line">      ...[</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">source</span>: name,</span><br><span class="line">          <span class="attr">target</span>: item.<span class="property">out</span>.<span class="property">name</span>,</span><br><span class="line">          <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">            <span class="attr">color</span>: <span class="string">&#x27;red&#x27;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">coords</span>: [childXY, nodeOutXY]</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">source</span>: item.<span class="property">out</span>.<span class="property">name</span>,</span><br><span class="line">          <span class="attr">target</span>: name,</span><br><span class="line">          <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">            <span class="attr">color</span>: <span class="string">&#x27;green&#x27;</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">coords</span>: [nodeOutXY, childXY]</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    );</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">setNodes</span> = (<span class="params">item, baseY, <span class="keyword">type</span></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> flag = <span class="keyword">type</span> === <span class="string">&#x27;intranet&#x27;</span> ? -<span class="number">1</span> : <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">const</span> nodeData = data[<span class="keyword">type</span> === <span class="string">&#x27;intranet&#x27;</span> ? <span class="number">1</span> : <span class="number">2</span>];</span><br><span class="line">  <span class="comment">// 节点-IN</span></span><br><span class="line">  <span class="keyword">const</span> nodeInXY = [flag * baseStep, baseY];</span><br><span class="line">  data.<span class="title function_">push</span>(&#123;</span><br><span class="line">    ...item.<span class="property">in</span>,</span><br><span class="line">    <span class="attr">category</span>: categories[<span class="number">2</span>].<span class="property">name</span>,</span><br><span class="line">    <span class="attr">value</span>: nodeInXY</span><br><span class="line">  &#125;);</span><br><span class="line">  links.<span class="title function_">push</span>(</span><br><span class="line">    ...[</span><br><span class="line">      <span class="comment">// 节点-IN —— 数据中心</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">source</span>: item.<span class="property">in</span>.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">target</span>: data[<span class="number">0</span>].<span class="property">name</span>,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="attr">color</span>: <span class="string">&#x27;red&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">coords</span>: [nodeInXY, data[<span class="number">0</span>].<span class="property">value</span>]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="comment">// 节点-IN —— 网关</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">source</span>: item.<span class="property">in</span>.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">target</span>: nodeData.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="attr">color</span>: <span class="string">&#x27;red&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">coords</span>: [nodeInXY, nodeData.<span class="property">value</span>]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="comment">// 数据中心 —— 节点-IN</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">source</span>: data[<span class="number">0</span>].<span class="property">name</span>,</span><br><span class="line">        <span class="attr">target</span>: item.<span class="property">in</span>.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="attr">color</span>: <span class="string">&#x27;green&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">coords</span>: [data[<span class="number">0</span>].<span class="property">value</span>, nodeInXY]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="comment">// 网关 —— 节点-IN</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">source</span>: nodeData.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">target</span>: item.<span class="property">in</span>.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="attr">color</span>: <span class="string">&#x27;green&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">coords</span>: [nodeData.<span class="property">value</span>, nodeInXY]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  );</span><br><span class="line">  <span class="comment">// 节点-OUT</span></span><br><span class="line">  <span class="keyword">const</span> nodeOutXY = [flag * baseStep * <span class="number">3</span>, baseY];</span><br><span class="line">  data.<span class="title function_">push</span>(&#123;</span><br><span class="line">    ...item.<span class="property">out</span>,</span><br><span class="line">    <span class="attr">category</span>: categories[<span class="number">2</span>].<span class="property">name</span>,</span><br><span class="line">    <span class="attr">value</span>: nodeOutXY</span><br><span class="line">  &#125;);</span><br><span class="line">  links.<span class="title function_">push</span>(</span><br><span class="line">    ...[</span><br><span class="line">      <span class="comment">// 节点-OUT —— 网关</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">source</span>: item.<span class="property">out</span>.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">target</span>: nodeData.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="attr">color</span>: <span class="string">&#x27;red&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">coords</span>: [nodeOutXY, nodeData.<span class="property">value</span>]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="comment">// 网关 —— 节点-OUT</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">source</span>: nodeData.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">target</span>: item.<span class="property">out</span>.<span class="property">name</span>,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="attr">color</span>: <span class="string">&#x27;green&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">coords</span>: [nodeData.<span class="property">value</span>, nodeOutXY]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  );</span><br><span class="line">  <span class="title function_">setChildData</span>(item, nodeOutXY, <span class="keyword">type</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">setNodeData</span> = (<span class="params">nodes, <span class="keyword">type</span></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> nodeHeights = <span class="title function_">getNodeHeights</span>(nodes.<span class="property">length</span>, baseStep);</span><br><span class="line">  nodes.<span class="title function_">forEach</span>(<span class="function">(<span class="params">item, index</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">setNodes</span>(item, nodeHeights[index], <span class="keyword">type</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">setPlaceholderData</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (maximum !== <span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">// 当只有一条路线时，增加两个不可见节点保持图表居中显示</span></span><br><span class="line">  data.<span class="title function_">push</span>(</span><br><span class="line">    ...[</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;placeholder1&#x27;</span>,</span><br><span class="line">        <span class="attr">value</span>: [<span class="number">0</span>, baseStep],</span><br><span class="line">        <span class="attr">symbolSize</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">label</span>: &#123;</span><br><span class="line">          <span class="attr">show</span>: <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;placeholder2&#x27;</span>,</span><br><span class="line">        <span class="attr">value</span>: [<span class="number">0</span>, -baseStep],</span><br><span class="line">        <span class="attr">symbolSize</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">label</span>: &#123;</span><br><span class="line">          <span class="attr">show</span>: <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">getOptions</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; intranet, outernet &#125; = requestData;</span><br><span class="line">  <span class="comment">// 设置内网数据</span></span><br><span class="line">  <span class="title function_">setNodeData</span>(intranet, <span class="string">&#x27;intranet&#x27;</span>);</span><br><span class="line">  <span class="comment">// 设置外网数据</span></span><br><span class="line">  <span class="title function_">setNodeData</span>(outernet, <span class="string">&#x27;outernet&#x27;</span>);</span><br><span class="line">  <span class="comment">// 设置占位数据</span></span><br><span class="line">  <span class="title function_">setPlaceholderData</span>();</span><br><span class="line">  <span class="keyword">const</span> option = &#123;</span><br><span class="line">    <span class="attr">xAxis</span>: &#123;</span><br><span class="line">      <span class="attr">show</span>: <span class="literal">false</span>,</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;value&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">yAxis</span>: &#123;</span><br><span class="line">      <span class="attr">show</span>: <span class="literal">false</span>,</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;value&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">series</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;graph&#x27;</span>,</span><br><span class="line">        <span class="attr">coordinateSystem</span>: <span class="string">&#x27;cartesian2d&#x27;</span>,</span><br><span class="line">        <span class="attr">zlevel</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="comment">// 箭头</span></span><br><span class="line">        <span class="attr">edgeSymbol</span>: [<span class="string">&#x27;circle&#x27;</span>, <span class="string">&#x27;arrow&#x27;</span>],</span><br><span class="line">        <span class="attr">edgeSymbolSize</span>: [<span class="number">1</span>, <span class="number">8</span>],</span><br><span class="line">        categories,</span><br><span class="line">        <span class="comment">//圆形上面的文字</span></span><br><span class="line">        <span class="attr">label</span>: &#123;</span><br><span class="line">          <span class="attr">show</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">position</span>: <span class="string">&#x27;bottom&#x27;</span>,</span><br><span class="line">          <span class="attr">fontSize</span>: <span class="number">12</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="attr">curveness</span>: <span class="number">0.05</span></span><br><span class="line">        &#125;,</span><br><span class="line">        data,</span><br><span class="line">        <span class="comment">// links</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;scatter&#x27;</span>,</span><br><span class="line">        <span class="attr">zlevel</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">data</span>: data.<span class="title function_">map</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> (&#123;</span><br><span class="line">          <span class="attr">symbol</span>: <span class="string">&#x27;circle&#x27;</span>,</span><br><span class="line">          <span class="attr">symbolSize</span>: categories.<span class="title function_">find</span>(</span><br><span class="line">            <span class="function">(<span class="params">categorie</span>) =&gt;</span> categorie.<span class="property">name</span> === item.<span class="property">category</span></span><br><span class="line">          )?.<span class="property">symbolSize</span>,</span><br><span class="line">          <span class="attr">value</span>: item.<span class="property">value</span></span><br><span class="line">        &#125;)),</span><br><span class="line">        <span class="attr">itemStyle</span>: &#123;</span><br><span class="line">          <span class="attr">color</span>: <span class="string">&#x27;#ffffff&#x27;</span>,</span><br><span class="line">          <span class="attr">opacity</span>: <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&#x27;lines&#x27;</span>,</span><br><span class="line">        <span class="attr">coordinateSystem</span>: <span class="string">&#x27;cartesian2d&#x27;</span>,</span><br><span class="line">        <span class="attr">zlevel</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">clip</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">effect</span>: &#123;</span><br><span class="line">          <span class="attr">show</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">trailLength</span>: <span class="number">0</span>,</span><br><span class="line">          <span class="attr">symbol</span>: <span class="string">&#x27;arrow&#x27;</span>,</span><br><span class="line">          <span class="attr">symbolSize</span>: <span class="number">6</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">lineStyle</span>: &#123;</span><br><span class="line">          <span class="comment">// width: 0,</span></span><br><span class="line">          <span class="attr">curveness</span>: <span class="number">0.05</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">data</span>: links</span><br><span class="line">          .<span class="title function_">filter</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> item.<span class="property">coords</span>)</span><br><span class="line">          .<span class="title function_">map</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> (&#123; <span class="attr">coords</span>: item.<span class="property">coords</span>, <span class="attr">lineStyle</span>: item.<span class="property">lineStyle</span> &#125;)) </span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">return</span> option;</span><br><span class="line">&#125;;</span><br><span class="line">option = <span class="title function_">getOptions</span>();</span><br></pre>
+  </div>
+  
+    <div class="reward-container">
+  
+  <span class="reward-button">鼓励一下</span>
+  <div>您的鼓励，是我最大的动力！</div>
+  <div class="reward-pay">
+    
+    <div style="margin: 10px">
+      <img src="/images/wechatpay.png" alt="微信" />
+    </div>
+    
+    <div style="margin: 10px">
+      <img src="/images/alipay.png" alt="支付宝" />
+    </div>
+    
+  </div>
+  
+</div>
+
+<script>
+  const rewardButtonDom = document.getElementsByClassName('reward-button')[0]
+  const rewardPayDom = document.getElementsByClassName('reward-pay')[0]
+  rewardButtonDom.addEventListener('click', function () {
+    rewardPayDom.style.display =
+      rewardPayDom.style.display === 'flex' ? 'none' : 'flex'
+  })
+</script>
+
+  
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            duhuan
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://yanadh.github.io/2024/02/23/echarts-graph-lines-scatter/">
+            https://yanadh.github.io/2024/02/23/echarts-graph-lines-scatter/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2023/09/08/uniapp-cli-setup/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">vue-cli 方式创建 uni-app 项目（支持快捷键） </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'uuCD03NcyqiN6Fz4voguuN27-gzGzoHsz',
+        appKey: '84jBWKST2K4aWAkLhNPgLOIE',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%95%88%E6%9E%9C%E9%A2%84%E8%A7%88"><span class="toc-text">1 效果预览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81"><span class="toc-text">2 实现代码</span></a></li></ol>
+</div></main>
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="/images/avatar.jpg" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">duhuan</p>
+<p class="author-description">随笔，方便后续查看</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>35</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>16</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/YanaDH">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%95%88%E6%9E%9C%E9%A2%84%E8%A7%88"><span class="toc-text">1 效果预览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81"><span class="toc-text">2 实现代码</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF/">
+        <div class="categories-list-item">
+          技术
+          <span class="categories-list-item-badge">35</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Electron/" 
+        title="Electron">
+        <div class="tags-list-item">Electron</div>
+      </a>
+    
+      <a 
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
+      </a>
+    
+      <a 
+        href="/tags/Element-Plus/" 
+        title="Element Plus">
+        <div class="tags-list-item">Element Plus</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
+      </a>
+    
+      <a 
+        href="/tags/Hexo/" 
+        title="Hexo">
+        <div class="tags-list-item">Hexo</div>
+      </a>
+    
+      <a 
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
+      </a>
+    
+      <a 
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
+      </a>
+    
+      <a 
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
+      </a>
+    
+      <a 
+        href="/tags/qiankun/" 
+        title="qiankun">
+        <div class="tags-list-item">qiankun</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
+      </a>
+    
+      <a 
+        href="/tags/Vite/" 
+        title="Vite">
+        <div class="tags-list-item">Vite</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/uni-app/" 
+        title="uni-app">
+        <div class="tags-list-item">uni-app</div>
+      </a>
+    
+      <a 
+        href="/tags/Echarts/" 
+        title="Echarts">
+        <div class="tags-list-item">Echarts</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%95%88%E6%9E%9C%E9%A2%84%E8%A7%88"><span class="toc-text">1 效果预览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81"><span class="toc-text">2 实现代码</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-02-23</div>
+        <a href="/2024/02/23/echarts-graph-lines-scatter/"><div class="recent-posts-item-content">Echarts —— 关系图+路径图+散点图（动态箭头）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-08</div>
+        <a href="/2023/09/08/uniapp-cli-setup/"><div class="recent-posts-item-content">vue-cli 方式创建 uni-app 项目（支持快捷键）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-09-06</div>
+        <a href="/2023/09/06/uniapp-mumu/"><div class="recent-posts-item-content">uni-app 运行到MuMu模拟器</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-08-25</div>
+        <a href="/2023/08/25/navigator-audiocontext/"><div class="recent-posts-item-content">Vue3 实现麦克风实时音量检测</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2022
+          
+          
+                - 
+                2024
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          Yana's Blog
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+    
+      <script> 
+        loadScript('/js/lib/busuanzi.min.js') 
+      </script>
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+     
+    
+    
+      <script>
+        setTimeout(() => {localSearch("search.json")}, 0)
+      </script>
+    
+  </body>
+</html>
