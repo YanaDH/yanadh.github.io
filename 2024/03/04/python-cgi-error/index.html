@@ -13,14 +13,14 @@
     content="Yana&#39;s Blog"
   />
   <link rel="icon" href="/images/favicon.ico" />
-  <title>Electron 快速入门</title>
+  <title>Python CGI编程错误汇总</title>
    
   <meta
     property="og:title"
-    content="Electron 快速入门"
+    content="Python CGI编程错误汇总"
   />
    
-  <meta property="og:url" content="https://yanadh.github.io/2023/03/09/electron-quick-start/index.html" />
+  <meta property="og:url" content="https://yanadh.github.io/2024/03/04/python-cgi-error/index.html" />
    
   <meta
     property="og:img"
@@ -28,17 +28,17 @@
   />
     
   <meta property="og:type" content="article" />
-  <meta property="og:article:published_time" content="2023-03-09" />
+  <meta property="og:article:published_time" content="2024-03-04" />
   <meta
     property="og:article:modified_time"
-    content="2023-03-09"
+    content="2024-03-05"
   />
   <meta
     property="og:article:author"
     content="duhuan"
   />
    
-  <meta property="og:article:tag" content="Electron" />
+  <meta property="og:article:tag" content="Python" />
        <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" > <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" > <link rel="preload" href="/css/main.css" as="style" >  
   <link rel="stylesheet" href="/css/main.css">  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css"> 
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css"> 
@@ -226,16 +226,16 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Electron 快速入门
+      Python CGI编程错误汇总
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2023-03-09T08:31:24.000Z">
+    <time datetime="2024-03-04T08:58:24.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2023-03-09</span>
+      <span>2024-03-04</span>
     </time>
     
       <span class="dot"></span>
@@ -249,7 +249,7 @@
     
     
       <span class="dot"></span>
-      <span>633 字</span>
+      <span>468 字</span>
     
   </div>
   
@@ -264,9 +264,9 @@
         
           
           <a 
-            href="/tags/Electron/" 
+            href="/tags/Python/" 
             class="post-meta-link">
-            Electron
+            Python
           </a>
         
       </div>
@@ -277,42 +277,24 @@
     id="section" 
     class="post-content">
     <ul>
-<li><a href="#1-electron-%E6%98%AF%E4%BB%80%E4%B9%88">1 Electron 是什么</a></li>
-<li><a href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F">2 创建应用程序</a></li>
-<li><a href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F">3 打包应用程序</a></li>
+<li><a href="#1-%E5%89%8D%E8%A8%80">1 前言</a></li>
+<li><a href="#2-%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6">2 测试文件</a></li>
+<li><a href="#3-%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93">3 问题总结</a></li>
 </ul>
-<h2 id="1-Electron-是什么"><a href="#1-Electron-是什么" class="headerlink" title="1 Electron 是什么"></a>1 Electron 是什么</h2><p>Electron是一个使用 JavaScript、HTML 和 CSS 构建桌面应用程序的框架。 Electron 将 Chromium 和 Node.js 嵌入到了一个二进制文件中，因此它允许你仅需一个代码仓库，就可以撰写支持 Windows、macOS 和 Linux 的跨平台应用。</p>
-<h2 id="2-创建应用程序"><a href="#2-创建应用程序" class="headerlink" title="2 创建应用程序"></a>2 创建应用程序</h2><ul>
-<li><p>初始化 package.json</p>
-<pre class="highlight"><span class="line">npm init</span><br></pre>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>在学习Python CGI编程时，运行起来总是有各种各样的问题，故将问题进行总结，以便新接触Python的童鞋能少走弯路</p>
+<div class="post-note note-warning"><p>以下均为本人遇到对应报错的解决方案，可能存在其他问题但报错相同的情况，若以下解决方案无效，请换方向排查</p></div>
+
+<h2 id="2-测试文件"><a href="#2-测试文件" class="headerlink" title="2 测试文件"></a>2 测试文件</h2><pre class="highlight"><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&quot;Content-type:text/html&quot;</span>)</span><br><span class="line"><span class="built_in">print</span> ()                             <span class="comment"># 空行，告诉服务器结束头部</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;html&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;head&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;meta charset=&quot;utf-8&quot;&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;title&gt;Hello Word - 我的第一个 CGI 程序！&lt;/title&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;/head&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;body&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;h2&gt;Hello Word! 我是来自菜鸟教程的第一CGI程序&lt;/h2&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;/body&gt;&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;&lt;/html&gt;&#x27;</span>)</span><br></pre>
+
+<h2 id="3-问题总结"><a href="#3-问题总结" class="headerlink" title="3 问题总结"></a>3 问题总结</h2><ul>
+<li><p>Linux 系统下报错AH01215: (2)No such file or directory: exec of ‘&#x2F;var&#x2F;www&#x2F;cgi-bin&#x2F;hello.py’ failed<br>Linux 下与 Windows 下编码方式不同，导致从 Windows 复制的文件在 Linux 下找不到<code>#!/usr/bin/python3</code>行，使 cgi 脚本没有找到环境，尝试删除对应文件并在 Linux 下重新创建</p>
 </li>
-<li><p>修改 package.json</p>
-<pre class="highlight"><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;main&quot;</span><span class="punctuation">:</span> <span class="string">&quot;main.js&quot;</span><span class="punctuation">,</span> <span class="comment">// 入口文件为 main.js</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A minimal Electron application&quot;</span><span class="punctuation">,</span> <span class="comment">// description 为 &quot;&quot; 会导致后续打包报错</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electron .&quot;</span><span class="punctuation">,</span> <span class="comment">// 启动 electron</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre>
+<li><p>Windows 系统下报错(OS 2)系统找不到指定的文件。  : [client ::1:55264] AH01223: couldn’t spawn child process<br>python 路径不正确，修改第一行为<code>#!C:/python3</code>，注意，<code>C:/python3</code>为真实<code>python.exe</code>对应目录，且必须放在文件最前面</p>
 </li>
-<li><p>安装 electron 包</p>
-<pre class="highlight"><span class="line">npm install --save-dev electron</span><br></pre>
-<p>若安装失败，设置一下 electron 下载镜像</p>
-<pre class="highlight"><span class="line">npm config <span class="built_in">set</span> electron_mirror <span class="string">&quot;https://npmmirror.com/mirrors/electron/&quot;</span></span><br></pre>
+<li><p>Windows 系统下报错You don’t have permission to access this resource.AH01630: client denied by server configuration:<br>httpd.conf 文件<code>ScriptAlias</code>和对应<code>Directory</code>路径配置错误，<code>ScriptAlias /cgi-bin/ &quot;C:/var/www/cgi-bin/&quot;</code>为真实路径，最后一个<code>/</code>必须存在且都不能为<code>\</code></p>
 </li>
-<li><p>在根目录下新增 main.js 文件</p>
-<pre class="highlight"><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> &#123; app, <span class="title class_">BrowserWindow</span> &#125; = <span class="built_in">require</span>(<span class="string">&#x27;electron&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">createWindow</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> win = <span class="keyword">new</span> <span class="title class_">BrowserWindow</span>(&#123;</span><br><span class="line">    <span class="attr">width</span>: <span class="number">800</span>,</span><br><span class="line">    <span class="attr">height</span>: <span class="number">600</span>,</span><br><span class="line">    <span class="attr">webPreferences</span>: &#123;</span><br><span class="line">      <span class="attr">preload</span>: path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;preload.js&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  win.<span class="title function_">loadFile</span>(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">whenReady</span>().<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">createWindow</span>()</span><br><span class="line">  app.<span class="title function_">on</span>(<span class="string">&#x27;activate&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// macOS 应用在没有打开任何窗口的情况下也继续运行</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title class_">BrowserWindow</span>.<span class="title function_">getAllWindows</span>().<span class="property">length</span> === <span class="number">0</span>) <span class="title function_">createWindow</span>()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">on</span>(<span class="string">&#x27;window-all-closed&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 除 macOS 外，应用关闭所有窗口则完全退出一个应用程序</span></span><br><span class="line">  <span class="keyword">if</span> (process.<span class="property">platform</span> !== <span class="string">&#x27;darwin&#x27;</span>) app.<span class="title function_">quit</span>()</span><br><span class="line">&#125;)</span><br></pre>
+<li><p>Windows 系统下中文出现乱码<br>在第二行增加<code># coding: utf8</code>，并删除<code>print (&#39;&lt;meta charset=&quot;utf-8&quot;&gt;&#39;)</code></p>
 </li>
-<li><p>在根目录下新建 index.html</p>
-<pre class="highlight"><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span></span></span><br><span class="line"><span class="tag">      <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Security-Policy&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">content</span>=<span class="string">&quot;default-src &#x27;self&#x27;; script-src &#x27;self&#x27;&quot;</span></span></span><br><span class="line"><span class="tag">    /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>你好!<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>你好!<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    我们正在使用 Node.js <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;node-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>, Chromium</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;chrome-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>, 和 Electron</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;electron-version&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>.</span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre>
-</li>
-<li><p>在根目录下新建 preload.js</p>
-<pre class="highlight"><span class="line"><span class="comment">// 通过预加载脚本从渲染器访问 Node.js</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;DOMContentLoaded&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">replaceText</span> = (<span class="params">selector, text</span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(selector)</span><br><span class="line">    <span class="keyword">if</span> (element) element.<span class="property">innerText</span> = text</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> dependency <span class="keyword">of</span> [<span class="string">&#x27;chrome&#x27;</span>, <span class="string">&#x27;node&#x27;</span>, <span class="string">&#x27;electron&#x27;</span>]) &#123;</span><br><span class="line">    <span class="title function_">replaceText</span>(<span class="string">`<span class="subst">$&#123;dependency&#125;</span>-version`</span>, process.<span class="property">versions</span>[dependency])</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre>
-</li>
-<li><p>启动 electron</p>
-<pre class="highlight"><span class="line">npm dev</span><br></pre>
-<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230309/2023030901.png" class="lozad post-image"src="/../images/20230309/2023030901.png"></p>
-</li>
-</ul>
-<h2 id="3-打包应用程序"><a href="#3-打包应用程序" class="headerlink" title="3 打包应用程序"></a>3 打包应用程序</h2><ul>
-<li>安装 Electron Forge<pre class="highlight"><span class="line">npm install --save-dev @electron-forge/cli</span><br></pre></li>
-<li>使用 Electron Forge 的”import”命令设置 Forge 的脚手架<pre class="highlight"><span class="line">npx electron-forge import</span><br></pre></li>
-<li>使用 Forge 的 make 命令来创建可分发的应用程序<pre class="highlight"><span class="line">npm run make</span><br></pre>
-以上三个命令执行完后，会创建一个 out 文件夹，文件夹下包含安装包<br><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/../images/20230309/2023030902.png" class="lozad post-image"src="/../images/20230309/2023030902.png"></li>
 </ul>
 
   </div>
@@ -362,8 +344,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://yanadh.github.io/2023/03/09/electron-quick-start/">
-            https://yanadh.github.io/2023/03/09/electron-quick-start/
+            href="https://yanadh.github.io/2024/03/04/python-cgi-error/">
+            https://yanadh.github.io/2024/03/04/python-cgi-error/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -373,29 +355,15 @@
 </article>
 <div class="nav">
   
-    <div class="nav-item-prev">
-      <a 
-        href="/2023/03/17/vite-rollup-plugin-esbuild/" 
-        class="nav-link">
-        <i class="iconfont icon-left nav-prev-icon"></i>
-        <div>
-          <div class="nav-label">上一篇</div>
-          
-            <div class="nav-title">Vue3 + Vite 页面白屏问题（开发环境+生产环境） </div>
-          
-        </div>
-      </a>
-    </div>
-  
   
     <div class="nav-item-next">
       <a 
-        href="/2023/02/28/vue3-element-plus-table/" 
+        href="/2024/02/23/echarts-graph-lines-scatter/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">Vue3 + Element Plus 封装公共表格组件（带源码） </div>
+            <div class="nav-title">Echarts —— 关系图+路径图+散点图（动态箭头） </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -449,7 +417,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6"><span class="toc-text">2 测试文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93"><span class="toc-text">3 问题总结</span></a></li></ol>
 </div></main>
             <aside class="left-column">
               
@@ -507,7 +475,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6"><span class="toc-text">2 测试文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93"><span class="toc-text">3 问题总结</span></a></li></ol>
       </div>
     </article>
   
@@ -544,15 +512,15 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/Vue3/" 
-        title="Vue3">
-        <div class="tags-list-item">Vue3</div>
+        href="/tags/Electron/" 
+        title="Electron">
+        <div class="tags-list-item">Electron</div>
       </a>
     
       <a 
-        href="/tags/Node/" 
-        title="Node">
-        <div class="tags-list-item">Node</div>
+        href="/tags/Git/" 
+        title="Git">
+        <div class="tags-list-item">Git</div>
       </a>
     
       <a 
@@ -562,15 +530,9 @@
       </a>
     
       <a 
-        href="/tags/uni-app/" 
-        title="uni-app">
-        <div class="tags-list-item">uni-app</div>
-      </a>
-    
-      <a 
-        href="/tags/JS/" 
-        title="JS">
-        <div class="tags-list-item">JS</div>
+        href="/tags/Vue3/" 
+        title="Vue3">
+        <div class="tags-list-item">Vue3</div>
       </a>
     
       <a 
@@ -580,45 +542,21 @@
       </a>
     
       <a 
-        href="/tags/Python/" 
-        title="Python">
-        <div class="tags-list-item">Python</div>
+        href="/tags/GitHub/" 
+        title="GitHub">
+        <div class="tags-list-item">GitHub</div>
       </a>
     
       <a 
-        href="/tags/Echarts/" 
-        title="Echarts">
-        <div class="tags-list-item">Echarts</div>
+        href="/tags/Node/" 
+        title="Node">
+        <div class="tags-list-item">Node</div>
       </a>
     
       <a 
-        href="/tags/Cli/" 
-        title="Cli">
-        <div class="tags-list-item">Cli</div>
-      </a>
-    
-      <a 
-        href="/tags/Pinia/" 
-        title="Pinia">
-        <div class="tags-list-item">Pinia</div>
-      </a>
-    
-      <a 
-        href="/tags/Vue-Router4/" 
-        title="Vue Router4">
-        <div class="tags-list-item">Vue Router4</div>
-      </a>
-    
-      <a 
-        href="/tags/Vite/" 
-        title="Vite">
-        <div class="tags-list-item">Vite</div>
-      </a>
-    
-      <a 
-        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
-        title="微前端">
-        <div class="tags-list-item">微前端</div>
+        href="/tags/JS/" 
+        title="JS">
+        <div class="tags-list-item">JS</div>
       </a>
     
       <a 
@@ -628,15 +566,45 @@
       </a>
     
       <a 
-        href="/tags/GitHub/" 
-        title="GitHub">
-        <div class="tags-list-item">GitHub</div>
+        href="/tags/%E5%BE%AE%E5%89%8D%E7%AB%AF/" 
+        title="微前端">
+        <div class="tags-list-item">微前端</div>
       </a>
     
       <a 
-        href="/tags/Git/" 
-        title="Git">
-        <div class="tags-list-item">Git</div>
+        href="/tags/Vite/" 
+        title="Vite">
+        <div class="tags-list-item">Vite</div>
+      </a>
+    
+      <a 
+        href="/tags/Vue-Router4/" 
+        title="Vue Router4">
+        <div class="tags-list-item">Vue Router4</div>
+      </a>
+    
+      <a 
+        href="/tags/Pinia/" 
+        title="Pinia">
+        <div class="tags-list-item">Pinia</div>
+      </a>
+    
+      <a 
+        href="/tags/Cli/" 
+        title="Cli">
+        <div class="tags-list-item">Cli</div>
+      </a>
+    
+      <a 
+        href="/tags/uni-app/" 
+        title="uni-app">
+        <div class="tags-list-item">uni-app</div>
+      </a>
+    
+      <a 
+        href="/tags/Echarts/" 
+        title="Echarts">
+        <div class="tags-list-item">Echarts</div>
       </a>
     
   </div>
@@ -657,7 +625,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Electron-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1 Electron 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">2 创建应用程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%93%E5%8C%85%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="toc-text">3 打包应用程序</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6"><span class="toc-text">2 测试文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93"><span class="toc-text">3 问题总结</span></a></li></ol>
     </article>
   
   
